@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expatriation Sydney → Tel Aviv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #FAF7F2;
+    --ink: #1E1A17;
+    --ink-soft: #4A4540;
+    --ink-faint: rgba(30, 26, 23, 0.55);
+    --line: rgba(30, 26, 23, 0.1);
+    --line-soft: rgba(30, 26, 23, 0.05);
+    --surface: rgba(255, 255, 255, 0.75);
+    --surface-soft: rgba(255, 255, 255, 0.55);
+    --surface-hover: #ffffff;
+    --accent: #C2410C;
+    --accent-blue: #0E2A47;
+    --green: #65A30D;
+    --crit-bg: #FEE2E2; --crit-fg: #7F1D1D; --crit-dot: #B91C1C;
+    --high-bg: #FFEDD5; --high-fg: #7C2D12; --high-dot: #C2410C;
+    --med-bg:  #FEF3C7; --med-fg:  #713F12; --med-dot:  #A16207;
+    --low-bg:  #F1F5F9; --low-fg:  #334155; --low-dot:  #64748B;
+  }
+  html, body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(201, 94, 43, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(14, 42, 71, 0.04) 0%, transparent 40%);
+    color: var(--ink);
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body { padding-bottom: 60px; }
+  .serif { font-family: 'Fraunces', Georgia, serif; font-feature-settings: "ss01", "ss02"; }
+  button { font-family: inherit; font-size: inherit; background: none; border: none; cursor: pointer; color: inherit; }
+  input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+  select { cursor: pointer; }
+
+  /* Layout */
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 14px; }
+  @media (min-width: 640px) { .wrap { padding: 0 24px; } }
+  @media (min-width: 900px) { .wrap { padding: 0 32px; } }
+
+  /* Header */
+  header { padding: 20px 0 14px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  @media (min-width: 640px) { h1 { font-size: 40px; } }
+  @media (min-width: 900px) { h1 { font-size: 48px; } }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .header-subtitle { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+  @media (min-width: 640px) { .header-subtitle { font-size: 13px; } }
+  .save-indicator { font-size: 11px; opacity: 0.6; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .save-indicator.saving { opacity: 1; color: var(--accent); }
+  .refresh-btn { font-size: 11px; opacity: 0.6; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
+  .refresh-btn:hover { opacity: 1; }
+
+  /* Progress */
+  .progress-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+  .progress-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.6; }
+  @media (min-width: 640px) { .progress-label { font-size: 11px; } }
+  .progress-value { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; }
+  @media (min-width: 640px) { .progress-value { font-size: 26px; } }
+  .progress-value .pct-sign { font-size: 12px; opacity: 0.5; font-family: 'DM Sans', sans-serif; }
+  .progress-bar { height: 5px; background: rgba(30, 26, 23, 0.1); border-radius: 3px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent) 100%);
+    transition: width 0.6s ease;
+  }
+  .progress-count { font-size: 11px; opacity: 0.6; margin-top: 4px; }
+
+  /* TABS - scrollable horizontal, with fade hint on right */
+  .tabs-outer {
+    position: relative;
+    border-bottom: 1px solid var(--line);
+  }
+  .tabs-outer::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 1px;
+    width: 30px;
+    background: linear-gradient(to right, transparent, var(--bg));
+    pointer-events: none;
+    opacity: 0.9;
+  }
+  .tabs-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding: 12px 0;
+  }
+  .tabs-scroll::-webkit-scrollbar { height: 4px; }
+  .tabs-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+  .tabs-inner {
+    display: inline-flex;
+    gap: 6px;
+    padding: 0 14px;
+    min-width: 100%;
+  }
+  @media (min-width: 640px) { .tabs-inner { padding: 0 24px; gap: 8px; } }
+  @media (min-width: 900px) { .tabs-inner { padding: 0 32px; } }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 11px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .tab:hover { background: var(--surface-hover); }
+  .tab.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .tab .count {
+    font-size: 11px;
+    padding: 1px 6px;
+    background: rgba(30, 26, 23, 0.07);
+    border-radius: 3px;
+  }
+  .tab.active .count { background: rgba(255, 255, 255, 0.15); }
+  .tab-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    padding: 0;
+    background: transparent;
+    border: 1px dashed rgba(30, 26, 23, 0.25);
+    border-radius: 6px;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+  .tab-add:hover { opacity: 1; background: var(--surface); }
+
+  /* Main */
+  main { padding: 20px 0; }
+
+  /* Section header */
+  .section-header {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  @media (min-width: 700px) {
+    .section-header { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  }
+  .section-header-left { flex: 1; min-width: 0; }
+  .section-title-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.5;
+    margin-bottom: 2px;
+  }
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .section-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+  @media (min-width: 640px) { .section-title { font-size: 30px; } }
+  .section-edit-actions {
+    display: inline-flex;
+    gap: 2px;
+    opacity: 0.4;
+  }
+  .section-edit-actions:hover { opacity: 1; }
+  .section-edit-actions button {
+    padding: 6px;
+    border-radius: 4px;
+    display: flex;
+  }
+  .section-edit-actions button:hover { background: rgba(30, 26, 23, 0.06); }
+  .section-edit-actions button.danger:hover { background: var(--crit-bg); color: var(--crit-fg); }
+  .section-subtitle {
+    font-size: 12px;
+    opacity: 0.65;
+    font-style: italic;
+    margin-top: 4px;
+  }
+  @media (min-width: 640px) { .section-subtitle { font-size: 13px; } }
+  .section-stats { text-align: right; flex-shrink: 0; }
+  .section-stats .pct { font-family: 'Fraunces', serif; font-size: 26px; }
+  @media (min-width: 640px) { .section-stats .pct { font-size: 30px; } }
+
+  /* Inline edit for titles */
+  .inline-edit {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+  }
+  .inline-edit input {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 18px;
+    font-family: 'Fraunces', serif;
+    outline: none;
+    flex: 1;
+    min-width: 0;
+  }
+  .inline-edit input.small { font-size: 14px; font-family: inherit; }
+  .inline-edit .btn-primary, .inline-edit .btn-ghost { flex-shrink: 0; }
+
+  /* Toolbar */
+  .toolbar {
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    padding: 7px 10px;
+  }
+  .search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    min-width: 0;
+  }
+  .search-box .clear-search { opacity: 0.4; display: flex; align-items: center; padding: 2px; }
+  .search-box .clear-search:hover { opacity: 1; }
+  .toolbar select {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  /* Subsection group */
+  .subsection {
+    margin-top: 20px;
+  }
+  .subsection-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 4px 6px;
+    border-bottom: 1px dashed var(--line);
+    margin-bottom: 8px;
+  }
+  .subsection-toggle {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+  .subsection-toggle:hover { opacity: 1; }
+  .subsection-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+  @media (min-width: 640px) { .subsection-title { font-size: 18px; } }
+  .subsection-count {
+    font-size: 11px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+  .subsection-actions {
+    display: inline-flex;
+    gap: 2px;
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+  .subsection-actions:hover { opacity: 1; }
+  .subsection-actions button { padding: 5px; border-radius: 4px; display: flex; }
+  .subsection-actions button:hover { background: rgba(30, 26, 23, 0.06); }
+  .subsection-actions button.danger:hover { background: var(--crit-bg); color: var(--crit-fg); }
+
+  /* Items */
+  .items-list { display: flex; flex-direction: column; gap: 5px; }
+  .items-list.collapsed { display: none; }
+  .item {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .item.dragging { opacity: 0.4; }
+  .item.drop-target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 10px 10px 12px;
+  }
+  @media (min-width: 640px) { .item-row { gap: 8px; padding: 10px 12px; } }
+  .item-prio-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .grip {
+    display: none;
+    cursor: grab;
+    opacity: 0.2;
+    padding-top: 2px;
+  }
+  .item:hover .grip { opacity: 0.7; }
+  .grip:active { cursor: grabbing; }
+  @media (min-width: 700px) { .grip { display: flex; } }
+  .move-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding-top: 0;
+  }
+  @media (min-width: 700px) { .move-buttons { display: none; } }
+  .move-buttons button {
+    opacity: 0.35;
+    padding: 4px 2px;
+    display: flex;
+  }
+  .move-buttons button:active { opacity: 1; }
+
+  .checkbox-btn {
+    flex-shrink: 0;
+    padding: 2px 0 0;
+    display: flex;
+    align-items: center;
+  }
+  .item-content { flex: 1; min-width: 0; }
+  .item-text-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .item-text {
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .item-text.done { text-decoration: line-through; opacity: 0.5; }
+  .subtask-badge {
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(30, 26, 23, 0.06);
+    opacity: 0.7;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .subtask-badge:hover { opacity: 1; background: rgba(30, 26, 23, 0.1); }
+  .subtask-badge.all-done { background: #DCFCE7; color: #14532D; opacity: 1; }
+
+  .prio-select {
+    font-size: 11px;
+    padding: 2px 20px 2px 8px;
+    border-radius: 999px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+  }
+  .prio-critical { background-color: var(--crit-bg); color: var(--crit-fg); }
+  .prio-high { background-color: var(--high-bg); color: var(--high-fg); }
+  .prio-medium { background-color: var(--med-bg); color: var(--med-fg); }
+  .prio-low { background-color: var(--low-bg); color: var(--low-fg); }
+
+  .notes-preview {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.6;
+    font-style: italic;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    cursor: pointer;
+    word-break: break-word;
+  }
+  .notes-preview:hover { opacity: 1; }
+  .notes-textarea {
+    margin-top: 6px;
+    width: 100%;
+    background: rgba(245, 242, 237, 0.8);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    opacity: 0.55;
+    flex-shrink: 0;
+  }
+  .item:hover .item-actions { opacity: 1; }
+  .item-actions button {
+    padding: 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+  }
+  .item-actions button:hover { background: rgba(30, 26, 23, 0.05); }
+  .item-actions button.has-notes { color: var(--accent); opacity: 1; }
+  .item-actions button.delete:hover { background: var(--crit-bg); color: var(--crit-fg); }
+  @media (max-width: 639px) {
+    .item-actions button { padding: 7px; }
+  }
+
+  /* Subtasks */
+  .subtasks-container {
+    margin: 0 10px 10px 34px;
+    padding: 6px 0 0 10px;
+    border-left: 2px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .subtask-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .subtask-row:hover { background: rgba(255, 255, 255, 0.5); }
+  .subtask-checkbox { flex-shrink: 0; display: flex; }
+  .subtask-text { flex: 1; min-width: 0; word-break: break-word; }
+  .subtask-text.done { text-decoration: line-through; opacity: 0.5; }
+  .subtask-actions {
+    display: inline-flex;
+    gap: 0;
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+  .subtask-row:hover .subtask-actions { opacity: 1; }
+  .subtask-actions button { padding: 4px; border-radius: 3px; display: flex; }
+  .subtask-actions button:hover { background: rgba(30, 26, 23, 0.06); }
+  .subtask-actions button.danger:hover { background: var(--crit-bg); color: var(--crit-fg); }
+  .add-subtask-btn {
+    align-self: flex-start;
+    padding: 3px 8px;
+    margin-top: 2px;
+    font-size: 12px;
+    opacity: 0.6;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .add-subtask-btn:hover { opacity: 1; background: rgba(30, 26, 23, 0.05); }
+
+  /* Add buttons & forms */
+  .add-btn {
+    width: 100%;
+    padding: 11px;
+    border: 2px dashed rgba(30, 26, 23, 0.18);
+    border-radius: 6px;
+    font-size: 13px;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .add-btn:hover {
+    border-color: rgba(30, 26, 23, 0.4);
+    opacity: 1;
+    background: var(--surface-soft);
+  }
+  .add-btn.small { padding: 7px; font-size: 12px; }
+  .add-subsection-btn {
+    margin-top: 16px;
+    padding: 10px;
+    border: 2px dashed rgba(30, 26, 23, 0.18);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    transition: all 0.15s;
+  }
+  .add-subsection-btn:hover { opacity: 1; border-color: rgba(30, 26, 23, 0.35); background: var(--surface-soft); }
+
+  .add-form {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .add-form input[type="text"] {
+    width: 100%;
+    background: rgba(245, 242, 237, 0.8);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 14px;
+    outline: none;
+  }
+  .add-form .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .add-form select {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .btn-primary {
+    padding: 7px 14px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .btn-primary:hover { background: var(--accent-blue); }
+  .btn-ghost {
+    padding: 7px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    opacity: 0.6;
+  }
+  .btn-ghost:hover { opacity: 1; }
+
+  /* Empty state */
+  .empty-state {
+    padding: 36px 0;
+    text-align: center;
+    opacity: 0.5;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.55;
+  }
+  .footer .quote { font-family: 'Fraunces', serif; font-style: italic; }
+
+  /* Loading */
+  .loading-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Icon sizes */
+  .ico { width: 14px; height: 14px; flex-shrink: 0; }
+  .ico-md { width: 16px; height: 16px; flex-shrink: 0; }
+  .ico-sm { width: 12px; height: 12px; flex-shrink: 0; }
+  .ico-lg { width: 20px; height: 20px; flex-shrink: 0; }
+  .ico-check { color: var(--green); }
+  .ico-partial { color: var(--accent); }
+  .ico-circle { opacity: 0.4; }
+
+  /* Utility */
+  .hidden { display: none !important; }
+  .flex { display: flex; }
+  .gap-1 { gap: 4px; }
+  .gap-2 { gap: 8px; }
+  .items-center { align-items: center; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="loading-screen">
+    <div>
+      <svg class="ico-lg spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.6; margin-bottom: 12px;">
+        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+      </svg>
+      <div class="serif" style="font-size: 22px; font-style: italic;">Chargement…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==============================================
+// Data model
+// ==============================================
+const STORAGE_KEY = 'expat-tracker-v2';
+const STORAGE_KEY_V1 = 'expat-tracker-v1';
+const PRIORITIES = { critical: 'Critique', high: 'Haute', medium: 'Moyenne', low: 'Basse' };
+const FAMILY = ['Préma', 'Jérémie', 'Matthieu', 'Baptiste'];
+
+function genId() {
+  return (crypto.randomUUID && crypto.randomUUID()) || 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+}
+function I(text, priority, notes) {
+  return { id: genId(), text, priority: priority || 'medium', notes: notes || '', done: false, subtasks: [] };
+}
+function IwithFamily(text, priority) {
+  const item = I(text, priority);
+  item.subtasks = FAMILY.map(name => ({ id: genId(), text: name, done: false }));
+  return item;
+}
+function SUB(title, items) {
+  return { id: genId(), title, collapsed: false, items: items || [] };
+}
+
+const DEFAULT_DATA = {
+  version: 2,
+  sections: [
+    {
+      id: 'status', emoji: '🔑', title: 'Statut & prérequis RH',
+      subtitle: "Point de départ : tout découle du statut retenu par le MEAE",
+      items: [
+        I("Confirmer le statut exact (titulaire MEAE / contractuel CDD / expatrié EAF)", 'critical'),
+        I("Confirmer le type de passeport attribué (service / diplomatique)", 'critical'),
+        I("Obtenir l'arrêté d'affectation / ordre de mission", 'critical'),
+        I("Confirmer si le logement est concédé par le poste ou sous indemnité de résidence", 'critical'),
+        I("Vérifier les droits déménagement (franchise barème MEAE, devis payé par le poste)", 'high'),
+        I("Enregistrer Jérémie et les enfants comme ayants droit au dossier RH", 'critical'),
+        I("Demander le livret d'accueil \"agent expatrié Tel Aviv\"", 'high'),
+        I("Demander à la RH les modalités concrètes de l'échange de notes France-Israël (travail du conjoint)", 'critical'),
+        I("Identifier l'interlocuteur RH dédié au poste Tel Aviv", 'high'),
+        I("Prendre contact avec le SG sortant pour un handover", 'high'),
+        I("Se faire communiquer la grille indemnités (résidence, majorations familiales)", 'high'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'admin-fr', emoji: '📄', title: 'Démarches administratives France',
+      subtitle: "Papiers, visas, impôts, banque côté français",
+      items: [
+        IwithFamily("Vérifier validité passeports famille (≥ 6 mois après arrivée)", 'critical'),
+        IwithFamily("Renouveler passeports si besoin (via consulat à Sydney)", 'high'),
+        IwithFamily("Vérifier / refaire CNI à jour", 'medium'),
+        I("Dépôt dossier visa diplo/service (MEAE → ambassade Israël Paris)", 'critical'),
+        I("Traduction assermentée + apostille acte de mariage", 'high'),
+        I("Apostille actes de naissance enfants", 'high'),
+        I("Apostille diplômes (Jérémie — utile pour travail sur place)", 'medium'),
+        I("Transfert inscription registre des Français établis hors de France (Sydney → Tel Aviv)", 'high'),
+        I("Signaler changement de résidence fiscale (service des impôts)", 'high'),
+        I("Se renseigner sur affiliation CFE (Caisse des Français de l'Étranger)", 'high'),
+        I("Souscrire mutuelle complémentaire internationale (MGEN / April / Allianz Care)", 'high'),
+        I("Prévenir banque française du changement de résidence", 'critical'),
+        I("Conserver au moins un compte bancaire FR actif", 'critical'),
+        I("Vérifier conséquences assurance emprunteur (crédit immo FR, non-résident)", 'high'),
+        I("Informer ClubFunding du changement de résidence fiscale", 'medium'),
+        I("Déclarer comptes crypto à l'étranger (formulaire 3916 bis)", 'high'),
+        I("Procuration notariale en France", 'medium'),
+        I("Redirection courrier postal FR (La Poste expat ou famille)", 'low'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'sydney', emoji: '🇦🇺', title: 'Départ de Sydney',
+      subtitle: "Clôture ordonnée des 3 ans à Sydney",
+      items: [
+        I("Donner préavis au Lycée Condorcet", 'critical'),
+        I("Obtenir attestation employeur + certificat de travail", 'high'),
+        I("Résiliation du bail Sydney (préavis NSW : 14 à 21 jours selon cas)", 'critical'),
+        I("État des lieux de sortie (photos détaillées)", 'high'),
+        I("Récupération du bond (caution) via NSW Fair Trading", 'medium'),
+        I("Résilier électricité", 'high'),
+        I("Résilier gaz", 'high'),
+        I("Résilier internet / NBN", 'high'),
+        I("Résilier abonnement mobile AU", 'high'),
+        I("Résilier assurance habitation", 'high'),
+        I("Résilier assurance auto", 'high'),
+        I("Vendre / expédier le véhicule", 'medium'),
+        I("Résilier abonnements divers (gym, streaming, etc.)", 'medium'),
+        I("Tax return australien \"departing Australia\" (ATO)", 'high'),
+        I("Lancer la demande DASP (Superannuation) après départ", 'high'),
+        I("Désinscription Medicare", 'medium'),
+        I("Informer Centrelink / Services Australia si applicable", 'low'),
+        I("Changer adresse postale / mail forwarding Australia Post", 'medium'),
+        I("Clôturer ou maintenir les comptes bancaires AU", 'medium'),
+        I("Devis déménageurs internationaux Sydney → Tel Aviv (3 devis mini)", 'high'),
+        I("Inventaire douanier précis (franchise agents accrédités)", 'high'),
+        I("Don / vente des meubles non déplacés", 'medium'),
+        I("Tri des documents papier + numérisation cloud sécurisé", 'medium'),
+        I("Pot de départ / au revoir collègues + famille d'accueil", 'low'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'housing', emoji: '🏠', title: 'Logement Tel Aviv',
+      subtitle: "Recherche, bail, installation",
+      items: [
+        I("Définir budget loyer (centre : 1 700-2 500 €/mois pour 3 pièces)", 'critical'),
+        I("Identifier quartiers cibles (Neve Tzedek, Florentin, Lev HaIr, Ramat Aviv, Jaffa nord)", 'high'),
+        I("Contacter un relocation agent francophone spécialisé expat/diplo", 'high'),
+        I("Voyage de repérage si budget le permet (1 semaine)", 'medium'),
+        I("Vérifier présence Mamad (pièce blindée) — non négociable", 'critical'),
+        I("Vérifier proximité école AEFE (Raymond-Leven, Chagall)", 'high'),
+        I("Vérifier proximité Institut français (7 bd Rothschild) et ambassade", 'medium'),
+        I("Vérifier état des lieux / équipements meublés ou non", 'high'),
+        I("Négocier bail (durée, clauses de sortie, indexation annuelle)", 'high'),
+        I("Prévoir dépôt de garantie (2 à 3 mois de loyer en général)", 'high'),
+        I("Comprendre Vaad Bayit (charges de copropriété)", 'medium'),
+        I("Signer le bail", 'critical'),
+        I("État des lieux d'entrée (photos + vidéo)", 'high'),
+        I("Souscrire assurance habitation IL", 'high'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'travel', emoji: '✈️', title: 'Voyage & déménagement',
+      subtitle: "La logistique physique du déménagement",
+      items: [
+        I("Réserver billets avion (pris en charge MEAE sur justificatif)", 'critical'),
+        I("Vérifier franchise bagages famille (soute + cabine)", 'high'),
+        I("Organiser le voyage d'installation MEAE", 'high'),
+        I("Date de déménagement conteneur confirmée", 'critical'),
+        I("Confirmer adresse de livraison Tel Aviv", 'critical'),
+        I("Préparer une valise \"30 premiers jours\" (hors conteneur)", 'high'),
+        IwithFamily("Check-up médical complet avant départ", 'high'),
+        IwithFamily("Vaccins à jour (hépatite A/B, DTP, ROR)", 'medium'),
+        I("Ordonnances longue durée + réserve médicaments (3 mois)", 'high'),
+        I("Permis de conduire international (IDP) — via NRMA Australie", 'high'),
+        I("Préparer pet passport + titrage FAVN 3 mois avant (si animaux)", 'critical'),
+        I("Certificat vétérinaire officiel < 10 jours (si animaux)", 'high'),
+        I("Numériser tous les documents importants + cloud chiffré", 'medium'),
+        I("Préparer clé USB \"survie\" avec scans de passeports, diplômes, etc.", 'medium'),
+        I("Informer proches de l'itinéraire et adresse temporaire", 'low'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'arrival', emoji: '🛂', title: 'Arrivée Tel Aviv (J à J+30)',
+      subtitle: "Les 30 premiers jours — priorité absolue",
+      items: [
+        I("Contact SCAC / service du personnel de l'ambassade", 'critical'),
+        I("Notification d'arrivée au Protocole MFA israélien (par l'ambassade, < 7j)", 'critical'),
+        IwithFamily("Préparer 4 photos d'identité par personne", 'high'),
+        I("Dossier accréditation MFA (passeports, acte mariage, actes naissance)", 'critical'),
+        IwithFamily("Récupération carte MFA ID (titre de séjour)", 'critical'),
+        I("Demander explicitement l'autorisation de travail pour le conjoint (Jérémie)", 'high'),
+        I("Ouverture compte bancaire israélien (Hapoalim / Leumi / Discount / Mizrahi)", 'critical'),
+        I("Choix cartes bancaires (débit + crédit — souvent séparées en IL)", 'high'),
+        IwithFamily("Souscription mobile (Cellcom / Partner / Pelephone)", 'high'),
+        I("Souscription fibre internet (Bezeq / HOT / Partner)", 'high'),
+        I("Inscription consulaire définitive Tel Aviv (1 rue Ben Yehuda)", 'high'),
+        I("Récupérer numéro d'urgence sécurité de l'ambassade", 'critical'),
+        I("Briefing sécurité par l'officier sécurité ambassade", 'critical'),
+        IwithFamily("Télécharger Home Front Command (app alertes)", 'critical'),
+        I("Repérer l'abri le plus proche du logement (90s d'alerte à Tel Aviv)", 'critical'),
+        I("Rejoindre Israël Accueil (association francophone)", 'medium'),
+        I("Rejoindre groupes Facebook / WhatsApp Français à Tel Aviv", 'low'),
+        I("Ouvrir Google Maps perso avec POI (médecin, supermarché, école, abri)", 'low'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'furniture', emoji: '🪑', title: 'Ameublement',
+      subtitle: "Équipement et mobilier à acquérir sur place",
+      items: [
+        I("Inventaire de ce qu'on garde / laisse / vend à Sydney", 'high'),
+        I("Estimer budget global ameublement Tel Aviv", 'high'),
+        I("Identifier magasins de référence (IKEA Rishon, ACE, Fox Home, Hashmal, etc.)", 'medium'),
+      ],
+      subsections: [
+        SUB('Électroménager', [
+          I('Réfrigérateur / congélateur', 'high'),
+          I('Lave-linge', 'high'),
+          I('Sèche-linge', 'medium'),
+          I('Four (souvent inclus en IL)', 'medium'),
+          I('Micro-ondes', 'medium'),
+          I('Lave-vaisselle', 'medium'),
+          I('Bouilloire', 'low'),
+          I('Cafetière', 'low'),
+          I('Petit électroménager (grille-pain, blender, mixeur)', 'low'),
+          I('Aspirateur', 'medium'),
+          I('Climatiseur (souvent inclus dans logement)', 'medium'),
+        ]),
+        SUB('Chambre parents (Préma & Jérémie)', [
+          I('Lit + matelas (queen ou king)', 'critical'),
+          I('Armoire / penderie', 'high'),
+          I('Tables de chevet (x2)', 'medium'),
+          I('Linge de lit (draps, couette, oreillers)', 'high'),
+          I('Rideaux occultants', 'medium'),
+          I('Luminaires', 'low'),
+        ]),
+        SUB('Chambre Matthieu', [
+          I('Lit + matelas', 'critical'),
+          I('Bureau + chaise', 'high'),
+          I('Armoire / rangements vêtements', 'high'),
+          I('Étagères / rangements jouets', 'medium'),
+          I('Linge de lit', 'high'),
+          I('Luminaires / veilleuse', 'low'),
+        ]),
+        SUB('Chambre Baptiste', [
+          I('Lit + matelas', 'critical'),
+          I('Bureau + chaise', 'high'),
+          I('Armoire / rangements vêtements', 'high'),
+          I('Étagères / rangements jouets', 'medium'),
+          I('Linge de lit', 'high'),
+          I('Luminaires / veilleuse', 'low'),
+        ]),
+        SUB('Salon / salle à manger', [
+          I('Canapé', 'critical'),
+          I('Table basse', 'medium'),
+          I('Table à manger + chaises', 'high'),
+          I('TV + meuble TV', 'medium'),
+          I('Bibliothèque / étagères', 'medium'),
+          I('Luminaires (plafond + lampes d\'appoint)', 'medium'),
+          I('Tapis', 'low'),
+          I('Décoration / cadres', 'low'),
+        ]),
+        SUB('Cuisine équipement', [
+          I('Vaisselle complète (assiettes, bols, verres)', 'high'),
+          I('Casseroles, poêles, cocottes', 'high'),
+          I('Ustensiles de cuisine', 'medium'),
+          I('Couteaux', 'medium'),
+          I('Conteneurs de stockage / Tupperware', 'low'),
+          I('Linge de cuisine (torchons, maniques)', 'low'),
+        ]),
+        SUB('Salle de bain', [
+          I('Serviettes famille (parents + enfants)', 'high'),
+          I('Tapis de bain', 'low'),
+          I('Accessoires (porte-savon, poubelle, panière)', 'low'),
+        ]),
+        SUB('Bureau Jérémie', [
+          I('Bureau', 'high'),
+          I('Chaise ergonomique', 'high'),
+          I('Écrans supplémentaires + supports', 'medium'),
+          I('Rangements / étagères', 'low'),
+          I('Multiprise + onduleur (UPS)', 'medium'),
+        ]),
+      ],
+    },
+    {
+      id: 'school', emoji: '👦', title: 'Enfants & École',
+      subtitle: "Réseau AEFE à Tel Aviv",
+      items: [
+        I("Identifier école AEFE cible (Raymond-Leven / Chagall / Collège des Frères)", 'critical'),
+        I("Contacter les écoles le plus tôt possible (places limitées)", 'critical'),
+        I("Préparer dossier d'inscription (bulletins 2 dernières années, justificatifs)", 'high'),
+        I("Entretien / visite école", 'high'),
+        I("Organiser transport scolaire (bus scolaire ou solution perso)", 'medium'),
+        I("Inscrire aux activités extrascolaires", 'low'),
+        I("Trouver un pédiatre francophone / anglophone", 'medium'),
+        I("Évaluer besoin Ulpan enfants (cours hébreu adapté)", 'low'),
+        I("Préparer l'adaptation émotionnelle (discussion changement de pays)", 'medium'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'work', emoji: '💼', title: 'Travail sur place (Jérémie)',
+      subtitle: "Quel scénario et quelles démarches",
+      items: [
+        I("Choisir le scénario : A (travail local) / B (télétravail FR) / C (indépendant IL) / D (revenus patrimoniaux)", 'critical'),
+        I("[A] Demander l'autorisation spécifique au MFA israélien via l'ambassade", 'high'),
+        I("[A] Analyser conséquences fiscales et perte partielle d'immunité", 'high'),
+        I("[B] Identifier clients ou employeur français (télétravail)", 'high'),
+        I("[B] Choisir structure juridique (portage salarial / auto-entrepreneur / SASU)", 'high'),
+        I("[B] Vérifier compatibilité avec statut d'accrédité (déclaration RH)", 'high'),
+        I("[C] Demander numéro Tik Nikuyim", 'medium'),
+        I("[C] Statut osek patur ou osek murshe selon CA prévisionnel", 'medium'),
+        I("[D] Analyser fiscalité \"nouveau résident\" IL (exonération 10 ans revenus étrangers)", 'high'),
+        I("Consulter un fiscaliste franco-israélien (rendez-vous prioritaire)", 'high'),
+        I("Mettre à jour LinkedIn / CV en anglais et en hébreu", 'medium'),
+        I("Réseautage local : French Tech Tel Aviv, meetups tech", 'medium'),
+        I("Évaluer compatibilité portefeuille crypto avec nouvelle résidence fiscale", 'high'),
+        I("Dimensionner activité marchand de biens FR à distance", 'medium'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'tax', emoji: '💰', title: 'Fiscalité & Patrimoine',
+      subtitle: "Optimiser le changement de résidence fiscale",
+      items: [
+        I("Déterminer date exacte de résidence fiscale IL (règle des 183 jours)", 'critical'),
+        I("Demander le statut \"oleh hadash\" / nouveau résident (exo 10 ans)", 'high'),
+        I("Déclaration 3916 / 3916 bis (comptes et crypto à l'étranger)", 'high'),
+        I("Déclaration plus-values crypto FR (2086) année N", 'high'),
+        I("Étudier convention fiscale France-Israël (non double imposition)", 'high'),
+        I("Consulter expert-comptable franco-israélien avant toute opération", 'critical'),
+        I("Audit crédit immobilier FR (assurance emprunteur, statut non-résident)", 'high'),
+        I("Point sur ClubFunding (traitement fiscal nouveau résident)", 'medium'),
+        I("KYC MEXC / exchanges crypto : mettre à jour avec nouvelle adresse", 'medium'),
+        I("Déclaration de revenus FR année du départ (2042 + 2042-NR)", 'critical'),
+        I("Prévoir archivage fiscal 10 ans (docs FR + IL)", 'low'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'health', emoji: '❤️', title: 'Santé, Sécurité, Intégration',
+      subtitle: "Vivre bien et en sécurité à Tel Aviv",
+      items: [
+        I("Vérifier couverture CFE famille complète", 'critical'),
+        I("Souscrire mutuelle complémentaire internationale", 'high'),
+        I("Identifier médecins francophones (généraliste, dentiste, gynéco, pédiatre)", 'medium'),
+        I("Identifier hôpitaux privés de référence (Ichilov / Assuta)", 'medium'),
+        I("Constituer trousse de secours / urgence maison", 'medium'),
+        I("Briefing famille consignes sirènes (90s d'alerte à Tel Aviv)", 'critical'),
+        I("S'inscrire à un Ulpan (cours d'hébreu intensif)", 'high'),
+        I("Vérifier si Ulpan subventionné par l'ambassade pour les conjoints", 'medium'),
+        I("Acheter adaptateurs électriques (prises israéliennes type H)", 'low'),
+        I("Carte Rav-Kav (transports en commun Israël)", 'medium'),
+        I("Carte de bibliothèque / médiathèque IFI (La Closerie)", 'low'),
+      ],
+      subsections: [],
+    },
+    {
+      id: 'post', emoji: '🔧', title: 'Post-installation (M+1 à M+3)',
+      subtitle: "Ce qui se fait une fois posé",
+      items: [
+        I("Conversion permis de conduire (si séjour > 1 an)", 'high'),
+        I("Acheter voiture ou location longue durée si besoin", 'medium'),
+        I("Mettre à jour adresses partout (banque FR, admin, ClubFunding, etc.)", 'medium'),
+        I("Transmission nouveau RIB aux interlocuteurs FR si besoin", 'low'),
+        I("Premier bilan d'installation (M+3)", 'low'),
+        I("Planifier premier retour en France (famille, vacances)", 'low'),
+        I("Renouvellement annuel accréditation MFA", 'medium'),
+        I("Explorer le pays (Jérusalem, Néguev, Mer Morte, Haïfa, Eilat)", 'low'),
+      ],
+      subsections: [],
+    }
+  ]
+};
+
+// ==============================================
+// Migration — ensure data has all required fields
+// ==============================================
+function migrate(data) {
+  if (!data || !data.sections) return null;
+  data.version = 2;
+  data.sections.forEach(s => {
+    if (!Array.isArray(s.items)) s.items = [];
+    if (!Array.isArray(s.subsections)) s.subsections = [];
+    s.items.forEach(i => { if (!Array.isArray(i.subtasks)) i.subtasks = []; });
+    s.subsections.forEach(sub => {
+      if (typeof sub.collapsed !== 'boolean') sub.collapsed = false;
+      if (!Array.isArray(sub.items)) sub.items = [];
+      sub.items.forEach(i => { if (!Array.isArray(i.subtasks)) i.subtasks = []; });
+    });
+  });
+  return data;
+}
+
+// ==============================================
+// Icons
+// ==============================================
+const ICO = {
+  checkFull: '<svg class="ico-md ico-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  checkPartial: '<svg class="ico-md ico-partial" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M 12 2 A 10 10 0 0 1 12 22 Z" fill="currentColor" stroke="none"/></svg>',
+  circle: '<svg class="ico-md ico-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>',
+  checkSm: '<svg class="ico ico-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  circleSm: '<svg class="ico ico-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>',
+  grip: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>',
+  up: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>',
+  down: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  chevronR: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  chevronD: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  note: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  edit: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>',
+  search: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  x: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  plus: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  plusSm: '<svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  save: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
+  refresh: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>',
+};
+
+// ==============================================
+// State
+// ==============================================
+let state = {
+  data: null,
+  currentSectionId: 'status',
+  search: '',
+  filter: 'all',
+  priorityFilter: 'all',
+  expandedNotes: {}, // itemId -> bool
+  expandedSubtasks: {}, // itemId -> bool
+  editing: null, // { type: 'section'|'subsection'|'item'|'subtask', id, parentId?, value }
+  adding: null, // { type: 'item'|'subsection'|'subtask', parentId?, text, priority }
+  draggedId: null,
+  dropTargetId: null,
+  saving: false,
+};
+let saveTimeout = null;
+
+// ==============================================
+// Storage (window.storage when in artifact, localStorage fallback)
+// ==============================================
+const hasWindowStorage = typeof window !== 'undefined' &&
+                         typeof window.storage !== 'undefined' &&
+                         window.storage && typeof window.storage.get === 'function';
+
+async function loadData() {
+  try {
+    if (hasWindowStorage) {
+      // Try v2
+      try {
+        const r = await window.storage.get(STORAGE_KEY, true);
+        if (r && r.value) return migrate(JSON.parse(r.value));
+      } catch (e) { /* not found */ }
+      // Try v1 → migrate
+      try {
+        const r1 = await window.storage.get(STORAGE_KEY_V1, true);
+        if (r1 && r1.value) return migrate(JSON.parse(r1.value));
+      } catch (e) { /* not found */ }
+    } else {
+      const raw2 = localStorage.getItem(STORAGE_KEY);
+      if (raw2) return migrate(JSON.parse(raw2));
+      const raw1 = localStorage.getItem(STORAGE_KEY_V1);
+      if (raw1) return migrate(JSON.parse(raw1));
+    }
+  } catch (e) { console.error('Load error', e); }
+  return null;
+}
+
+async function saveData(data) {
+  try {
+    const json = JSON.stringify(data);
+    if (hasWindowStorage) {
+      await window.storage.set(STORAGE_KEY, json, true);
+    } else {
+      localStorage.setItem(STORAGE_KEY, json);
+    }
+  } catch (e) { console.error('Save error', e); }
+}
+
+function scheduleSave() {
+  if (saveTimeout) clearTimeout(saveTimeout);
+  state.saving = true;
+  updateSaveIndicator();
+  saveTimeout = setTimeout(async () => {
+    await saveData(state.data);
+    state.saving = false;
+    updateSaveIndicator();
+  }, 400);
+}
+
+function updateSaveIndicator() {
+  const el = document.getElementById('save-indicator');
+  if (!el) return;
+  if (state.saving) {
+    el.innerHTML = ICO.save + ' Sauvegarde…';
+    el.className = 'save-indicator saving';
+  } else {
+    el.innerHTML = ICO.checkSm + ' Synchronisé';
+    el.className = 'save-indicator';
+  }
+}
+
+// ==============================================
+// Helpers / lookups
+// ==============================================
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function currentSection() {
+  return state.data.sections.find(s => s.id === state.currentSectionId) || state.data.sections[0];
+}
+// Find item and its container (section.items or subsection.items) in current section
+function findItemContainer(itemId) {
+  const sec = currentSection();
+  if (sec.items.find(i => i.id === itemId)) return sec.items;
+  for (const sub of sec.subsections) {
+    if (sub.items.find(i => i.id === itemId)) return sub.items;
+  }
+  return null;
+}
+function findItem(itemId) {
+  const c = findItemContainer(itemId);
+  return c ? c.find(i => i.id === itemId) : null;
+}
+function itemEffectiveDone(item) {
+  if (item.subtasks && item.subtasks.length > 0) {
+    return item.subtasks.every(st => st.done);
+  }
+  return item.done;
+}
+function itemProgress(item) {
+  if (!item.subtasks || item.subtasks.length === 0) return null;
+  const done = item.subtasks.filter(st => st.done).length;
+  return { done, total: item.subtasks.length };
+}
+function countItems(sec) {
+  let total = 0, done = 0;
+  const allItems = [...sec.items, ...sec.subsections.flatMap(s => s.items)];
+  allItems.forEach(item => {
+    if (item.subtasks && item.subtasks.length > 0) {
+      total += item.subtasks.length;
+      done += item.subtasks.filter(st => st.done).length;
+    } else {
+      total += 1;
+      if (item.done) done += 1;
+    }
+  });
+  return { done, total };
+}
+function sectionStats(sec) {
+  const { done, total } = countItems(sec);
+  return { done, total, pct: total ? Math.round(done/total*100) : 0 };
+}
+function globalStats() {
+  let done = 0, total = 0;
+  state.data.sections.forEach(s => {
+    const c = countItems(s); done += c.done; total += c.total;
+  });
+  return { done, total, pct: total ? Math.round(done/total*100) : 0 };
+}
+function matchSearch(item, q) {
+  if (!q) return true;
+  q = q.toLowerCase();
+  if (item.text.toLowerCase().includes(q)) return true;
+  if ((item.notes||'').toLowerCase().includes(q)) return true;
+  if (item.subtasks && item.subtasks.some(st => st.text.toLowerCase().includes(q))) return true;
+  return false;
+}
+function matchFilter(item) {
+  const done = itemEffectiveDone(item);
+  if (state.filter === 'todo' && done) return false;
+  if (state.filter === 'done' && !done) return false;
+  if (state.priorityFilter !== 'all' && item.priority !== state.priorityFilter) return false;
+  return true;
+}
+function filterItems(items) {
+  return items.filter(i => matchFilter(i) && matchSearch(i, state.search));
+}
+
+// ==============================================
+// Mutations
+// ==============================================
+function mutate(fn) { fn(state.data); scheduleSave(); render(); }
+
+function toggleItemDone(itemId) {
+  mutate(() => {
+    const item = findItem(itemId);
+    if (!item) return;
+    if (item.subtasks && item.subtasks.length > 0) {
+      // Toggle: if all done → uncheck all, else check all
+      const allDone = item.subtasks.every(st => st.done);
+      item.subtasks.forEach(st => st.done = !allDone);
+    } else {
+      item.done = !item.done;
+    }
+  });
+}
+function toggleSubtaskDone(itemId, subtaskId) {
+  mutate(() => {
+    const item = findItem(itemId);
+    if (!item) return;
+    const st = item.subtasks.find(s => s.id === subtaskId);
+    if (st) st.done = !st.done;
+  });
+}
+function changeItemPriority(itemId, priority) {
+  mutate(() => { const i = findItem(itemId); if (i) i.priority = priority; });
+}
+function updateItemText(itemId, text) {
+  mutate(() => { const i = findItem(itemId); if (i) i.text = text.trim() || i.text; });
+}
+function updateItemNotes(itemId, notes) {
+  const i = findItem(itemId);
+  if (i) { i.notes = notes; scheduleSave(); }
+}
+function deleteItem(itemId) {
+  const item = findItem(itemId);
+  if (!item) return;
+  if (!confirm('Supprimer "' + item.text + '" ?')) return;
+  mutate(() => {
+    const c = findItemContainer(itemId);
+    if (!c) return;
+    const idx = c.findIndex(i => i.id === itemId);
+    if (idx >= 0) c.splice(idx, 1);
+  });
+}
+function moveItem(itemId, direction) {
+  mutate(() => {
+    const c = findItemContainer(itemId);
+    if (!c) return;
+    const idx = c.findIndex(i => i.id === itemId);
+    const target = direction === 'up' ? idx - 1 : idx + 1;
+    if (target < 0 || target >= c.length) return;
+    [c[idx], c[target]] = [c[target], c[idx]];
+  });
+}
+function dropReorderItem(draggedId, targetId) {
+  if (!draggedId || draggedId === targetId) return;
+  const cDragged = findItemContainer(draggedId);
+  const cTarget = findItemContainer(targetId);
+  if (!cDragged || !cTarget) return;
+  mutate(() => {
+    const fromIdx = cDragged.findIndex(i => i.id === draggedId);
+    const [moved] = cDragged.splice(fromIdx, 1);
+    const toIdx = cTarget.findIndex(i => i.id === targetId);
+    cTarget.splice(toIdx, 0, moved);
+  });
+}
+function addItem(containerType, parentId, text, priority) {
+  if (!text.trim()) return;
+  mutate(() => {
+    const sec = currentSection();
+    const newItem = I(text.trim(), priority);
+    if (containerType === 'section') sec.items.push(newItem);
+    else {
+      const sub = sec.subsections.find(s => s.id === parentId);
+      if (sub) sub.items.push(newItem);
+    }
+  });
+}
+
+// Subtasks
+function addSubtask(itemId, text) {
+  if (!text.trim()) return;
+  mutate(() => {
+    const i = findItem(itemId);
+    if (i) i.subtasks.push({ id: genId(), text: text.trim(), done: false });
+  });
+}
+function updateSubtaskText(itemId, stId, text) {
+  mutate(() => {
+    const i = findItem(itemId); if (!i) return;
+    const st = i.subtasks.find(s => s.id === stId);
+    if (st) st.text = text.trim() || st.text;
+  });
+}
+function deleteSubtask(itemId, stId) {
+  mutate(() => {
+    const i = findItem(itemId); if (!i) return;
+    i.subtasks = i.subtasks.filter(s => s.id !== stId);
+  });
+}
+function moveSubtask(itemId, stId, direction) {
+  mutate(() => {
+    const i = findItem(itemId); if (!i) return;
+    const idx = i.subtasks.findIndex(s => s.id === stId);
+    const target = direction === 'up' ? idx - 1 : idx + 1;
+    if (target < 0 || target >= i.subtasks.length) return;
+    [i.subtasks[idx], i.subtasks[target]] = [i.subtasks[target], i.subtasks[idx]];
+  });
+}
+
+// Subsections
+function addSubsection(title) {
+  if (!title.trim()) return;
+  mutate(() => {
+    const sec = currentSection();
+    sec.subsections.push({ id: genId(), title: title.trim(), collapsed: false, items: [] });
+  });
+}
+function updateSubsectionTitle(subId, title) {
+  mutate(() => {
+    const sec = currentSection();
+    const sub = sec.subsections.find(s => s.id === subId);
+    if (sub && title.trim()) sub.title = title.trim();
+  });
+}
+function deleteSubsection(subId) {
+  const sec = currentSection();
+  const sub = sec.subsections.find(s => s.id === subId);
+  if (!sub) return;
+  const count = sub.items.length;
+  const msg = count > 0
+    ? `Supprimer la sous-section "${sub.title}" ?\n\nLes ${count} tâche(s) seront déplacées dans la section principale.`
+    : `Supprimer la sous-section "${sub.title}" ?`;
+  if (!confirm(msg)) return;
+  mutate(() => {
+    // Move items to section.items
+    sec.items.push(...sub.items);
+    sec.subsections = sec.subsections.filter(s => s.id !== subId);
+  });
+}
+function toggleSubsection(subId) {
+  mutate(() => {
+    const sec = currentSection();
+    const sub = sec.subsections.find(s => s.id === subId);
+    if (sub) sub.collapsed = !sub.collapsed;
+  });
+}
+function moveSubsection(subId, direction) {
+  mutate(() => {
+    const sec = currentSection();
+    const idx = sec.subsections.findIndex(s => s.id === subId);
+    const target = direction === 'up' ? idx - 1 : idx + 1;
+    if (target < 0 || target >= sec.subsections.length) return;
+    [sec.subsections[idx], sec.subsections[target]] = [sec.subsections[target], sec.subsections[idx]];
+  });
+}
+
+// Sections
+function addSection(title, emoji) {
+  if (!title.trim()) return;
+  mutate(() => {
+    const newSec = {
+      id: genId(), emoji: emoji.trim() || '📁', title: title.trim(), subtitle: '',
+      items: [], subsections: []
+    };
+    state.data.sections.push(newSec);
+    state.currentSectionId = newSec.id;
+  });
+}
+function updateSectionTitle(secId, title, subtitle, emoji) {
+  mutate(() => {
+    const sec = state.data.sections.find(s => s.id === secId);
+    if (!sec) return;
+    if (title.trim()) sec.title = title.trim();
+    if (subtitle !== undefined) sec.subtitle = subtitle.trim();
+    if (emoji && emoji.trim()) sec.emoji = emoji.trim();
+  });
+}
+function deleteSection(secId) {
+  const sec = state.data.sections.find(s => s.id === secId);
+  if (!sec) return;
+  const c = countItems(sec);
+  if (!confirm(`⚠️ Supprimer la section "${sec.title}" ?\n\nCela supprimera ${c.total} tâche(s). Cette action est irréversible.`)) return;
+  // Double confirm
+  if (!confirm('Êtes-vous absolument sûr ? Tapez OK pour confirmer.')) return;
+  mutate(() => {
+    state.data.sections = state.data.sections.filter(s => s.id !== secId);
+    if (state.currentSectionId === secId && state.data.sections.length > 0) {
+      state.currentSectionId = state.data.sections[0].id;
+    }
+  });
+}
+
+async function refresh() {
+  const loaded = await loadData();
+  if (loaded) { state.data = loaded; render(); }
+}
+
+// ==============================================
+// Render
+// ==============================================
+function render() {
+  const app = document.getElementById('app');
+  const sec = currentSection();
+  const g = globalStats();
+  const s = sectionStats(sec);
+
+  app.innerHTML = `
+    ${renderHeader(g)}
+    ${renderTabs()}
+    <main>
+      <div class="wrap">
+        ${renderSectionHeader(sec, s)}
+        ${renderToolbar()}
+        ${renderSectionBody(sec)}
+        <div class="footer">
+          <div class="quote">« Les voyages forment la jeunesse » — et les administrations aussi.</div>
+        </div>
+      </div>
+    </main>
+  `;
+}
+
+function renderHeader(g) {
+  return `
+    <header>
+      <div class="wrap">
+        <div class="header-top">
+          <div>
+            <div class="eyebrow">🇫🇷 → 🇮🇱 <span>Sydney → Tel Aviv</span></div>
+            <h1>Projet d'<em>expatriation</em></h1>
+            <div class="header-subtitle">Checklist partagée • Sauvegarde automatique</div>
+          </div>
+          <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
+            <span id="save-indicator" class="save-indicator">${ICO.checkSm} Synchronisé</span>
+            <button class="refresh-btn" data-action="refresh" title="Rafraîchir">${ICO.refresh} Rafraîchir</button>
+          </div>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">Progression globale</span>
+          <span class="progress-value">${g.pct}<span class="pct-sign">%</span></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${g.pct}%"></div></div>
+        <div class="progress-count">${g.done} / ${g.total} tâches terminées</div>
+      </div>
+    </header>
+  `;
+}
+
+function renderTabs() {
+  return `
+    <div class="tabs-outer">
+      <div class="tabs-scroll">
+        <div class="tabs-inner">
+          ${state.data.sections.map(s => {
+            const st = sectionStats(s);
+            const active = s.id === state.currentSectionId ? ' active' : '';
+            return `<button class="tab${active}" data-action="select-section" data-id="${s.id}">
+              <span>${s.emoji}</span>
+              <span>${escapeHtml(s.title)}</span>
+              <span class="count">${st.done}/${st.total}</span>
+            </button>`;
+          }).join('')}
+          <button class="tab-add" data-action="add-section" title="Ajouter une section">${ICO.plus}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSectionHeader(sec, s) {
+  const isEditing = state.editing && state.editing.type === 'section' && state.editing.id === sec.id;
+  return `
+    <div class="section-header">
+      <div class="section-header-left">
+        <div class="section-title-label">${sec.emoji} Section</div>
+        ${isEditing ? `
+          <div class="inline-edit" style="margin: 6px 0;">
+            <input type="text" id="inline-edit-emoji" value="${escapeHtml(sec.emoji)}" style="width: 50px; flex: 0 0 auto; text-align:center;" maxlength="4">
+            <input type="text" id="inline-edit-title" value="${escapeHtml(state.editing.value)}" autofocus>
+            <button class="btn-primary" data-action="save-section-edit">OK</button>
+            <button class="btn-ghost" data-action="cancel-edit">✕</button>
+          </div>
+          <input type="text" id="inline-edit-subtitle" class="small" placeholder="Sous-titre (optionnel)" value="${escapeHtml(sec.subtitle || '')}" style="width:100%; background: var(--surface); border:1px solid var(--line); border-radius:4px; padding:6px 10px; font-size:13px; outline:none; margin-top:6px;">
+        ` : `
+          <div class="section-title-row">
+            <span class="section-title serif">${escapeHtml(sec.title)}</span>
+            <span class="section-edit-actions">
+              <button data-action="edit-section" data-id="${sec.id}" title="Renommer">${ICO.edit}</button>
+              <button data-action="delete-section" data-id="${sec.id}" class="danger" title="Supprimer la section">${ICO.trash}</button>
+            </span>
+          </div>
+          ${sec.subtitle ? `<div class="section-subtitle">${escapeHtml(sec.subtitle)}</div>` : ''}
+        `}
+      </div>
+      <div class="section-stats">
+        <div class="pct">${s.pct}<span style="font-size:12px;opacity:0.5;font-family:'DM Sans',sans-serif;">%</span></div>
+        <div style="font-size:11px;opacity:0.6;">${s.done} / ${s.total}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderToolbar() {
+  return `
+    <div class="toolbar">
+      <div class="search-box">
+        ${ICO.search}
+        <input type="text" id="search-input" placeholder="Rechercher…" value="${escapeHtml(state.search)}">
+        ${state.search ? '<button class="clear-search" data-action="clear-search">'+ICO.x+'</button>' : ''}
+      </div>
+      <select data-action="set-filter">
+        <option value="all"${state.filter==='all'?' selected':''}>Toutes</option>
+        <option value="todo"${state.filter==='todo'?' selected':''}>À faire</option>
+        <option value="done"${state.filter==='done'?' selected':''}>Terminées</option>
+      </select>
+      <select data-action="set-prio-filter">
+        <option value="all"${state.priorityFilter==='all'?' selected':''}>Priorités</option>
+        <option value="critical"${state.priorityFilter==='critical'?' selected':''}>Critique</option>
+        <option value="high"${state.priorityFilter==='high'?' selected':''}>Haute</option>
+        <option value="medium"${state.priorityFilter==='medium'?' selected':''}>Moyenne</option>
+        <option value="low"${state.priorityFilter==='low'?' selected':''}>Basse</option>
+      </select>
+    </div>
+  `;
+}
+
+function renderSectionBody(sec) {
+  let html = '';
+
+  // Ungrouped items
+  const sectionItems = filterItems(sec.items);
+  const hasSubsections = sec.subsections.length > 0;
+
+  if (sectionItems.length > 0 || !hasSubsections) {
+    html += `<div class="items-list">`;
+    if (sectionItems.length > 0) {
+      html += sectionItems.map(i => renderItem(i)).join('');
+    } else if (sec.items.length === 0 && !hasSubsections) {
+      html += `<div class="empty-state">Aucune tâche dans cette section.</div>`;
+    }
+    html += `</div>`;
+
+    // Add item button for ungrouped
+    const adding = state.adding && state.adding.type === 'item' && state.adding.parentType === 'section';
+    html += adding ? renderAddItemForm('section', null) : `
+      <button class="add-btn" data-action="start-add-item" data-parent-type="section">
+        ${ICO.plus} Ajouter une tâche
+      </button>
+    `;
+  }
+
+  // Subsections
+  sec.subsections.forEach(sub => {
+    html += renderSubsection(sub);
+  });
+
+  // Add subsection button
+  const addingSub = state.adding && state.adding.type === 'subsection';
+  html += addingSub ? `
+    <div class="add-form" style="margin-top:16px;">
+      <input type="text" id="new-subsection-title" placeholder="Nom de la sous-section…" autofocus>
+      <div class="row">
+        <button class="btn-primary" data-action="confirm-add-subsection">Créer</button>
+        <button class="btn-ghost" data-action="cancel-add">Annuler</button>
+      </div>
+    </div>
+  ` : `
+    <button class="add-subsection-btn" data-action="start-add-subsection">
+      ${ICO.plus} Ajouter une sous-section
+    </button>
+  `;
+
+  return html;
+}
+
+function renderSubsection(sub) {
+  const isEditing = state.editing && state.editing.type === 'subsection' && state.editing.id === sub.id;
+  const items = filterItems(sub.items);
+  const doneCount = sub.items.filter(i => itemEffectiveDone(i)).length;
+  const adding = state.adding && state.adding.type === 'item' && state.adding.parentType === 'subsection' && state.adding.parentId === sub.id;
+
+  return `
+    <div class="subsection">
+      <div class="subsection-header">
+        <button class="subsection-toggle" data-action="toggle-subsection" data-id="${sub.id}" title="${sub.collapsed ? 'Déplier' : 'Replier'}">
+          ${sub.collapsed ? ICO.chevronR : ICO.chevronD}
+        </button>
+        ${isEditing ? `
+          <div class="inline-edit">
+            <input type="text" id="inline-edit-subsection-${sub.id}" class="small" value="${escapeHtml(state.editing.value)}" autofocus>
+            <button class="btn-primary" data-action="save-subsection-edit" data-id="${sub.id}">OK</button>
+            <button class="btn-ghost" data-action="cancel-edit">✕</button>
+          </div>
+        ` : `
+          <span class="subsection-title">${escapeHtml(sub.title)}</span>
+          <span class="subsection-count">${doneCount}/${sub.items.length}</span>
+          <span class="subsection-actions">
+            <button data-action="move-subsection-up" data-id="${sub.id}" title="Monter">${ICO.up}</button>
+            <button data-action="move-subsection-down" data-id="${sub.id}" title="Descendre">${ICO.down}</button>
+            <button data-action="edit-subsection" data-id="${sub.id}" title="Renommer">${ICO.edit}</button>
+            <button data-action="delete-subsection" data-id="${sub.id}" class="danger" title="Supprimer">${ICO.trash}</button>
+          </span>
+        `}
+      </div>
+      ${!sub.collapsed ? `
+        <div class="items-list">
+          ${items.length === 0
+            ? (sub.items.length === 0 ? '<div class="empty-state" style="padding:16px 0;">Sous-section vide.</div>' : '<div class="empty-state" style="padding:12px 0;">Aucune tâche ne correspond aux filtres.</div>')
+            : items.map(i => renderItem(i)).join('')}
+        </div>
+        ${adding ? renderAddItemForm('subsection', sub.id) : `
+          <button class="add-btn small" data-action="start-add-item" data-parent-type="subsection" data-parent-id="${sub.id}">
+            ${ICO.plusSm} Ajouter une tâche
+          </button>
+        `}
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderItem(item) {
+  const isEditing = state.editing && state.editing.type === 'item' && state.editing.id === item.id;
+  const notesOpen = state.expandedNotes[item.id];
+  const subtasksOpen = state.expandedSubtasks[item.id];
+  const isDragged = state.draggedId === item.id;
+  const isDropTarget = state.dropTargetId === item.id && state.draggedId !== item.id;
+  const prio = item.priority || 'medium';
+  const dotColors = { critical: 'var(--crit-dot)', high: 'var(--high-dot)', medium: 'var(--med-dot)', low: 'var(--low-dot)' };
+  const hasSubtasks = item.subtasks && item.subtasks.length > 0;
+  const progress = itemProgress(item);
+  const effectiveDone = itemEffectiveDone(item);
+
+  if (isEditing) {
+    return `
+      <div class="item" data-id="${item.id}">
+        <div class="item-prio-bar" style="background:${dotColors[prio]};"></div>
+        <div class="item-row">
+          <div style="padding-top:2px;">${effectiveDone ? ICO.checkFull : ICO.circle}</div>
+          <div class="item-content">
+            <input type="text" class="inline-edit" style="width:100%; background: var(--surface); border:1px solid var(--line); border-radius:4px; padding:6px 10px; font-size:14px; outline:none;" id="inline-edit-item-${item.id}" value="${escapeHtml(state.editing.value)}">
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button class="btn-primary" data-action="save-item-edit" data-id="${item.id}">Enregistrer</button>
+              <button class="btn-ghost" data-action="cancel-edit">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const cls = 'item' + (isDragged ? ' dragging' : '') + (isDropTarget ? ' drop-target' : '');
+  const checkIcon = hasSubtasks
+    ? (effectiveDone ? ICO.checkFull : (progress.done > 0 ? ICO.checkPartial : ICO.circle))
+    : (item.done ? ICO.checkFull : ICO.circle);
+
+  return `
+    <div class="${cls}" data-id="${item.id}" draggable="true">
+      <div class="item-prio-bar" style="background:${dotColors[prio]};"></div>
+      <div class="item-row">
+        <div class="grip">${ICO.grip}</div>
+        <div class="move-buttons">
+          <button data-action="move-item-up" data-id="${item.id}">${ICO.up}</button>
+          <button data-action="move-item-down" data-id="${item.id}">${ICO.down}</button>
+        </div>
+        <button class="checkbox-btn" data-action="toggle-item" data-id="${item.id}">${checkIcon}</button>
+        <div class="item-content">
+          <div class="item-text-row">
+            <span class="item-text${effectiveDone ? ' done' : ''}">${escapeHtml(item.text)}</span>
+            ${hasSubtasks ? `<span class="subtask-badge${effectiveDone ? ' all-done' : ''}" data-action="toggle-subtasks-display" data-id="${item.id}">
+              ${subtasksOpen ? ICO.chevronD : ICO.chevronR} ${progress.done}/${progress.total}
+            </span>` : ''}
+            <select class="prio-select prio-${prio}" data-action="change-prio" data-id="${item.id}">
+              ${Object.entries(PRIORITIES).map(([k,v]) =>
+                `<option value="${k}"${k===prio?' selected':''}>${v}</option>`
+              ).join('')}
+            </select>
+          </div>
+          ${notesOpen ? `
+            <textarea class="notes-textarea" data-action="update-notes" data-id="${item.id}" placeholder="Notes, liens, contacts, références…">${escapeHtml(item.notes || '')}</textarea>
+          ` : (item.notes ? `
+            <div class="notes-preview" data-action="toggle-notes-display" data-id="${item.id}">
+              ${ICO.note}
+              <span>${escapeHtml(item.notes.slice(0, 80))}${item.notes.length > 80 ? '…' : ''}</span>
+            </div>
+          ` : '')}
+        </div>
+        <div class="item-actions">
+          ${!hasSubtasks ? `<button data-action="toggle-subtasks-display" data-id="${item.id}" title="Ajouter des sous-tâches">${ICO.chevronR}</button>` : ''}
+          <button data-action="toggle-notes-display" data-id="${item.id}" title="Notes"${item.notes?' class="has-notes"':''}>${ICO.note}</button>
+          <button data-action="edit-item" data-id="${item.id}" title="Modifier">${ICO.edit}</button>
+          <button data-action="delete-item" data-id="${item.id}" class="delete" title="Supprimer">${ICO.trash}</button>
+        </div>
+      </div>
+      ${subtasksOpen ? renderSubtasks(item) : ''}
+    </div>
+  `;
+}
+
+function renderSubtasks(item) {
+  const adding = state.adding && state.adding.type === 'subtask' && state.adding.parentId === item.id;
+  let html = '<div class="subtasks-container">';
+  item.subtasks.forEach(st => {
+    const editingSt = state.editing && state.editing.type === 'subtask' && state.editing.id === st.id;
+    if (editingSt) {
+      html += `
+        <div class="subtask-row">
+          <input type="text" class="inline-edit small" style="flex:1; background: var(--surface); border:1px solid var(--line); border-radius:3px; padding:4px 8px; font-size:13px; outline:none;" id="inline-edit-subtask-${st.id}" value="${escapeHtml(state.editing.value)}">
+          <button class="btn-primary" style="padding:4px 10px;" data-action="save-subtask-edit" data-id="${st.id}" data-item-id="${item.id}">OK</button>
+          <button class="btn-ghost" style="padding:4px 8px;" data-action="cancel-edit">✕</button>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="subtask-row">
+          <button class="subtask-checkbox" data-action="toggle-subtask" data-item-id="${item.id}" data-id="${st.id}">
+            ${st.done ? ICO.checkSm : ICO.circleSm}
+          </button>
+          <span class="subtask-text${st.done?' done':''}">${escapeHtml(st.text)}</span>
+          <span class="subtask-actions">
+            <button data-action="move-subtask-up" data-item-id="${item.id}" data-id="${st.id}">${ICO.up}</button>
+            <button data-action="move-subtask-down" data-item-id="${item.id}" data-id="${st.id}">${ICO.down}</button>
+            <button data-action="edit-subtask" data-item-id="${item.id}" data-id="${st.id}">${ICO.edit}</button>
+            <button data-action="delete-subtask" data-item-id="${item.id}" data-id="${st.id}" class="danger">${ICO.trash}</button>
+          </span>
+        </div>
+      `;
+    }
+  });
+  if (adding) {
+    html += `
+      <div class="subtask-row" style="gap:8px;">
+        <input type="text" id="new-subtask-text" placeholder="Sous-tâche…" autofocus style="flex:1; background: var(--surface); border:1px solid var(--line); border-radius:3px; padding:4px 8px; font-size:13px; outline:none;">
+        <button class="btn-primary" style="padding:4px 10px;" data-action="confirm-add-subtask" data-id="${item.id}">+</button>
+        <button class="btn-ghost" style="padding:4px 8px;" data-action="cancel-add">✕</button>
+      </div>
+    `;
+  } else {
+    html += `<button class="add-subtask-btn" data-action="start-add-subtask" data-id="${item.id}">${ICO.plusSm} Ajouter une sous-tâche</button>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderAddItemForm(parentType, parentId) {
+  const prio = (state.adding && state.adding.priority) || 'medium';
+  return `
+    <div class="add-form">
+      <input type="text" id="new-item-text" placeholder="Nouvelle tâche…" autofocus value="${escapeHtml((state.adding && state.adding.text) || '')}">
+      <div class="row">
+        <select id="new-item-prio">
+          ${Object.entries(PRIORITIES).map(([k,v]) =>
+            `<option value="${k}"${k===prio?' selected':''}>${v}</option>`
+          ).join('')}
+        </select>
+        <button class="btn-primary" data-action="confirm-add-item" data-parent-type="${parentType}" data-parent-id="${parentId || ''}">Ajouter</button>
+        <button class="btn-ghost" data-action="cancel-add">Annuler</button>
+      </div>
+    </div>
+  `;
+}
+
+// ==============================================
+// Event delegation
+// ==============================================
+function handleClick(e) {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const a = el.dataset.action;
+  const id = el.dataset.id;
+
+  switch (a) {
+    case 'refresh': refresh(); break;
+    case 'select-section': {
+      state.currentSectionId = id;
+      state.search = '';
+      state.editing = null;
+      state.adding = null;
+      state.expandedNotes = {};
+      state.expandedSubtasks = {};
+      render();
+      break;
+    }
+    case 'add-section': {
+      const title = prompt('Nom de la nouvelle section :');
+      if (!title) return;
+      const emoji = prompt('Emoji (optionnel) :', '📁') || '📁';
+      addSection(title, emoji);
+      break;
+    }
+    case 'edit-section': {
+      const sec = state.data.sections.find(s => s.id === id);
+      state.editing = { type: 'section', id, value: sec.title };
+      render();
+      setTimeout(() => document.getElementById('inline-edit-title')?.focus(), 30);
+      break;
+    }
+    case 'save-section-edit': {
+      const title = document.getElementById('inline-edit-title').value;
+      const subtitle = document.getElementById('inline-edit-subtitle').value;
+      const emoji = document.getElementById('inline-edit-emoji').value;
+      state.editing = null;
+      updateSectionTitle(state.currentSectionId, title, subtitle, emoji);
+      break;
+    }
+    case 'delete-section': deleteSection(id); break;
+
+    case 'clear-search': state.search = ''; render(); break;
+
+    case 'start-add-item': {
+      state.adding = { type: 'item', parentType: el.dataset.parentType, parentId: el.dataset.parentId || null, text: '', priority: 'medium' };
+      render();
+      setTimeout(() => document.getElementById('new-item-text')?.focus(), 30);
+      break;
+    }
+    case 'confirm-add-item': {
+      const text = document.getElementById('new-item-text').value;
+      const prio = document.getElementById('new-item-prio').value;
+      const parentType = el.dataset.parentType;
+      const parentId = el.dataset.parentId || null;
+      state.adding = null;
+      addItem(parentType, parentId, text, prio);
+      break;
+    }
+    case 'cancel-add': state.adding = null; render(); break;
+
+    case 'start-add-subsection': {
+      state.adding = { type: 'subsection' };
+      render();
+      setTimeout(() => document.getElementById('new-subsection-title')?.focus(), 30);
+      break;
+    }
+    case 'confirm-add-subsection': {
+      const title = document.getElementById('new-subsection-title').value;
+      state.adding = null;
+      addSubsection(title);
+      break;
+    }
+    case 'edit-subsection': {
+      const sec = currentSection();
+      const sub = sec.subsections.find(s => s.id === id);
+      state.editing = { type: 'subsection', id, value: sub.title };
+      render();
+      setTimeout(() => document.getElementById('inline-edit-subsection-' + id)?.focus(), 30);
+      break;
+    }
+    case 'save-subsection-edit': {
+      const val = document.getElementById('inline-edit-subsection-' + id).value;
+      state.editing = null;
+      updateSubsectionTitle(id, val);
+      break;
+    }
+    case 'delete-subsection': deleteSubsection(id); break;
+    case 'toggle-subsection': toggleSubsection(id); break;
+    case 'move-subsection-up': moveSubsection(id, 'up'); break;
+    case 'move-subsection-down': moveSubsection(id, 'down'); break;
+
+    case 'toggle-item': toggleItemDone(id); break;
+    case 'change-prio': /* handled by change event */ break;
+    case 'edit-item': {
+      const item = findItem(id);
+      state.editing = { type: 'item', id, value: item.text };
+      render();
+      setTimeout(() => document.getElementById('inline-edit-item-' + id)?.focus(), 30);
+      break;
+    }
+    case 'save-item-edit': {
+      const val = document.getElementById('inline-edit-item-' + id).value;
+      state.editing = null;
+      updateItemText(id, val);
+      break;
+    }
+    case 'cancel-edit': state.editing = null; render(); break;
+    case 'delete-item': deleteItem(id); break;
+    case 'move-item-up': moveItem(id, 'up'); break;
+    case 'move-item-down': moveItem(id, 'down'); break;
+    case 'toggle-notes-display': {
+      state.expandedNotes[id] = !state.expandedNotes[id];
+      render();
+      break;
+    }
+    case 'toggle-subtasks-display': {
+      state.expandedSubtasks[id] = !state.expandedSubtasks[id];
+      render();
+      break;
+    }
+
+    // Subtasks
+    case 'toggle-subtask': toggleSubtaskDone(el.dataset.itemId, id); break;
+    case 'start-add-subtask': {
+      state.adding = { type: 'subtask', parentId: id };
+      state.expandedSubtasks[id] = true;
+      render();
+      setTimeout(() => document.getElementById('new-subtask-text')?.focus(), 30);
+      break;
+    }
+    case 'confirm-add-subtask': {
+      const text = document.getElementById('new-subtask-text').value;
+      state.adding = null;
+      addSubtask(id, text);
+      break;
+    }
+    case 'edit-subtask': {
+      const itemId = el.dataset.itemId;
+      const item = findItem(itemId);
+      const st = item.subtasks.find(s => s.id === id);
+      state.editing = { type: 'subtask', id, parentId: itemId, value: st.text };
+      render();
+      setTimeout(() => document.getElementById('inline-edit-subtask-' + id)?.focus(), 30);
+      break;
+    }
+    case 'save-subtask-edit': {
+      const itemId = el.dataset.itemId;
+      const val = document.getElementById('inline-edit-subtask-' + id).value;
+      state.editing = null;
+      updateSubtaskText(itemId, id, val);
+      break;
+    }
+    case 'delete-subtask': deleteSubtask(el.dataset.itemId, id); break;
+    case 'move-subtask-up': moveSubtask(el.dataset.itemId, id, 'up'); break;
+    case 'move-subtask-down': moveSubtask(el.dataset.itemId, id, 'down'); break;
+  }
+}
+
+function handleChange(e) {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const a = el.dataset.action;
+  const id = el.dataset.id;
+  if (a === 'change-prio') changeItemPriority(id, e.target.value);
+  if (a === 'set-filter') { state.filter = e.target.value; render(); }
+  if (a === 'set-prio-filter') { state.priorityFilter = e.target.value; render(); }
+}
+
+function handleInput(e) {
+  const el = e.target;
+  if (el.id === 'search-input') {
+    state.search = el.value;
+    // Re-render body only (keep focus on input)
+    // simpler: re-render, but we need to preserve focus + cursor position
+    const cursor = el.selectionStart;
+    render();
+    const newInput = document.getElementById('search-input');
+    if (newInput) { newInput.focus(); newInput.setSelectionRange(cursor, cursor); }
+  }
+  const actionEl = el.closest('[data-action]');
+  if (actionEl && actionEl.dataset.action === 'update-notes') {
+    updateItemNotes(actionEl.dataset.id, el.value);
+  }
+}
+
+function handleKeydown(e) {
+  const el = e.target;
+  if (e.key === 'Enter' && !e.shiftKey) {
+    if (el.id === 'inline-edit-title') { document.querySelector('[data-action="save-section-edit"]')?.click(); e.preventDefault(); }
+    if (el.id?.startsWith('inline-edit-subsection-')) {
+      const id = el.id.replace('inline-edit-subsection-', '');
+      document.querySelector(`[data-action="save-subsection-edit"][data-id="${id}"]`)?.click();
+      e.preventDefault();
+    }
+    if (el.id?.startsWith('inline-edit-item-')) {
+      const id = el.id.replace('inline-edit-item-', '');
+      document.querySelector(`[data-action="save-item-edit"][data-id="${id}"]`)?.click();
+      e.preventDefault();
+    }
+    if (el.id?.startsWith('inline-edit-subtask-')) {
+      const id = el.id.replace('inline-edit-subtask-', '');
+      document.querySelector(`[data-action="save-subtask-edit"][data-id="${id}"]`)?.click();
+      e.preventDefault();
+    }
+    if (el.id === 'new-item-text') { document.querySelector('[data-action="confirm-add-item"]')?.click(); e.preventDefault(); }
+    if (el.id === 'new-subsection-title') { document.querySelector('[data-action="confirm-add-subsection"]')?.click(); e.preventDefault(); }
+    if (el.id === 'new-subtask-text') { document.querySelector('[data-action="confirm-add-subtask"]')?.click(); e.preventDefault(); }
+  }
+  if (e.key === 'Escape') {
+    if (state.editing) { state.editing = null; render(); }
+    else if (state.adding) { state.adding = null; render(); }
+  }
+}
+
+// Drag & drop
+function handleDragStart(e) {
+  const el = e.target.closest('.item');
+  if (!el) return;
+  state.draggedId = el.dataset.id;
+  e.dataTransfer.effectAllowed = 'move';
+  el.classList.add('dragging');
+}
+function handleDragOver(e) {
+  const el = e.target.closest('.item');
+  if (!el || !state.draggedId) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const id = el.dataset.id;
+  if (id !== state.draggedId && state.dropTargetId !== id) {
+    state.dropTargetId = id;
+    document.querySelectorAll('.item.drop-target').forEach(x => x.classList.remove('drop-target'));
+    el.classList.add('drop-target');
+  }
+}
+function handleDrop(e) {
+  const el = e.target.closest('.item');
+  if (!el || !state.draggedId) return;
+  e.preventDefault();
+  const dId = state.draggedId;
+  const tId = el.dataset.id;
+  state.draggedId = null;
+  state.dropTargetId = null;
+  dropReorderItem(dId, tId);
+}
+function handleDragEnd() {
+  state.draggedId = null;
+  state.dropTargetId = null;
+  document.querySelectorAll('.item.dragging,.item.drop-target').forEach(x => {
+    x.classList.remove('dragging'); x.classList.remove('drop-target');
+  });
+}
+
+// ==============================================
+// Init
+// ==============================================
+(async function init() {
+  let loaded = await loadData();
+  if (!loaded) {
+    loaded = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    await saveData(loaded);
+  }
+  state.data = loaded;
+
+  const app = document.getElementById('app');
+  app.addEventListener('click', handleClick);
+  app.addEventListener('change', handleChange);
+  app.addEventListener('input', handleInput);
+  app.addEventListener('keydown', handleKeydown);
+  app.addEventListener('dragstart', handleDragStart);
+  app.addEventListener('dragover', handleDragOver);
+  app.addEventListener('drop', handleDrop);
+  app.addEventListener('dragend', handleDragEnd);
+
+  render();
+})();
+</script>
+</body>
+</html>
