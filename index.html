@@ -17,7 +17,6 @@
     --bg: #FAF7F2;
     --ink: #1E1A17;
     --ink-soft: #4A4540;
-    --ink-faint: rgba(30, 26, 23, 0.55);
     --line: rgba(30, 26, 23, 0.1);
     --line-soft: rgba(30, 26, 23, 0.05);
     --surface: rgba(255, 255, 255, 0.75);
@@ -50,31 +49,14 @@
   select { cursor: pointer; }
   a { color: inherit; }
 
-  /* Layout */
   .wrap { max-width: 960px; margin: 0 auto; padding: 0 14px; }
   @media (min-width: 640px) { .wrap { padding: 0 24px; } }
   @media (min-width: 900px) { .wrap { padding: 0 32px; } }
 
   /* Header */
   header { padding: 20px 0 14px; border-bottom: 1px solid var(--line); }
-  .eyebrow {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    opacity: 0.6;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-  h1 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: 28px;
-    font-weight: 400;
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-  }
+  .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.6; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  h1 { font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; }
   h1 em { font-style: italic; color: var(--accent); }
   @media (min-width: 640px) { h1 { font-size: 40px; } }
   @media (min-width: 900px) { h1 { font-size: 48px; } }
@@ -84,599 +66,201 @@
   .refresh-btn { font-size: 11px; opacity: 0.6; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
   .refresh-btn:hover { opacity: 1; }
 
-  /* Progress */
-  .progress-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+  .progress-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; gap:10px; flex-wrap:wrap; }
   .progress-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.6; }
   @media (min-width: 640px) { .progress-label { font-size: 11px; } }
   .progress-value { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; }
   @media (min-width: 640px) { .progress-value { font-size: 26px; } }
   .progress-value .pct-sign { font-size: 12px; opacity: 0.5; font-family: 'DM Sans', sans-serif; }
   .progress-bar { height: 5px; background: rgba(30, 26, 23, 0.1); border-radius: 3px; overflow: hidden; }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent) 100%);
-    transition: width 0.6s ease;
-  }
-  .progress-count { font-size: 11px; opacity: 0.6; margin-top: 4px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent) 100%); transition: width 0.6s ease; }
+  .progress-count { font-size: 11px; opacity: 0.6; margin-top: 4px; display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap; }
+  .global-total { font-family: 'Fraunces', serif; font-style: italic; color: var(--accent); font-size: 13px; font-weight: 500; }
 
   /* TABS */
   .tabs-outer { position: relative; border-bottom: 1px solid var(--line); }
-  .tabs-scroll {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    padding: 12px 0;
-  }
+  .tabs-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding: 12px 0; }
   .tabs-scroll::-webkit-scrollbar { height: 4px; }
   .tabs-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
-  .tabs-inner {
-    display: inline-flex;
-    gap: 6px;
-    padding: 0 14px;
-    min-width: 100%;
-  }
-  /* Mobile fade hint */
-  .tabs-outer::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0; bottom: 1px;
-    width: 30px;
-    background: linear-gradient(to right, transparent, var(--bg));
-    pointer-events: none;
-    opacity: 0.9;
-  }
-  /* Desktop: wrap tabs on 2+ lines, no scroll, no fade */
+  .tabs-inner { display: inline-flex; gap: 6px; padding: 0 14px; min-width: 100%; }
+  .tabs-outer::after { content: ''; position: absolute; right: 0; top: 0; bottom: 1px; width: 30px; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; opacity: 0.9; }
   @media (min-width: 700px) {
     .tabs-scroll { overflow: visible; padding: 10px 0; }
-    .tabs-inner {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 0 24px;
-    }
+    .tabs-inner { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 24px; }
     .tabs-outer::after { display: none; }
   }
   @media (min-width: 900px) { .tabs-inner { padding: 0 32px; } }
-  .tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 11px;
-    border-radius: 6px;
-    background: var(--surface);
-    border: 1px solid var(--line-soft);
-    font-size: 13px;
-    font-weight: 500;
-    white-space: nowrap;
-    transition: background 0.15s, box-shadow 0.15s;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
+  .tab { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 6px; background: var(--surface); border: 1px solid var(--line-soft); font-size: 13px; font-weight: 500; white-space: nowrap; transition: background 0.15s, box-shadow 0.15s; flex-shrink: 0; cursor: pointer; user-select: none; -webkit-user-select: none; }
   .tab:hover { background: var(--surface-hover); }
-  .tab.active {
-    background: var(--ink);
-    color: var(--bg);
-    border-color: var(--ink);
-  }
-  .tab .count {
-    font-size: 11px;
-    padding: 1px 6px;
-    background: rgba(30, 26, 23, 0.07);
-    border-radius: 3px;
-  }
+  .tab.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .tab .count { font-size: 11px; padding: 1px 6px; background: rgba(30, 26, 23, 0.07); border-radius: 3px; }
   .tab.active .count { background: rgba(255, 255, 255, 0.15); }
   .tab.dragging { opacity: 0.35; }
   .tab.drop-target { box-shadow: 0 0 0 2px var(--accent); }
-  .tab-add {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    padding: 0;
-    background: transparent;
-    border: 1px dashed rgba(30, 26, 23, 0.25);
-    border-radius: 6px;
-    opacity: 0.7;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
+  .tab-add { display: inline-flex; align-items: center; justify-content: center; width: 34px; padding: 0; background: transparent; border: 1px dashed rgba(30, 26, 23, 0.25); border-radius: 6px; opacity: 0.7; flex-shrink: 0; cursor: pointer; }
   .tab-add:hover { opacity: 1; background: var(--surface); }
 
-  /* Main */
   main { padding: 20px 0; }
 
-  /* Section header */
-  .section-header {
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  @media (min-width: 700px) {
-    .section-header { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; }
-  }
+  .section-header { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+  @media (min-width: 700px) { .section-header { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; } }
   .section-header-left { flex: 1; min-width: 0; }
-  .section-title-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    opacity: 0.5;
-    margin-bottom: 2px;
-  }
-  .section-title-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .section-title {
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: 24px;
-    font-weight: 400;
-    line-height: 1.15;
-    cursor: text;
-  }
+  .section-title-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.5; margin-bottom: 2px; }
+  .section-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .section-title { font-family: 'Fraunces', Georgia, serif; font-size: 24px; font-weight: 400; line-height: 1.15; cursor: pointer; }
+  .section-title:hover { text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
   @media (min-width: 640px) { .section-title { font-size: 30px; } }
-  .section-edit-actions { display: inline-flex; gap: 2px; opacity: 0.55; }
+  .section-edit-actions { display: inline-flex; gap: 2px; opacity: 0.7; }
   .section-edit-actions:hover { opacity: 1; }
-  .section-edit-actions button {
-    padding: 6px;
-    border-radius: 4px;
-    display: flex;
-  }
+  .section-edit-actions button { padding: 6px; border-radius: 4px; display: flex; }
   .section-edit-actions button:hover { background: rgba(30, 26, 23, 0.06); }
   .section-edit-actions button.danger:hover { background: var(--crit-bg); color: var(--crit-fg); }
-  .section-subtitle {
-    font-size: 12px;
-    opacity: 0.65;
-    font-style: italic;
-    margin-top: 4px;
-  }
+  .section-subtitle { font-size: 12px; opacity: 0.65; font-style: italic; margin-top: 4px; }
   @media (min-width: 640px) { .section-subtitle { font-size: 13px; } }
   .section-stats { text-align: right; flex-shrink: 0; }
   .section-stats .pct { font-family: 'Fraunces', serif; font-size: 26px; }
   @media (min-width: 640px) { .section-stats .pct { font-size: 30px; } }
+  .section-total { font-family: 'Fraunces', serif; font-style: italic; color: var(--accent); font-size: 13px; font-weight: 500; margin-top: 2px; }
 
-  /* Inline edit */
-  .inline-edit {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-    flex-wrap: wrap;
-  }
-  .inline-edit input {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 6px 10px;
-    font-size: 18px;
-    font-family: 'Fraunces', serif;
-    outline: none;
-    flex: 1;
-    min-width: 0;
-  }
+  .inline-edit { display: flex; gap: 6px; align-items: center; flex: 1; min-width: 0; flex-wrap: wrap; }
+  .inline-edit input { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; font-size: 18px; font-family: 'Fraunces', serif; outline: none; flex: 1; min-width: 0; }
   .inline-edit input.small { font-size: 14px; font-family: inherit; }
   .inline-edit input.emoji { width: 56px; flex: 0 0 auto; text-align: center; font-family: inherit; font-size: 20px; }
   .inline-edit .btn-primary, .inline-edit .btn-ghost { flex-shrink: 0; }
 
-  /* Toolbar */
-  .toolbar {
-    margin-bottom: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-  }
-  .search-box {
-    flex: 1;
-    min-width: 180px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface);
-    border: 1px solid var(--line-soft);
-    border-radius: 6px;
-    padding: 7px 10px;
-  }
-  .search-box input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    min-width: 0;
-  }
+  .toolbar { margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .search-box { flex: 1; min-width: 180px; display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line-soft); border-radius: 6px; padding: 7px 10px; }
+  .search-box input { flex: 1; background: transparent; border: none; outline: none; font-size: 14px; min-width: 0; }
   .search-box .clear-search { opacity: 0.4; display: flex; align-items: center; padding: 2px; }
   .search-box .clear-search:hover { opacity: 1; }
-  .toolbar select {
-    background: var(--surface);
-    border: 1px solid var(--line-soft);
-    border-radius: 6px;
-    padding: 7px 10px;
-    font-size: 13px;
-    outline: none;
-  }
+  .toolbar select { background: var(--surface); border: 1px solid var(--line-soft); border-radius: 6px; padding: 7px 10px; font-size: 13px; outline: none; }
 
-  /* Subsection */
-  .subsection {
-    margin-top: 20px;
-    border-radius: 6px;
-    transition: box-shadow 0.15s;
-  }
+  .subsection { margin-top: 20px; border-radius: 6px; transition: box-shadow 0.15s; }
   .subsection.dragging { opacity: 0.35; }
-  .subsection.drop-target {
-    box-shadow: 0 0 0 2px var(--accent);
-    background: rgba(194, 65, 12, 0.04);
-  }
-  .subsection-header {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 8px 4px 6px;
-    border-bottom: 1px dashed var(--line);
-    margin-bottom: 8px;
-  }
-  .subsection-toggle {
-    display: flex;
-    align-items: center;
-    padding: 4px;
-    opacity: 0.6;
-    flex-shrink: 0;
-  }
+  .subsection.drop-target { box-shadow: 0 0 0 2px var(--accent); background: rgba(194, 65, 12, 0.04); }
+  .subsection-header { display: flex; align-items: center; gap: 4px; padding: 8px 4px 6px; border-bottom: 1px dashed var(--line); margin-bottom: 8px; flex-wrap: wrap; }
+  .subsection-toggle { display: flex; align-items: center; padding: 4px; opacity: 0.6; flex-shrink: 0; }
   .subsection-toggle:hover { opacity: 1; }
-  .subsection-grip {
-    display: none;
-    cursor: grab;
-    opacity: 0.3;
-    padding: 4px 2px;
-    flex-shrink: 0;
-  }
+  .subsection-grip { display: none; cursor: grab; opacity: 0.3; padding: 4px 2px; flex-shrink: 0; }
   .subsection-grip:active { cursor: grabbing; }
   .subsection:hover .subsection-grip { opacity: 0.6; }
   @media (min-width: 700px) { .subsection-grip { display: inline-flex; } }
-  .subsection-title {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 16px;
-    flex: 1;
-    min-width: 0;
-  }
+  .subsection-title { font-family: 'Fraunces', serif; font-style: italic; font-size: 16px; flex: 1; min-width: 0; cursor: pointer; }
+  .subsection-title:hover { text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
   @media (min-width: 640px) { .subsection-title { font-size: 18px; } }
   .subsection-count { font-size: 11px; opacity: 0.5; flex-shrink: 0; }
-  .subsection-actions {
-    display: inline-flex;
-    gap: 2px;
-    opacity: 0.55;
-    flex-shrink: 0;
-  }
+  .subsection-total { font-size: 12px; font-style: italic; color: var(--accent); flex-shrink: 0; font-family: 'Fraunces', serif; }
+  .subsection-actions { display: inline-flex; gap: 2px; opacity: 0.7; flex-shrink: 0; }
   .subsection-actions:hover { opacity: 1; }
   .subsection-actions button { padding: 5px; border-radius: 4px; display: flex; }
   .subsection-actions button:hover { background: rgba(30, 26, 23, 0.06); }
   .subsection-actions button.danger:hover { background: var(--crit-bg); color: var(--crit-fg); }
 
-  /* Items */
   .items-list { display: flex; flex-direction: column; gap: 5px; }
-  .items-list.collapsed { display: none; }
-  .item {
-    background: var(--surface);
-    border: 1px solid var(--line-soft);
-    border-radius: 6px;
-    transition: all 0.15s;
-    position: relative;
-    overflow: hidden;
-  }
+  .item { background: var(--surface); border: 1px solid var(--line-soft); border-radius: 6px; transition: all 0.15s; position: relative; overflow: hidden; }
   .item.dragging { opacity: 0.35; }
   .item.drop-target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-  .item-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 10px 10px 10px 12px;
-  }
+  .item-row { display: flex; align-items: flex-start; gap: 6px; padding: 10px 10px 10px 12px; }
   @media (min-width: 640px) { .item-row { gap: 8px; padding: 10px 12px; } }
-  .item-prio-bar {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-  }
-  .grip {
-    display: none;
-    cursor: grab;
-    opacity: 0.2;
-    padding-top: 2px;
-  }
+  .item-prio-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .grip { display: none; cursor: grab; opacity: 0.2; padding-top: 2px; }
   .item:hover .grip { opacity: 0.7; }
   .grip:active { cursor: grabbing; }
   @media (min-width: 700px) { .grip { display: flex; } }
-  .move-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    padding-top: 0;
-  }
+  .move-buttons { display: flex; flex-direction: column; gap: 1px; padding-top: 0; }
   @media (min-width: 700px) { .move-buttons { display: none; } }
-  .move-buttons button {
-    opacity: 0.35;
-    padding: 4px 2px;
-    display: flex;
-  }
+  .move-buttons button { opacity: 0.35; padding: 4px 2px; display: flex; }
   .move-buttons button:active { opacity: 1; }
 
-  .checkbox-btn {
-    flex-shrink: 0;
-    padding: 2px 0 0;
-    display: flex;
-    align-items: center;
-  }
+  .checkbox-btn { flex-shrink: 0; padding: 2px 0 0; display: flex; align-items: center; }
   .item-content { flex: 1; min-width: 0; }
-  .item-text-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-  }
-  .item-text {
-    font-size: 14px;
-    line-height: 1.4;
-    word-break: break-word;
-  }
+  .item-text-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .item-text { font-size: 14px; line-height: 1.4; word-break: break-word; }
   .item-text.done { text-decoration: line-through; opacity: 0.5; }
-  .subtask-badge {
-    font-size: 11px;
-    padding: 1px 6px;
-    border-radius: 999px;
-    background: rgba(30, 26, 23, 0.06);
-    opacity: 0.7;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-  }
+  .subtask-badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: rgba(30, 26, 23, 0.06); opacity: 0.7; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
   .subtask-badge:hover { opacity: 1; background: rgba(30, 26, 23, 0.1); }
   .subtask-badge.all-done { background: #DCFCE7; color: #14532D; opacity: 1; }
 
-  /* Inline link */
-  .link-inline {
-    display: inline-flex;
-    align-items: center;
-    color: var(--accent);
-    text-decoration: none;
-    padding: 2px 6px;
-    border-radius: 3px;
-    background: var(--high-bg);
-    opacity: 0.85;
-    flex-shrink: 0;
-    transition: opacity 0.15s;
-    font-size: 11px;
-  }
+  .link-inline { display: inline-flex; align-items: center; color: var(--accent); text-decoration: none; padding: 2px 6px; border-radius: 3px; background: var(--high-bg); opacity: 0.85; flex-shrink: 0; transition: opacity 0.15s; font-size: 11px; }
   .link-inline:hover { opacity: 1; }
 
-  .prio-select {
-    font-size: 11px;
-    padding: 2px 20px 2px 8px;
-    border-radius: 999px;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 6px center;
-  }
+  .location-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; color: white; cursor: pointer; transition: opacity 0.15s; }
+  .location-pill:hover { opacity: 0.85; }
+
+  .price-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: rgba(14, 42, 71, 0.08); color: var(--accent-blue); cursor: pointer; font-family: 'Fraunces', serif; font-variant-numeric: tabular-nums; }
+  .price-pill:hover { background: rgba(14, 42, 71, 0.14); }
+  .price-pill.computed { background: transparent; border: 1px dashed rgba(14, 42, 71, 0.25); font-style: italic; }
+
+  .prio-select { font-size: 11px; padding: 2px 20px 2px 8px; border-radius: 999px; font-weight: 500; cursor: pointer; border: none; outline: none; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 6px center; }
   .prio-critical { background-color: var(--crit-bg); color: var(--crit-fg); }
   .prio-high { background-color: var(--high-bg); color: var(--high-fg); }
   .prio-medium { background-color: var(--med-bg); color: var(--med-fg); }
   .prio-low { background-color: var(--low-bg); color: var(--low-fg); }
 
-  .notes-preview {
-    margin-top: 4px;
-    font-size: 12px;
-    opacity: 0.6;
-    font-style: italic;
-    display: flex;
-    align-items: flex-start;
-    gap: 4px;
-    cursor: pointer;
-    word-break: break-word;
-  }
+  .notes-preview { margin-top: 4px; font-size: 12px; opacity: 0.6; font-style: italic; display: flex; align-items: flex-start; gap: 4px; cursor: pointer; word-break: break-word; }
   .notes-preview:hover { opacity: 1; }
-  .notes-textarea {
-    margin-top: 6px;
-    width: 100%;
-    background: rgba(245, 242, 237, 0.8);
-    border: 1px solid var(--line-soft);
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 13px;
-    outline: none;
-    resize: vertical;
-    min-height: 60px;
-    font-family: inherit;
-  }
+  .notes-textarea { margin-top: 6px; width: 100%; background: rgba(245, 242, 237, 0.8); border: 1px solid var(--line-soft); border-radius: 4px; padding: 8px; font-size: 13px; outline: none; resize: vertical; min-height: 60px; font-family: inherit; }
 
-  .item-actions {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    opacity: 0.55;
-    flex-shrink: 0;
-  }
+  /* Location editor inline */
+  .location-editor { margin-top: 8px; padding: 10px; background: rgba(245, 242, 237, 0.8); border: 1px solid var(--line-soft); border-radius: 6px; display: flex; flex-direction: column; gap: 8px; }
+  .location-editor input { width: 100%; background: white; border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; font-size: 13px; outline: none; }
+  .color-swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+  .color-swatch { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; }
+  .color-swatch:hover { transform: scale(1.1); }
+  .color-swatch.selected { border-color: var(--ink); transform: scale(1.1); }
+  .location-editor .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .item-actions { display: flex; align-items: center; gap: 0; opacity: 0.55; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 140px; }
+  @media (min-width: 700px) { .item-actions { max-width: none; } }
   .item:hover .item-actions { opacity: 1; }
-  .item-actions button {
-    padding: 6px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-  }
+  .item-actions button { padding: 6px; border-radius: 4px; display: flex; align-items: center; }
   .item-actions button:hover { background: rgba(30, 26, 23, 0.05); }
-  .item-actions button.has-notes, .item-actions button.has-link { color: var(--accent); opacity: 1; }
+  .item-actions button.has-data { color: var(--accent); opacity: 1; }
   .item-actions button.delete:hover { background: var(--crit-bg); color: var(--crit-fg); }
-  @media (max-width: 639px) { .item-actions button { padding: 7px; } }
+  @media (max-width: 639px) { .item-actions button { padding: 5px; } }
 
-  /* Subtasks */
-  .subtasks-container {
-    margin: 0 10px 10px 34px;
-    padding: 6px 0 0 10px;
-    border-left: 2px solid var(--line);
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .subtask-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 6px;
-    border-radius: 4px;
-    font-size: 13px;
-  }
+  .subtasks-container { margin: 0 10px 10px 34px; padding: 6px 0 0 10px; border-left: 2px solid var(--line); display: flex; flex-direction: column; gap: 3px; }
+  .subtask-row { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 4px; font-size: 13px; flex-wrap: wrap; }
   .subtask-row:hover { background: rgba(255, 255, 255, 0.5); }
   .subtask-checkbox { flex-shrink: 0; display: flex; }
-  .subtask-text { flex: 1; min-width: 0; word-break: break-word; }
+  .subtask-text { flex: 1; min-width: 100px; word-break: break-word; }
   .subtask-text.done { text-decoration: line-through; opacity: 0.5; }
-  .subtask-actions {
-    display: inline-flex;
-    gap: 0;
-    opacity: 0.4;
-    flex-shrink: 0;
-  }
+  .subtask-actions { display: inline-flex; gap: 0; opacity: 0.4; flex-shrink: 0; flex-wrap: wrap; }
   .subtask-row:hover .subtask-actions { opacity: 1; }
-  .subtask-actions button { padding: 4px; border-radius: 3px; display: flex; }
+  .subtask-actions button { padding: 3px; border-radius: 3px; display: flex; }
   .subtask-actions button:hover { background: rgba(30, 26, 23, 0.06); }
-  .subtask-actions button.has-link { color: var(--accent); opacity: 1; }
+  .subtask-actions button.has-data { color: var(--accent); opacity: 1; }
   .subtask-actions button.danger:hover { background: var(--crit-bg); color: var(--crit-fg); }
-  .add-subtask-btn {
-    align-self: flex-start;
-    padding: 3px 8px;
-    margin-top: 2px;
-    font-size: 12px;
-    opacity: 0.6;
-    border-radius: 3px;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-  }
+  .add-subtask-btn { align-self: flex-start; padding: 3px 8px; margin-top: 2px; font-size: 12px; opacity: 0.6; border-radius: 3px; display: inline-flex; align-items: center; gap: 3px; }
   .add-subtask-btn:hover { opacity: 1; background: rgba(30, 26, 23, 0.05); }
 
-  /* Add forms */
-  .add-btn {
-    width: 100%;
-    padding: 11px;
-    border: 2px dashed rgba(30, 26, 23, 0.18);
-    border-radius: 6px;
-    font-size: 13px;
-    opacity: 0.7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.15s;
-    margin-top: 8px;
-    cursor: pointer;
-  }
-  .add-btn:hover {
-    border-color: rgba(30, 26, 23, 0.4);
-    opacity: 1;
-    background: var(--surface-soft);
-  }
+  .subtask-location-editor { width: 100%; margin-top: 4px; padding: 8px; background: rgba(245, 242, 237, 0.8); border: 1px solid var(--line-soft); border-radius: 4px; display: flex; flex-direction: column; gap: 6px; }
+  .subtask-location-editor input { width: 100%; background: white; border: 1px solid var(--line); border-radius: 3px; padding: 5px 8px; font-size: 12px; outline: none; }
+
+  .add-btn { width: 100%; padding: 11px; border: 2px dashed rgba(30, 26, 23, 0.18); border-radius: 6px; font-size: 13px; opacity: 0.7; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; margin-top: 8px; cursor: pointer; }
+  .add-btn:hover { border-color: rgba(30, 26, 23, 0.4); opacity: 1; background: var(--surface-soft); }
   .add-btn.small { padding: 7px; font-size: 12px; }
-  .add-subsection-btn {
-    margin-top: 16px;
-    padding: 10px;
-    border: 2px dashed rgba(30, 26, 23, 0.18);
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    opacity: 0.7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    transition: all 0.15s;
-    cursor: pointer;
-  }
+  .add-subsection-btn { margin-top: 16px; padding: 10px; border: 2px dashed rgba(30, 26, 23, 0.18); border-radius: 6px; font-size: 13px; font-family: 'Fraunces', serif; font-style: italic; opacity: 0.7; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; transition: all 0.15s; cursor: pointer; }
   .add-subsection-btn:hover { opacity: 1; border-color: rgba(30, 26, 23, 0.35); background: var(--surface-soft); }
 
-  .add-form {
-    background: var(--surface);
-    border: 1px solid var(--line-soft);
-    border-radius: 6px;
-    padding: 10px;
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .add-form input[type="text"] {
-    width: 100%;
-    background: rgba(245, 242, 237, 0.8);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 8px 10px;
-    font-size: 14px;
-    outline: none;
-  }
+  .add-form { background: var(--surface); border: 1px solid var(--line-soft); border-radius: 6px; padding: 10px; margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .add-form input[type="text"] { width: 100%; background: rgba(245, 242, 237, 0.8); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; font-size: 14px; outline: none; }
   .add-form .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .add-form select {
-    background: white;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 6px 10px;
-    font-size: 13px;
-  }
+  .add-form select { background: white; border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; font-size: 13px; }
 
-  .btn-primary {
-    padding: 7px 14px;
-    background: var(--ink);
-    color: var(--bg);
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-  }
+  .btn-primary { padding: 7px 14px; background: var(--ink); color: var(--bg); border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; }
   .btn-primary:hover { background: var(--accent-blue); }
-  .btn-ghost {
-    padding: 7px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    opacity: 0.6;
-    cursor: pointer;
-  }
+  .btn-ghost { padding: 7px 12px; border-radius: 4px; font-size: 13px; opacity: 0.6; cursor: pointer; }
   .btn-ghost:hover { opacity: 1; }
+  .btn-danger { padding: 7px 14px; background: var(--crit-fg); color: white; border-radius: 4px; font-size: 13px; cursor: pointer; }
+  .btn-danger:hover { background: #991B1B; }
 
-  .empty-state {
-    padding: 36px 0;
-    text-align: center;
-    opacity: 0.5;
-    font-style: italic;
-    font-family: 'Fraunces', serif;
-    font-size: 14px;
-  }
+  .empty-state { padding: 36px 0; text-align: center; opacity: 0.5; font-style: italic; font-family: 'Fraunces', serif; font-size: 14px; }
 
-  .footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
-    text-align: center;
-    font-size: 11px;
-    opacity: 0.55;
-  }
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); text-align: center; font-size: 11px; opacity: 0.55; }
   .footer .quote { font-family: 'Fraunces', serif; font-style: italic; }
 
-  .loading-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    text-align: center;
-  }
+  .loading-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -687,6 +271,37 @@
   .ico-check { color: var(--green); }
   .ico-partial { color: var(--accent); }
   .ico-circle { opacity: 0.4; }
+
+  /* CONTEXT MENU */
+  .ctx-backdrop { position: fixed; inset: 0; z-index: 100; background: transparent; }
+  .ctx-menu {
+    position: fixed;
+    z-index: 101;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    padding: 4px;
+    min-width: 200px;
+    animation: ctxFade 0.1s ease-out;
+  }
+  @keyframes ctxFade { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .ctx-menu button {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .ctx-menu button:hover { background: rgba(30, 26, 23, 0.06); }
+  .ctx-menu button.danger { color: var(--crit-fg); }
+  .ctx-menu button.danger:hover { background: var(--crit-bg); }
+  .ctx-menu .ctx-separator { height: 1px; background: var(--line); margin: 4px 0; }
+  .ctx-header { padding: 8px 12px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; }
 </style>
 </head>
 <body>
@@ -710,27 +325,30 @@ const STORAGE_KEY = 'expat-tracker-v2';
 const STORAGE_KEY_V1 = 'expat-tracker-v1';
 const PRIORITIES = { critical: 'Critique', high: 'Haute', medium: 'Moyenne', low: 'Basse' };
 const FAMILY = ['Préma', 'Jérémie', 'Matthieu', 'Baptiste'];
+const COLOR_PALETTE = [
+  '#DC2626', '#EA580C', '#D97706', '#CA8A04',
+  '#16A34A', '#059669', '#0D9488', '#2563EB',
+  '#4F46E5', '#9333EA', '#DB2777', '#52525B'
+];
 
 function genId() {
   return (crypto.randomUUID && crypto.randomUUID()) || 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2);
 }
 function I(text, priority, notes) {
-  return { id: genId(), text, priority: priority || 'medium', notes: notes || '', link: '', done: false, subtasks: [] };
+  return { id: genId(), text, priority: priority || 'medium', notes: notes || '', link: '', price: 0, location: null, done: false, subtasks: [] };
 }
 function IwithFamily(text, priority) {
   const item = I(text, priority);
-  item.subtasks = FAMILY.map(name => ({ id: genId(), text: name, done: false, link: '' }));
+  item.subtasks = FAMILY.map(name => ({ id: genId(), text: name, done: false, link: '', price: 0, location: null }));
   return item;
 }
-function SUB(title, items) {
-  return { id: genId(), title, collapsed: false, items: items || [] };
-}
+function SUB(title, items) { return { id: genId(), title, collapsed: false, items: items || [] }; }
 
 // ==============================================
-// Default data
+// Default data (unchanged from v3)
 // ==============================================
 const DEFAULT_DATA = {
-  version: 2,
+  version: 3,
   sections: [
     {
       id: 'status', emoji: '🔑', title: 'Statut & prérequis RH',
@@ -747,8 +365,7 @@ const DEFAULT_DATA = {
         I("Identifier l'interlocuteur RH dédié au poste Tel Aviv", 'high'),
         I("Prendre contact avec le SG sortant pour un handover", 'high'),
         I("Se faire communiquer la grille indemnités (résidence, majorations familiales)", 'high'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'admin-fr', emoji: '📄', title: 'Démarches administratives France',
@@ -772,8 +389,7 @@ const DEFAULT_DATA = {
         I("Déclarer comptes crypto à l'étranger (formulaire 3916 bis)", 'high'),
         I("Procuration notariale en France", 'medium'),
         I("Redirection courrier postal FR (La Poste expat ou famille)", 'low'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'sydney', emoji: '🇦🇺', title: 'Départ de Sydney',
@@ -803,8 +419,7 @@ const DEFAULT_DATA = {
         I("Don / vente des meubles non déplacés", 'medium'),
         I("Tri des documents papier + numérisation cloud sécurisé", 'medium'),
         I("Pot de départ / au revoir collègues + famille d'accueil", 'low'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'housing', emoji: '🏠', title: 'Logement Tel Aviv',
@@ -824,8 +439,7 @@ const DEFAULT_DATA = {
         I("Signer le bail", 'critical'),
         I("État des lieux d'entrée (photos + vidéo)", 'high'),
         I("Souscrire assurance habitation IL", 'high'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'travel', emoji: '✈️', title: 'Voyage & déménagement',
@@ -846,8 +460,7 @@ const DEFAULT_DATA = {
         I("Numériser tous les documents importants + cloud chiffré", 'medium'),
         I("Préparer clé USB \"survie\" avec scans de passeports, diplômes, etc.", 'medium'),
         I("Informer proches de l'itinéraire et adresse temporaire", 'low'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'arrival', emoji: '🛂', title: 'Arrivée Tel Aviv (J à J+30)',
@@ -871,8 +484,7 @@ const DEFAULT_DATA = {
         I("Rejoindre Israël Accueil (association francophone)", 'medium'),
         I("Rejoindre groupes Facebook / WhatsApp Français à Tel Aviv", 'low'),
         I("Ouvrir Google Maps perso avec POI (médecin, supermarché, école, abri)", 'low'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'furniture', emoji: '🪑', title: 'Ameublement',
@@ -884,71 +496,49 @@ const DEFAULT_DATA = {
       ],
       subsections: [
         SUB('Électroménager', [
-          I('Réfrigérateur / congélateur', 'high'),
-          I('Lave-linge', 'high'),
-          I('Sèche-linge', 'medium'),
-          I('Four (souvent inclus en IL)', 'medium'),
-          I('Micro-ondes', 'medium'),
-          I('Lave-vaisselle', 'medium'),
-          I('Bouilloire', 'low'),
-          I('Cafetière', 'low'),
+          I('Réfrigérateur / congélateur', 'high'), I('Lave-linge', 'high'),
+          I('Sèche-linge', 'medium'), I('Four (souvent inclus en IL)', 'medium'),
+          I('Micro-ondes', 'medium'), I('Lave-vaisselle', 'medium'),
+          I('Bouilloire', 'low'), I('Cafetière', 'low'),
           I('Petit électroménager (grille-pain, blender, mixeur)', 'low'),
-          I('Aspirateur', 'medium'),
-          I('Climatiseur (souvent inclus dans logement)', 'medium'),
+          I('Aspirateur', 'medium'), I('Climatiseur (souvent inclus dans logement)', 'medium'),
         ]),
         SUB('Chambre parents (Préma & Jérémie)', [
-          I('Lit + matelas (queen ou king)', 'critical'),
-          I('Armoire / penderie', 'high'),
-          I('Tables de chevet (x2)', 'medium'),
-          I('Linge de lit (draps, couette, oreillers)', 'high'),
-          I('Rideaux occultants', 'medium'),
-          I('Luminaires', 'low'),
+          I('Lit + matelas (queen ou king)', 'critical'), I('Armoire / penderie', 'high'),
+          I('Tables de chevet (x2)', 'medium'), I('Linge de lit (draps, couette, oreillers)', 'high'),
+          I('Rideaux occultants', 'medium'), I('Luminaires', 'low'),
         ]),
         SUB('Chambre Matthieu', [
-          I('Lit + matelas', 'critical'),
-          I('Bureau + chaise', 'high'),
-          I('Armoire / rangements vêtements', 'high'),
-          I('Étagères / rangements jouets', 'medium'),
-          I('Linge de lit', 'high'),
-          I('Luminaires / veilleuse', 'low'),
+          I('Lit + matelas', 'critical'), I('Bureau + chaise', 'high'),
+          I('Armoire / rangements vêtements', 'high'), I('Étagères / rangements jouets', 'medium'),
+          I('Linge de lit', 'high'), I('Luminaires / veilleuse', 'low'),
         ]),
         SUB('Chambre Baptiste', [
-          I('Lit + matelas', 'critical'),
-          I('Bureau + chaise', 'high'),
-          I('Armoire / rangements vêtements', 'high'),
-          I('Étagères / rangements jouets', 'medium'),
-          I('Linge de lit', 'high'),
-          I('Luminaires / veilleuse', 'low'),
+          I('Lit + matelas', 'critical'), I('Bureau + chaise', 'high'),
+          I('Armoire / rangements vêtements', 'high'), I('Étagères / rangements jouets', 'medium'),
+          I('Linge de lit', 'high'), I('Luminaires / veilleuse', 'low'),
         ]),
         SUB('Salon / salle à manger', [
-          I('Canapé', 'critical'),
-          I('Table basse', 'medium'),
-          I('Table à manger + chaises', 'high'),
-          I('TV + meuble TV', 'medium'),
+          I('Canapé', 'critical'), I('Table basse', 'medium'),
+          I('Table à manger + chaises', 'high'), I('TV + meuble TV', 'medium'),
           I('Bibliothèque / étagères', 'medium'),
           I('Luminaires (plafond + lampes d\'appoint)', 'medium'),
-          I('Tapis', 'low'),
-          I('Décoration / cadres', 'low'),
+          I('Tapis', 'low'), I('Décoration / cadres', 'low'),
         ]),
         SUB('Cuisine équipement', [
           I('Vaisselle complète (assiettes, bols, verres)', 'high'),
-          I('Casseroles, poêles, cocottes', 'high'),
-          I('Ustensiles de cuisine', 'medium'),
-          I('Couteaux', 'medium'),
-          I('Conteneurs de stockage / Tupperware', 'low'),
+          I('Casseroles, poêles, cocottes', 'high'), I('Ustensiles de cuisine', 'medium'),
+          I('Couteaux', 'medium'), I('Conteneurs de stockage / Tupperware', 'low'),
           I('Linge de cuisine (torchons, maniques)', 'low'),
         ]),
         SUB('Salle de bain', [
           I('Serviettes famille (parents + enfants)', 'high'),
-          I('Tapis de bain', 'low'),
-          I('Accessoires (porte-savon, poubelle, panière)', 'low'),
+          I('Tapis de bain', 'low'), I('Accessoires (porte-savon, poubelle, panière)', 'low'),
         ]),
         SUB('Bureau Jérémie', [
-          I('Bureau', 'high'),
-          I('Chaise ergonomique', 'high'),
+          I('Bureau', 'high'), I('Chaise ergonomique', 'high'),
           I('Écrans supplémentaires + supports', 'medium'),
-          I('Rangements / étagères', 'low'),
-          I('Multiprise + onduleur (UPS)', 'medium'),
+          I('Rangements / étagères', 'low'), I('Multiprise + onduleur (UPS)', 'medium'),
         ]),
       ],
     },
@@ -965,8 +555,7 @@ const DEFAULT_DATA = {
         I("Trouver un pédiatre francophone / anglophone", 'medium'),
         I("Évaluer besoin Ulpan enfants (cours hébreu adapté)", 'low'),
         I("Préparer l'adaptation émotionnelle (discussion changement de pays)", 'medium'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'work', emoji: '💼', title: 'Travail sur place (Jérémie)',
@@ -986,8 +575,7 @@ const DEFAULT_DATA = {
         I("Réseautage local : French Tech Tel Aviv, meetups tech", 'medium'),
         I("Évaluer compatibilité portefeuille crypto avec nouvelle résidence fiscale", 'high'),
         I("Dimensionner activité marchand de biens FR à distance", 'medium'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'tax', emoji: '💰', title: 'Fiscalité & Patrimoine',
@@ -1004,8 +592,7 @@ const DEFAULT_DATA = {
         I("KYC MEXC / exchanges crypto : mettre à jour avec nouvelle adresse", 'medium'),
         I("Déclaration de revenus FR année du départ (2042 + 2042-NR)", 'critical'),
         I("Prévoir archivage fiscal 10 ans (docs FR + IL)", 'low'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'health', emoji: '❤️', title: 'Santé, Sécurité, Intégration',
@@ -1022,8 +609,7 @@ const DEFAULT_DATA = {
         I("Acheter adaptateurs électriques (prises israéliennes type H)", 'low'),
         I("Carte Rav-Kav (transports en commun Israël)", 'medium'),
         I("Carte de bibliothèque / médiathèque IFI (La Closerie)", 'low'),
-      ],
-      subsections: [],
+      ], subsections: [],
     },
     {
       id: 'post', emoji: '🔧', title: 'Post-installation (M+1 à M+3)',
@@ -1037,8 +623,7 @@ const DEFAULT_DATA = {
         I("Planifier premier retour en France (famille, vacances)", 'low'),
         I("Renouvellement annuel accréditation MFA", 'medium'),
         I("Explorer le pays (Jérusalem, Néguev, Mer Morte, Haïfa, Eilat)", 'low'),
-      ],
-      subsections: [],
+      ], subsections: [],
     }
   ]
 };
@@ -1048,27 +633,26 @@ const DEFAULT_DATA = {
 // ==============================================
 function migrate(data) {
   if (!data || !data.sections) return null;
-  data.version = 2;
+  data.version = 3;
+  const fixItem = (i) => {
+    if (!Array.isArray(i.subtasks)) i.subtasks = [];
+    if (typeof i.link !== 'string') i.link = '';
+    if (typeof i.price !== 'number') i.price = 0;
+    if (!i.location || typeof i.location !== 'object') i.location = null;
+    i.subtasks.forEach(st => {
+      if (typeof st.link !== 'string') st.link = '';
+      if (typeof st.price !== 'number') st.price = 0;
+      if (!st.location || typeof st.location !== 'object') st.location = null;
+    });
+  };
   data.sections.forEach(s => {
     if (!Array.isArray(s.items)) s.items = [];
     if (!Array.isArray(s.subsections)) s.subsections = [];
-    s.items.forEach(i => {
-      if (!Array.isArray(i.subtasks)) i.subtasks = [];
-      if (typeof i.link !== 'string') i.link = '';
-      i.subtasks.forEach(st => {
-        if (typeof st.link !== 'string') st.link = '';
-      });
-    });
+    s.items.forEach(fixItem);
     s.subsections.forEach(sub => {
       if (typeof sub.collapsed !== 'boolean') sub.collapsed = false;
       if (!Array.isArray(sub.items)) sub.items = [];
-      sub.items.forEach(i => {
-        if (!Array.isArray(i.subtasks)) i.subtasks = [];
-        if (typeof i.link !== 'string') i.link = '';
-        i.subtasks.forEach(st => {
-          if (typeof st.link !== 'string') st.link = '';
-        });
-      });
+      sub.items.forEach(fixItem);
     });
   });
   return data;
@@ -1091,6 +675,8 @@ const ICO = {
   note: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
   link: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',
   linkSm: '<svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',
+  tag: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+  euro: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 00-5.2-2A7.9 7.9 0 006 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>',
   edit: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
   trash: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>',
   search: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
@@ -1112,21 +698,21 @@ let state = {
   priorityFilter: 'all',
   expandedNotes: {},
   expandedSubtasks: {},
+  expandedLocation: {},        // itemId or 'st:subtaskId' -> bool
   editing: null,
   adding: null,
-  draggedType: null, // 'item' | 'subsection' | 'tab'
+  draggedType: null,
   draggedId: null,
   dropTargetId: null,
   saving: false,
+  contextMenu: null,           // { type: 'tab', id, x, y }
 };
 let saveTimeout = null;
 
 // ==============================================
 // Storage
 // ==============================================
-const hasWindowStorage = typeof window !== 'undefined' &&
-                         typeof window.storage !== 'undefined' &&
-                         window.storage && typeof window.storage.get === 'function';
+const hasWindowStorage = typeof window !== 'undefined' && typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
 
 async function loadData() {
   try {
@@ -1140,7 +726,6 @@ async function loadData() {
   } catch (e) { console.error('Load error', e); }
   return null;
 }
-
 async function saveData(data) {
   try {
     const json = JSON.stringify(data);
@@ -1148,7 +733,6 @@ async function saveData(data) {
     else localStorage.setItem(STORAGE_KEY, json);
   } catch (e) { console.error('Save error', e); }
 }
-
 function scheduleSave() {
   if (saveTimeout) clearTimeout(saveTimeout);
   state.saving = true;
@@ -1159,13 +743,10 @@ function scheduleSave() {
     updateSaveIndicator();
   }, 400);
 }
-
 function updateSaveIndicator() {
   const el = document.getElementById('save-indicator');
   if (!el) return;
-  el.innerHTML = state.saving
-    ? ICO.save + ' Sauvegarde…'
-    : ICO.checkSm + ' Synchronisé';
+  el.innerHTML = state.saving ? ICO.save + ' Sauvegarde…' : ICO.checkSm + ' Synchronisé';
   el.className = 'save-indicator' + (state.saving ? ' saving' : '');
 }
 
@@ -1181,6 +762,28 @@ function normalizeUrl(url) {
   if (!url) return '';
   if (/^(https?:|mailto:|tel:|ftp:|file:)/i.test(url)) return url;
   return 'https://' + url;
+}
+function parsePrice(str) {
+  if (str === null || str === undefined) return 0;
+  str = String(str).trim();
+  if (!str) return 0;
+  str = str.replace(/[€$£¥\s]/g, '');
+  if (str.includes(',') && str.includes('.')) {
+    str = str.replace(/\./g, '').replace(',', '.');
+  } else if (str.includes(',')) {
+    str = str.replace(',', '.');
+  }
+  const n = parseFloat(str);
+  return isNaN(n) ? 0 : Math.max(0, n);
+}
+function formatPrice(n) {
+  if (!n || n === 0) return '';
+  const hasDecimal = n % 1 !== 0;
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency', currency: 'EUR',
+    minimumFractionDigits: hasDecimal ? 2 : 0,
+    maximumFractionDigits: 2
+  }).format(n);
 }
 function currentSection() {
   return state.data.sections.find(s => s.id === state.currentSectionId) || state.data.sections[0];
@@ -1206,6 +809,24 @@ function itemProgress(item) {
   const done = item.subtasks.filter(st => st.done).length;
   return { done, total: item.subtasks.length };
 }
+
+// Totals
+function computeItemTotal(item) {
+  let total = parseFloat(item.price) || 0;
+  if (item.subtasks) item.subtasks.forEach(st => { total += parseFloat(st.price) || 0; });
+  return total;
+}
+function computeSubsectionTotal(sub) {
+  return sub.items.reduce((a, i) => a + computeItemTotal(i), 0);
+}
+function computeSectionTotal(sec) {
+  return sec.items.reduce((a, i) => a + computeItemTotal(i), 0)
+       + sec.subsections.reduce((a, s) => a + computeSubsectionTotal(s), 0);
+}
+function computeGlobalTotal() {
+  return state.data.sections.reduce((a, s) => a + computeSectionTotal(s), 0);
+}
+
 function countItems(sec) {
   let total = 0, done = 0;
   const allItems = [...sec.items, ...sec.subsections.flatMap(s => s.items)];
@@ -1235,7 +856,8 @@ function matchSearch(item, q) {
   if (item.text.toLowerCase().includes(q)) return true;
   if ((item.notes||'').toLowerCase().includes(q)) return true;
   if ((item.link||'').toLowerCase().includes(q)) return true;
-  if (item.subtasks && item.subtasks.some(st => st.text.toLowerCase().includes(q))) return true;
+  if (item.location && item.location.name && item.location.name.toLowerCase().includes(q)) return true;
+  if (item.subtasks && item.subtasks.some(st => st.text.toLowerCase().includes(q) || (st.location && st.location.name && st.location.name.toLowerCase().includes(q)))) return true;
   return false;
 }
 function matchFilter(item) {
@@ -1245,100 +867,103 @@ function matchFilter(item) {
   if (state.priorityFilter !== 'all' && item.priority !== state.priorityFilter) return false;
   return true;
 }
-function filterItems(items) {
-  return items.filter(i => matchFilter(i) && matchSearch(i, state.search));
-}
+function filterItems(items) { return items.filter(i => matchFilter(i) && matchSearch(i, state.search)); }
 
 // ==============================================
 // Mutations
 // ==============================================
 function mutate(fn) { fn(state.data); scheduleSave(); render(); }
-
-// Items
-function toggleItemDone(itemId) {
+function toggleItemDone(id) {
   mutate(() => {
-    const item = findItem(itemId);
-    if (!item) return;
-    if (item.subtasks && item.subtasks.length > 0) {
-      const allDone = item.subtasks.every(st => st.done);
-      item.subtasks.forEach(st => st.done = !allDone);
-    } else {
-      item.done = !item.done;
-    }
+    const i = findItem(id); if (!i) return;
+    if (i.subtasks && i.subtasks.length > 0) {
+      const allDone = i.subtasks.every(st => st.done);
+      i.subtasks.forEach(st => st.done = !allDone);
+    } else i.done = !i.done;
   });
 }
-function changeItemPriority(itemId, priority) { mutate(() => { const i = findItem(itemId); if (i) i.priority = priority; }); }
-function updateItemText(itemId, text) { mutate(() => { const i = findItem(itemId); if (i) i.text = text.trim() || i.text; }); }
-function updateItemNotes(itemId, notes) { const i = findItem(itemId); if (i) { i.notes = notes; scheduleSave(); } }
-function updateItemLink(itemId, link) { mutate(() => { const i = findItem(itemId); if (i) i.link = normalizeUrl(link); }); }
-function deleteItem(itemId) {
-  const item = findItem(itemId);
-  if (!item) return;
-  if (!confirm('Supprimer "' + item.text + '" ?')) return;
-  mutate(() => { const c = findItemContainer(itemId); const idx = c.findIndex(i => i.id === itemId); if (idx >= 0) c.splice(idx, 1); });
-}
-function moveItem(itemId, direction) {
+function changeItemPriority(id, p) { mutate(() => { const i = findItem(id); if (i) i.priority = p; }); }
+function updateItemText(id, t) { mutate(() => { const i = findItem(id); if (i && t.trim()) i.text = t.trim(); }); }
+function updateItemNotes(id, n) { const i = findItem(id); if (i) { i.notes = n; scheduleSave(); } }
+function updateItemLink(id, l) { mutate(() => { const i = findItem(id); if (i) i.link = normalizeUrl(l); }); }
+function updateItemPrice(id, p) { mutate(() => { const i = findItem(id); if (i) i.price = parsePrice(p); }); }
+function updateItemLocation(id, name, color) {
   mutate(() => {
-    const c = findItemContainer(itemId); if (!c) return;
-    const idx = c.findIndex(i => i.id === itemId);
-    const target = direction === 'up' ? idx - 1 : idx + 1;
-    if (target < 0 || target >= c.length) return;
-    [c[idx], c[target]] = [c[target], c[idx]];
+    const i = findItem(id); if (!i) return;
+    if (!name || !name.trim()) i.location = null;
+    else i.location = { name: name.trim(), color: color || COLOR_PALETTE[0] };
   });
 }
-function dropReorderItem(draggedId, targetId) {
-  if (!draggedId || draggedId === targetId) return;
-  const cDragged = findItemContainer(draggedId);
-  const cTarget = findItemContainer(targetId);
-  if (!cDragged || !cTarget) return;
+function deleteItem(id) {
+  const i = findItem(id); if (!i) return;
+  if (!confirm('Supprimer "' + i.text + '" ?')) return;
+  mutate(() => { const c = findItemContainer(id); const idx = c.findIndex(x => x.id === id); if (idx >= 0) c.splice(idx, 1); });
+}
+function moveItem(id, dir) {
   mutate(() => {
-    const fromIdx = cDragged.findIndex(i => i.id === draggedId);
-    const [moved] = cDragged.splice(fromIdx, 1);
-    const toIdx = cTarget.findIndex(i => i.id === targetId);
-    cTarget.splice(toIdx, 0, moved);
+    const c = findItemContainer(id); if (!c) return;
+    const idx = c.findIndex(x => x.id === id);
+    const t = dir === 'up' ? idx-1 : idx+1;
+    if (t < 0 || t >= c.length) return;
+    [c[idx], c[t]] = [c[t], c[idx]];
   });
 }
-function addItem(containerType, parentId, text, priority) {
-  if (!text.trim()) return;
+function dropReorderItem(dId, tId) {
+  if (!dId || dId === tId) return;
+  const cD = findItemContainer(dId); const cT = findItemContainer(tId);
+  if (!cD || !cT) return;
+  mutate(() => {
+    const fi = cD.findIndex(x => x.id === dId);
+    const [m] = cD.splice(fi, 1);
+    const ti = cT.findIndex(x => x.id === tId);
+    cT.splice(ti, 0, m);
+  });
+}
+function addItem(pt, pid, txt, pr) {
+  if (!txt.trim()) return;
   mutate(() => {
     const sec = currentSection();
-    const newItem = I(text.trim(), priority);
-    if (containerType === 'section') sec.items.push(newItem);
-    else { const sub = sec.subsections.find(s => s.id === parentId); if (sub) sub.items.push(newItem); }
+    const ni = I(txt.trim(), pr);
+    if (pt === 'section') sec.items.push(ni);
+    else { const sub = sec.subsections.find(s => s.id === pid); if (sub) sub.items.push(ni); }
   });
 }
 
 // Subtasks
-function toggleSubtaskDone(itemId, subtaskId) {
+function toggleSubtaskDone(iid, sid) {
+  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.done = !st.done; });
+}
+function addSubtask(iid, txt) {
+  if (!txt.trim()) return;
+  mutate(() => { const i = findItem(iid); if (i) i.subtasks.push({ id: genId(), text: txt.trim(), done: false, link: '', price: 0, location: null }); });
+}
+function updateSubtaskText(iid, sid, txt) {
+  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st && txt.trim()) st.text = txt.trim(); });
+}
+function updateSubtaskLink(iid, sid, l) {
+  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.link = normalizeUrl(l); });
+}
+function updateSubtaskPrice(iid, sid, p) {
+  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.price = parsePrice(p); });
+}
+function updateSubtaskLocation(iid, sid, name, color) {
   mutate(() => {
-    const i = findItem(itemId); if (!i) return;
-    const st = i.subtasks.find(s => s.id === subtaskId); if (st) st.done = !st.done;
+    const i = findItem(iid); if (!i) return;
+    const st = i.subtasks.find(x => x.id === sid); if (!st) return;
+    if (!name || !name.trim()) st.location = null;
+    else st.location = { name: name.trim(), color: color || COLOR_PALETTE[0] };
   });
 }
-function addSubtask(itemId, text) {
-  if (!text.trim()) return;
-  mutate(() => { const i = findItem(itemId); if (i) i.subtasks.push({ id: genId(), text: text.trim(), done: false, link: '' }); });
+function deleteSubtask(iid, sid) {
+  mutate(() => { const i = findItem(iid); if (!i) return; i.subtasks = i.subtasks.filter(x => x.id !== sid); });
 }
-function updateSubtaskText(itemId, stId, text) {
-  mutate(() => { const i = findItem(itemId); if (!i) return;
-    const st = i.subtasks.find(s => s.id === stId); if (st) st.text = text.trim() || st.text;
-  });
-}
-function updateSubtaskLink(itemId, stId, link) {
-  mutate(() => { const i = findItem(itemId); if (!i) return;
-    const st = i.subtasks.find(s => s.id === stId); if (st) st.link = normalizeUrl(link);
-  });
-}
-function deleteSubtask(itemId, stId) {
-  mutate(() => { const i = findItem(itemId); if (!i) return; i.subtasks = i.subtasks.filter(s => s.id !== stId); });
-}
-function moveSubtask(itemId, stId, direction) {
+function moveSubtask(iid, sid, dir) {
   mutate(() => {
-    const i = findItem(itemId); if (!i) return;
-    const idx = i.subtasks.findIndex(s => s.id === stId);
-    const target = direction === 'up' ? idx - 1 : idx + 1;
-    if (target < 0 || target >= i.subtasks.length) return;
-    [i.subtasks[idx], i.subtasks[target]] = [i.subtasks[target], i.subtasks[idx]];
+    const i = findItem(iid); if (!i) return;
+    const idx = i.subtasks.findIndex(x => x.id === sid);
+    const t = dir === 'up' ? idx-1 : idx+1;
+    if (t < 0 || t >= i.subtasks.length) return;
+    [i.subtasks[idx], i.subtasks[t]] = [i.subtasks[t], i.subtasks[idx]];
   });
 }
 
@@ -1347,41 +972,37 @@ function addSubsection(title) {
   if (!title.trim()) return;
   mutate(() => { const sec = currentSection(); sec.subsections.push({ id: genId(), title: title.trim(), collapsed: false, items: [] }); });
 }
-function updateSubsectionTitle(subId, title) {
-  mutate(() => { const sec = currentSection(); const sub = sec.subsections.find(s => s.id === subId); if (sub && title.trim()) sub.title = title.trim(); });
+function updateSubsectionTitle(sid, t) {
+  mutate(() => { const sec = currentSection(); const sub = sec.subsections.find(x => x.id === sid); if (sub && t.trim()) sub.title = t.trim(); });
 }
-function deleteSubsection(subId) {
+function deleteSubsection(sid) {
   const sec = currentSection();
-  const sub = sec.subsections.find(s => s.id === subId);
-  if (!sub) return;
+  const sub = sec.subsections.find(s => s.id === sid); if (!sub) return;
   const count = sub.items.length;
   const msg = count > 0
     ? `Supprimer la sous-section "${sub.title}" ?\n\nLes ${count} tâche(s) seront déplacées dans la section principale.`
     : `Supprimer la sous-section "${sub.title}" ?`;
   if (!confirm(msg)) return;
-  mutate(() => { sec.items.push(...sub.items); sec.subsections = sec.subsections.filter(s => s.id !== subId); });
+  mutate(() => { sec.items.push(...sub.items); sec.subsections = sec.subsections.filter(s => s.id !== sid); });
 }
-function toggleSubsection(subId) {
-  mutate(() => { const sec = currentSection(); const sub = sec.subsections.find(s => s.id === subId); if (sub) sub.collapsed = !sub.collapsed; });
-}
-function moveSubsection(subId, direction) {
+function toggleSubsection(sid) { mutate(() => { const sec = currentSection(); const sub = sec.subsections.find(s => s.id === sid); if (sub) sub.collapsed = !sub.collapsed; }); }
+function moveSubsection(sid, dir) {
   mutate(() => {
     const sec = currentSection();
-    const idx = sec.subsections.findIndex(s => s.id === subId);
-    const target = direction === 'up' ? idx - 1 : idx + 1;
-    if (target < 0 || target >= sec.subsections.length) return;
-    [sec.subsections[idx], sec.subsections[target]] = [sec.subsections[target], sec.subsections[idx]];
+    const idx = sec.subsections.findIndex(s => s.id === sid);
+    const t = dir === 'up' ? idx-1 : idx+1;
+    if (t < 0 || t >= sec.subsections.length) return;
+    [sec.subsections[idx], sec.subsections[t]] = [sec.subsections[t], sec.subsections[idx]];
   });
 }
-function dropReorderSubsection(draggedId, targetId) {
-  if (!draggedId || draggedId === targetId) return;
+function dropReorderSubsection(dId, tId) {
+  if (!dId || dId === tId) return;
   mutate(() => {
     const sec = currentSection();
-    const fromIdx = sec.subsections.findIndex(s => s.id === draggedId);
-    if (fromIdx < 0) return;
-    const [moved] = sec.subsections.splice(fromIdx, 1);
-    const toIdx = sec.subsections.findIndex(s => s.id === targetId);
-    sec.subsections.splice(toIdx < 0 ? sec.subsections.length : toIdx, 0, moved);
+    const fi = sec.subsections.findIndex(s => s.id === dId); if (fi < 0) return;
+    const [m] = sec.subsections.splice(fi, 1);
+    const ti = sec.subsections.findIndex(s => s.id === tId);
+    sec.subsections.splice(ti < 0 ? sec.subsections.length : ti, 0, m);
   });
 }
 
@@ -1389,70 +1010,116 @@ function dropReorderSubsection(draggedId, targetId) {
 function addSection(title, emoji) {
   if (!title.trim()) return;
   mutate(() => {
-    const newSec = { id: genId(), emoji: (emoji && emoji.trim()) || '📁', title: title.trim(), subtitle: '', items: [], subsections: [] };
-    state.data.sections.push(newSec);
-    state.currentSectionId = newSec.id;
+    const ns = { id: genId(), emoji: (emoji && emoji.trim()) || '📁', title: title.trim(), subtitle: '', items: [], subsections: [] };
+    state.data.sections.push(ns);
+    state.currentSectionId = ns.id;
   });
 }
-function updateSectionTitle(secId, title, subtitle, emoji) {
+function updateSectionTitle(sid, title, subtitle, emoji) {
   mutate(() => {
-    const sec = state.data.sections.find(s => s.id === secId); if (!sec) return;
-    if (title && title.trim()) sec.title = title.trim();
+    const sec = state.data.sections.find(s => s.id === sid); if (!sec) return;
+    if (title !== undefined && title && title.trim()) sec.title = title.trim();
     if (subtitle !== undefined) sec.subtitle = subtitle.trim();
-    if (emoji && emoji.trim()) sec.emoji = emoji.trim();
+    if (emoji !== undefined && emoji && emoji.trim()) sec.emoji = emoji.trim();
   });
 }
-function deleteSection(secId) {
-  const sec = state.data.sections.find(s => s.id === secId); if (!sec) return;
+function deleteSection(sid) {
+  const sec = state.data.sections.find(s => s.id === sid); if (!sec) return;
   const c = countItems(sec);
   if (!confirm(`⚠️ Supprimer la section "${sec.title}" ?\n\nCela supprimera ${c.total} tâche(s). Cette action est irréversible.`)) return;
-  if (!confirm('Êtes-vous absolument sûr ? Tapez OK pour confirmer.')) return;
+  if (!confirm('Êtes-vous absolument sûr ?')) return;
   mutate(() => {
-    state.data.sections = state.data.sections.filter(s => s.id !== secId);
-    if (state.currentSectionId === secId && state.data.sections.length > 0) {
-      state.currentSectionId = state.data.sections[0].id;
-    }
+    state.data.sections = state.data.sections.filter(s => s.id !== sid);
+    if (state.currentSectionId === sid && state.data.sections.length > 0) state.currentSectionId = state.data.sections[0].id;
   });
 }
-function moveSectionTab(secId, direction) {
+function dropReorderTab(dId, tId) {
+  if (!dId || dId === tId) return;
   mutate(() => {
-    const idx = state.data.sections.findIndex(s => s.id === secId);
-    const target = direction === 'left' ? idx - 1 : idx + 1;
-    if (target < 0 || target >= state.data.sections.length) return;
-    [state.data.sections[idx], state.data.sections[target]] = [state.data.sections[target], state.data.sections[idx]];
-  });
-}
-function dropReorderTab(draggedId, targetId) {
-  if (!draggedId || draggedId === targetId) return;
-  mutate(() => {
-    const fromIdx = state.data.sections.findIndex(s => s.id === draggedId);
-    if (fromIdx < 0) return;
-    const [moved] = state.data.sections.splice(fromIdx, 1);
-    const toIdx = state.data.sections.findIndex(s => s.id === targetId);
-    state.data.sections.splice(toIdx < 0 ? state.data.sections.length : toIdx, 0, moved);
+    const fi = state.data.sections.findIndex(s => s.id === dId); if (fi < 0) return;
+    const [m] = state.data.sections.splice(fi, 1);
+    const ti = state.data.sections.findIndex(s => s.id === tId);
+    state.data.sections.splice(ti < 0 ? state.data.sections.length : ti, 0, m);
   });
 }
 
-async function refresh() {
-  const loaded = await loadData();
-  if (loaded) { state.data = loaded; render(); }
+async function refresh() { const l = await loadData(); if (l) { state.data = l; render(); } }
+
+// ==============================================
+// Interactions (prompts + location editor)
+// ==============================================
+function manageItemLink(id) {
+  const i = findItem(id); if (!i) return;
+  const v = prompt(i.link ? 'Modifier le lien (vide pour retirer) :' : 'Ajouter un lien (URL) :', i.link || '');
+  if (v === null) return;
+  updateItemLink(id, v);
+}
+function manageSubtaskLink(iid, sid) {
+  const i = findItem(iid); if (!i) return;
+  const st = i.subtasks.find(x => x.id === sid); if (!st) return;
+  const v = prompt(st.link ? 'Modifier le lien (vide pour retirer) :' : 'Ajouter un lien (URL) :', st.link || '');
+  if (v === null) return;
+  updateSubtaskLink(iid, sid, v);
+}
+function manageItemPrice(id) {
+  const i = findItem(id); if (!i) return;
+  const current = i.price ? String(i.price).replace('.', ',') : '';
+  const v = prompt('Prix en € (vide pour retirer) :', current);
+  if (v === null) return;
+  updateItemPrice(id, v);
+}
+function manageSubtaskPrice(iid, sid) {
+  const i = findItem(iid); if (!i) return;
+  const st = i.subtasks.find(x => x.id === sid); if (!st) return;
+  const current = st.price ? String(st.price).replace('.', ',') : '';
+  const v = prompt('Prix en € (vide pour retirer) :', current);
+  if (v === null) return;
+  updateSubtaskPrice(iid, sid, v);
 }
 
-// Link prompt
-function manageItemLink(itemId) {
-  const item = findItem(itemId); if (!item) return;
-  const current = item.link || '';
-  const val = prompt(current ? 'Modifier le lien (laisser vide pour supprimer) :' : 'Ajouter un lien (URL) :', current);
-  if (val === null) return;
-  updateItemLink(itemId, val);
+function toggleLocationEditor(key) {
+  state.expandedLocation[key] = !state.expandedLocation[key];
+  render();
 }
-function manageSubtaskLink(itemId, stId) {
-  const item = findItem(itemId); if (!item) return;
-  const st = item.subtasks.find(s => s.id === stId); if (!st) return;
-  const current = st.link || '';
-  const val = prompt(current ? 'Modifier le lien (laisser vide pour supprimer) :' : 'Ajouter un lien (URL) :', current);
-  if (val === null) return;
-  updateSubtaskLink(itemId, stId, val);
+
+// ==============================================
+// Context menu
+// ==============================================
+function openTabContextMenu(tabId, x, y) {
+  // Keep menu on screen
+  const W = window.innerWidth, H = window.innerHeight;
+  const mw = 220, mh = 170;
+  if (x + mw > W - 10) x = W - mw - 10;
+  if (y + mh > H - 10) y = H - mh - 10;
+  state.contextMenu = { type: 'tab', id: tabId, x, y };
+  render();
+}
+function closeContextMenu() { if (state.contextMenu) { state.contextMenu = null; render(); } }
+
+function ctxRenameTab(id) {
+  closeContextMenu();
+  const sec = state.data.sections.find(s => s.id === id); if (!sec) return;
+  const newTitle = prompt('Nouveau nom de la section :', sec.title);
+  if (newTitle === null || !newTitle.trim()) return;
+  updateSectionTitle(id, newTitle, undefined, undefined);
+}
+function ctxChangeEmojiTab(id) {
+  closeContextMenu();
+  const sec = state.data.sections.find(s => s.id === id); if (!sec) return;
+  const newEmoji = prompt('Nouvel emoji (1-4 caractères) :', sec.emoji);
+  if (newEmoji === null || !newEmoji.trim()) return;
+  updateSectionTitle(id, undefined, undefined, newEmoji);
+}
+function ctxEditSubtitleTab(id) {
+  closeContextMenu();
+  const sec = state.data.sections.find(s => s.id === id); if (!sec) return;
+  const newSub = prompt('Sous-titre (vide pour retirer) :', sec.subtitle || '');
+  if (newSub === null) return;
+  updateSectionTitle(id, undefined, newSub, undefined);
+}
+function ctxDeleteTab(id) {
+  closeContextMenu();
+  deleteSection(id);
 }
 
 // ==============================================
@@ -1463,13 +1130,15 @@ function render() {
   const sec = currentSection();
   const g = globalStats();
   const s = sectionStats(sec);
+  const gTotal = computeGlobalTotal();
+  const sTotal = computeSectionTotal(sec);
 
   app.innerHTML = `
-    ${renderHeader(g)}
+    ${renderHeader(g, gTotal)}
     ${renderTabs()}
     <main>
       <div class="wrap">
-        ${renderSectionHeader(sec, s)}
+        ${renderSectionHeader(sec, s, sTotal)}
         ${renderToolbar()}
         ${renderSectionBody(sec)}
         <div class="footer">
@@ -1477,10 +1146,11 @@ function render() {
         </div>
       </div>
     </main>
+    ${renderContextMenu()}
   `;
 }
 
-function renderHeader(g) {
+function renderHeader(g, gTotal) {
   return `
     <header>
       <div class="wrap">
@@ -1499,7 +1169,10 @@ function renderHeader(g) {
           <span class="progress-value">${g.pct}<span class="pct-sign">%</span></span>
         </div>
         <div class="progress-bar"><div class="progress-fill" style="width:${g.pct}%"></div></div>
-        <div class="progress-count">${g.done} / ${g.total} tâches terminées</div>
+        <div class="progress-count">
+          <span>${g.done} / ${g.total} tâches terminées</span>
+          ${gTotal > 0 ? `<span class="global-total">Total estimé : ${formatPrice(gTotal)}</span>` : ''}
+        </div>
       </div>
     </header>
   `;
@@ -1515,7 +1188,7 @@ function renderTabs() {
             const active = s.id === state.currentSectionId ? ' active' : '';
             const dragging = state.draggedType === 'tab' && state.draggedId === s.id ? ' dragging' : '';
             const dropTarget = state.draggedType === 'tab' && state.dropTargetId === s.id && state.draggedId !== s.id ? ' drop-target' : '';
-            return `<button class="tab${active}${dragging}${dropTarget}" draggable="true" data-drag-type="tab" data-id="${s.id}" data-action="select-section">
+            return `<button class="tab${active}${dragging}${dropTarget}" draggable="true" data-drag-type="tab" data-id="${s.id}" data-action="select-section" title="Clic droit / Double-clic / Appui long pour éditer">
               <span>${s.emoji}</span>
               <span>${escapeHtml(s.title)}</span>
               <span class="count">${st.done}/${st.total}</span>
@@ -1528,10 +1201,29 @@ function renderTabs() {
   `;
 }
 
-function renderSectionHeader(sec, s) {
+function renderContextMenu() {
+  const ctx = state.contextMenu;
+  if (!ctx) return '';
+  if (ctx.type === 'tab') {
+    const sec = state.data.sections.find(s => s.id === ctx.id);
+    if (!sec) return '';
+    return `
+      <div class="ctx-backdrop" data-action="close-context-menu"></div>
+      <div class="ctx-menu" style="top:${ctx.y}px; left:${ctx.x}px;">
+        <div class="ctx-header">${sec.emoji} ${escapeHtml(sec.title)}</div>
+        <button data-action="ctx-rename-tab" data-id="${ctx.id}">${ICO.edit} Renommer la section</button>
+        <button data-action="ctx-emoji-tab" data-id="${ctx.id}">😀 Changer l'emoji</button>
+        <button data-action="ctx-subtitle-tab" data-id="${ctx.id}">${ICO.note} Modifier le sous-titre</button>
+        <div class="ctx-separator"></div>
+        <button data-action="ctx-delete-tab" data-id="${ctx.id}" class="danger">${ICO.trash} Supprimer la section</button>
+      </div>
+    `;
+  }
+  return '';
+}
+
+function renderSectionHeader(sec, s, sTotal) {
   const isEditing = state.editing && state.editing.type === 'section' && state.editing.id === sec.id;
-  const isFirst = state.data.sections[0]?.id === sec.id;
-  const isLast = state.data.sections[state.data.sections.length - 1]?.id === sec.id;
   return `
     <div class="section-header">
       <div class="section-header-left">
@@ -1548,10 +1240,8 @@ function renderSectionHeader(sec, s) {
           <div class="section-title-row">
             <span class="section-title serif" data-action="edit-section" data-id="${sec.id}" title="Cliquer pour renommer">${escapeHtml(sec.title)}</span>
             <span class="section-edit-actions">
-              ${!isFirst ? `<button data-action="move-section-left" data-id="${sec.id}" title="Déplacer à gauche">${ICO.up}</button>` : ''}
-              ${!isLast ? `<button data-action="move-section-right" data-id="${sec.id}" title="Déplacer à droite">${ICO.down}</button>` : ''}
               <button data-action="edit-section" data-id="${sec.id}" title="Renommer / changer emoji">${ICO.edit}</button>
-              <button data-action="delete-section" data-id="${sec.id}" class="danger" title="Supprimer la section">${ICO.trash}</button>
+              <button data-action="open-tab-menu" data-id="${sec.id}" title="Plus d'options">⋯</button>
             </span>
           </div>
           ${sec.subtitle ? `<div class="section-subtitle">${escapeHtml(sec.subtitle)}</div>` : ''}
@@ -1560,6 +1250,7 @@ function renderSectionHeader(sec, s) {
       <div class="section-stats">
         <div class="pct">${s.pct}<span style="font-size:12px;opacity:0.5;font-family:'DM Sans',sans-serif;">%</span></div>
         <div style="font-size:11px;opacity:0.6;">${s.done} / ${s.total}</div>
+        ${sTotal > 0 ? `<div class="section-total">${formatPrice(sTotal)}</div>` : ''}
       </div>
     </div>
   `;
@@ -1592,12 +1283,12 @@ function renderToolbar() {
 function renderSectionBody(sec) {
   let html = '';
   const sectionItems = filterItems(sec.items);
-  const hasSubsections = sec.subsections.length > 0;
+  const hasSub = sec.subsections.length > 0;
 
-  if (sectionItems.length > 0 || !hasSubsections) {
+  if (sectionItems.length > 0 || !hasSub) {
     html += `<div class="items-list">`;
     if (sectionItems.length > 0) html += sectionItems.map(i => renderItem(i)).join('');
-    else if (sec.items.length === 0 && !hasSubsections) html += `<div class="empty-state">Aucune tâche dans cette section.</div>`;
+    else if (sec.items.length === 0 && !hasSub) html += `<div class="empty-state">Aucune tâche dans cette section.</div>`;
     html += `</div>`;
 
     const adding = state.adding && state.adding.type === 'item' && state.adding.parentType === 'section';
@@ -1606,8 +1297,8 @@ function renderSectionBody(sec) {
 
   sec.subsections.forEach(sub => { html += renderSubsection(sub); });
 
-  const addingSub = state.adding && state.adding.type === 'subsection';
-  html += addingSub ? `
+  const addSub = state.adding && state.adding.type === 'subsection';
+  html += addSub ? `
     <div class="add-form" style="margin-top:16px;">
       <input type="text" id="new-subsection-title" placeholder="Nom de la sous-section…" autofocus>
       <div class="row">
@@ -1627,6 +1318,7 @@ function renderSubsection(sub) {
   const adding = state.adding && state.adding.type === 'item' && state.adding.parentType === 'subsection' && state.adding.parentId === sub.id;
   const dragging = state.draggedType === 'subsection' && state.draggedId === sub.id ? ' dragging' : '';
   const dropTarget = state.draggedType === 'subsection' && state.dropTargetId === sub.id && state.draggedId !== sub.id ? ' drop-target' : '';
+  const subTotal = computeSubsectionTotal(sub);
 
   return `
     <div class="subsection${dragging}${dropTarget}" draggable="true" data-drag-type="subsection" data-id="${sub.id}">
@@ -1642,8 +1334,9 @@ function renderSubsection(sub) {
             <button class="btn-ghost" data-action="cancel-edit">✕</button>
           </div>
         ` : `
-          <span class="subsection-title">${escapeHtml(sub.title)}</span>
+          <span class="subsection-title" data-action="edit-subsection" data-id="${sub.id}">${escapeHtml(sub.title)}</span>
           <span class="subsection-count">${doneCount}/${sub.items.length}</span>
+          ${subTotal > 0 ? `<span class="subsection-total">${formatPrice(subTotal)}</span>` : ''}
           <span class="subsection-actions">
             <button data-action="move-subsection-up" data-id="${sub.id}" title="Monter">${ICO.up}</button>
             <button data-action="move-subsection-down" data-id="${sub.id}" title="Descendre">${ICO.down}</button>
@@ -1668,6 +1361,7 @@ function renderItem(item) {
   const isEditing = state.editing && state.editing.type === 'item' && state.editing.id === item.id;
   const notesOpen = state.expandedNotes[item.id];
   const subtasksOpen = state.expandedSubtasks[item.id];
+  const locationOpen = state.expandedLocation[item.id];
   const isDragged = state.draggedType === 'item' && state.draggedId === item.id;
   const isDropTarget = state.draggedType === 'item' && state.dropTargetId === item.id && state.draggedId !== item.id;
   const prio = item.priority || 'medium';
@@ -1676,6 +1370,11 @@ function renderItem(item) {
   const progress = itemProgress(item);
   const effectiveDone = itemEffectiveDone(item);
   const hasLink = !!item.link;
+  const hasLocation = !!item.location;
+  const hasOwnPrice = item.price && item.price > 0;
+  const itemTotal = computeItemTotal(item);
+  // Show computed total if item has subtasks with prices or own price
+  const showTotal = itemTotal > 0;
 
   if (isEditing) {
     return `
@@ -1700,6 +1399,14 @@ function renderItem(item) {
     ? (effectiveDone ? ICO.checkFull : (progress.done > 0 ? ICO.checkPartial : ICO.circle))
     : (item.done ? ICO.checkFull : ICO.circle);
 
+  // Price display: show computed total if item has subtasks, else own price
+  let priceDisplay = '';
+  if (showTotal) {
+    const isComputed = hasSubtasks && !hasOwnPrice;
+    const tooltip = isComputed ? 'Total calculé depuis les sous-tâches' : 'Cliquer pour modifier';
+    priceDisplay = `<span class="price-pill${isComputed ? ' computed' : ''}" data-action="manage-item-price" data-id="${item.id}" title="${tooltip}">${formatPrice(itemTotal)}</span>`;
+  }
+
   return `
     <div class="${cls}" data-id="${item.id}" draggable="true" data-drag-type="item">
       <div class="item-prio-bar" style="background:${dotColors[prio]};"></div>
@@ -1714,33 +1421,58 @@ function renderItem(item) {
           <div class="item-text-row">
             <span class="item-text${effectiveDone ? ' done' : ''}">${escapeHtml(item.text)}</span>
             ${hasLink ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer" class="link-inline" title="${escapeHtml(item.link)}">${ICO.linkSm}</a>` : ''}
+            ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(item.location.color)};" data-action="toggle-location-editor" data-key="${item.id}" title="Cliquer pour modifier">${escapeHtml(item.location.name)}</span>` : ''}
+            ${priceDisplay}
             ${hasSubtasks ? `<span class="subtask-badge${effectiveDone ? ' all-done' : ''}" data-action="toggle-subtasks-display" data-id="${item.id}">
               ${subtasksOpen ? ICO.chevronD : ICO.chevronR} ${progress.done}/${progress.total}
             </span>` : ''}
             <select class="prio-select prio-${prio}" data-action="change-prio" data-id="${item.id}">
-              ${Object.entries(PRIORITIES).map(([k,v]) =>
-                `<option value="${k}"${k===prio?' selected':''}>${v}</option>`
-              ).join('')}
+              ${Object.entries(PRIORITIES).map(([k,v]) => `<option value="${k}"${k===prio?' selected':''}>${v}</option>`).join('')}
             </select>
           </div>
           ${notesOpen ? `
             <textarea class="notes-textarea" data-action="update-notes" data-id="${item.id}" placeholder="Notes, liens, contacts, références…">${escapeHtml(item.notes || '')}</textarea>
           ` : (item.notes ? `
             <div class="notes-preview" data-action="toggle-notes-display" data-id="${item.id}">
-              ${ICO.note}
-              <span>${escapeHtml(item.notes.slice(0, 80))}${item.notes.length > 80 ? '…' : ''}</span>
+              ${ICO.note}<span>${escapeHtml(item.notes.slice(0, 80))}${item.notes.length > 80 ? '…' : ''}</span>
             </div>
           ` : '')}
+          ${locationOpen ? renderLocationEditor(item, 'item') : ''}
         </div>
         <div class="item-actions">
-          ${!hasSubtasks ? `<button data-action="toggle-subtasks-display" data-id="${item.id}" title="Ajouter des sous-tâches">${ICO.chevronR}</button>` : ''}
-          <button data-action="manage-item-link" data-id="${item.id}" title="${hasLink ? 'Modifier le lien' : 'Ajouter un lien'}"${hasLink ? ' class="has-link"' : ''}>${ICO.link}</button>
-          <button data-action="toggle-notes-display" data-id="${item.id}" title="Notes"${item.notes?' class="has-notes"':''}>${ICO.note}</button>
+          ${!hasSubtasks ? `<button data-action="toggle-subtasks-display" data-id="${item.id}" title="Sous-tâches">${ICO.chevronR}</button>` : ''}
+          <button data-action="toggle-location-editor" data-key="${item.id}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter un lieu'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
+          <button data-action="manage-item-price" data-id="${item.id}" title="${hasOwnPrice ? 'Modifier le prix' : 'Ajouter un prix'}"${hasOwnPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
+          <button data-action="manage-item-link" data-id="${item.id}" title="${hasLink ? 'Modifier le lien' : 'Ajouter un lien'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
+          <button data-action="toggle-notes-display" data-id="${item.id}" title="Notes"${item.notes?' class="has-data"':''}>${ICO.note}</button>
           <button data-action="edit-item" data-id="${item.id}" title="Modifier">${ICO.edit}</button>
           <button data-action="delete-item" data-id="${item.id}" class="delete" title="Supprimer">${ICO.trash}</button>
         </div>
       </div>
       ${subtasksOpen ? renderSubtasks(item) : ''}
+    </div>
+  `;
+}
+
+function renderLocationEditor(item, kind, parentItemId) {
+  // kind = 'item' or 'subtask'
+  const key = kind === 'item' ? item.id : 'st:' + item.id;
+  const current = item.location || { name: '', color: COLOR_PALETTE[0] };
+  const editorId = kind === 'item' ? `loc-editor-${item.id}` : `loc-editor-st-${item.id}`;
+  const dataAttr = kind === 'item'
+    ? `data-item-id="${item.id}"`
+    : `data-parent-id="${parentItemId}" data-subtask-id="${item.id}"`;
+  return `
+    <div class="${kind === 'item' ? 'location-editor' : 'subtask-location-editor'}" id="${editorId}">
+      <input type="text" data-role="loc-name" ${dataAttr} placeholder="Magasin / Lieu (ex: IKEA, Amazon, Fnac)" value="${escapeHtml(current.name || '')}" autofocus>
+      <div class="color-swatches" ${dataAttr}>
+        ${COLOR_PALETTE.map(c => `<div class="color-swatch${c === current.color ? ' selected' : ''}" data-role="loc-color" data-color="${c}" style="background:${c};"></div>`).join('')}
+      </div>
+      <div class="row">
+        <button class="btn-primary" data-action="save-location" data-kind="${kind}" data-key="${key}" data-item-id="${kind === 'item' ? item.id : parentItemId}" data-subtask-id="${kind === 'subtask' ? item.id : ''}">Enregistrer</button>
+        ${current.name ? `<button class="btn-danger" data-action="remove-location" data-kind="${kind}" data-key="${key}" data-item-id="${kind === 'item' ? item.id : parentItemId}" data-subtask-id="${kind === 'subtask' ? item.id : ''}">Retirer</button>` : ''}
+        <button class="btn-ghost" data-action="cancel-location-editor" data-key="${key}">Annuler</button>
+      </div>
     </div>
   `;
 }
@@ -1751,6 +1483,10 @@ function renderSubtasks(item) {
   item.subtasks.forEach(st => {
     const editingSt = state.editing && state.editing.type === 'subtask' && state.editing.id === st.id;
     const hasLink = !!st.link;
+    const hasLocation = !!st.location;
+    const hasPrice = st.price && st.price > 0;
+    const locKey = 'st:' + st.id;
+    const locOpen = state.expandedLocation[locKey];
     if (editingSt) {
       html += `
         <div class="subtask-row">
@@ -1767,13 +1503,18 @@ function renderSubtasks(item) {
           </button>
           <span class="subtask-text${st.done?' done':''}">${escapeHtml(st.text)}</span>
           ${hasLink ? `<a href="${escapeHtml(st.link)}" target="_blank" rel="noopener noreferrer" class="link-inline" title="${escapeHtml(st.link)}">${ICO.linkSm}</a>` : ''}
+          ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(st.location.color)};" data-action="toggle-location-editor" data-key="${locKey}">${escapeHtml(st.location.name)}</span>` : ''}
+          ${hasPrice ? `<span class="price-pill" data-action="manage-subtask-price" data-item-id="${item.id}" data-id="${st.id}">${formatPrice(st.price)}</span>` : ''}
           <span class="subtask-actions">
-            <button data-action="manage-subtask-link" data-item-id="${item.id}" data-id="${st.id}" title="${hasLink ? 'Modifier lien' : 'Ajouter lien'}"${hasLink ? ' class="has-link"' : ''}>${ICO.link}</button>
+            <button data-action="toggle-location-editor" data-key="${locKey}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter lieu'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
+            <button data-action="manage-subtask-price" data-item-id="${item.id}" data-id="${st.id}" title="${hasPrice ? 'Modifier prix' : 'Ajouter prix'}"${hasPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
+            <button data-action="manage-subtask-link" data-item-id="${item.id}" data-id="${st.id}" title="${hasLink ? 'Modifier lien' : 'Ajouter lien'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
             <button data-action="move-subtask-up" data-item-id="${item.id}" data-id="${st.id}">${ICO.up}</button>
             <button data-action="move-subtask-down" data-item-id="${item.id}" data-id="${st.id}">${ICO.down}</button>
             <button data-action="edit-subtask" data-item-id="${item.id}" data-id="${st.id}">${ICO.edit}</button>
             <button data-action="delete-subtask" data-item-id="${item.id}" data-id="${st.id}" class="danger">${ICO.trash}</button>
           </span>
+          ${locOpen ? renderLocationEditor(st, 'subtask', item.id) : ''}
         </div>
       `;
     }
@@ -1800,9 +1541,7 @@ function renderAddItemForm(parentType, parentId) {
       <input type="text" id="new-item-text" placeholder="Nouvelle tâche…" autofocus value="${escapeHtml((state.adding && state.adding.text) || '')}">
       <div class="row">
         <select id="new-item-prio">
-          ${Object.entries(PRIORITIES).map(([k,v]) =>
-            `<option value="${k}"${k===prio?' selected':''}>${v}</option>`
-          ).join('')}
+          ${Object.entries(PRIORITIES).map(([k,v]) => `<option value="${k}"${k===prio?' selected':''}>${v}</option>`).join('')}
         </select>
         <button class="btn-primary" data-action="confirm-add-item" data-parent-type="${parentType}" data-parent-id="${parentId || ''}">Ajouter</button>
         <button class="btn-ghost" data-action="cancel-add">Annuler</button>
@@ -1816,14 +1555,29 @@ function renderAddItemForm(parentType, parentId) {
 // ==============================================
 function handleClick(e) {
   const el = e.target.closest('[data-action]');
-  if (!el) return;
+
+  // Color swatch click
+  const sw = e.target.closest('[data-role="loc-color"]');
+  if (sw) {
+    // Mark as selected visually
+    const container = sw.parentElement;
+    container.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('selected'));
+    sw.classList.add('selected');
+    return;
+  }
+
+  if (!el) {
+    // Close context menu on random click
+    if (state.contextMenu) closeContextMenu();
+    return;
+  }
+
   const a = el.dataset.action;
   const id = el.dataset.id;
 
   switch (a) {
     case 'refresh': refresh(); break;
     case 'select-section': {
-      // Don't re-render if drag just happened on this tab
       if (state.draggedType) return;
       state.currentSectionId = id;
       state.search = '';
@@ -1831,6 +1585,7 @@ function handleClick(e) {
       state.adding = null;
       state.expandedNotes = {};
       state.expandedSubtasks = {};
+      state.expandedLocation = {};
       render();
       break;
     }
@@ -1842,8 +1597,7 @@ function handleClick(e) {
       break;
     }
     case 'edit-section': {
-      const sec = state.data.sections.find(s => s.id === id);
-      if (!sec) return;
+      const sec = state.data.sections.find(s => s.id === id); if (!sec) return;
       state.editing = { type: 'section', id, value: sec.title };
       render();
       setTimeout(() => document.getElementById('inline-edit-title')?.focus(), 30);
@@ -1857,9 +1611,16 @@ function handleClick(e) {
       updateSectionTitle(state.currentSectionId, title, subtitle, emoji);
       break;
     }
-    case 'delete-section': deleteSection(id); break;
-    case 'move-section-left': moveSectionTab(id, 'left'); break;
-    case 'move-section-right': moveSectionTab(id, 'right'); break;
+    case 'open-tab-menu': {
+      const rect = el.getBoundingClientRect();
+      openTabContextMenu(id, rect.left, rect.bottom + 4);
+      break;
+    }
+    case 'close-context-menu': closeContextMenu(); break;
+    case 'ctx-rename-tab': ctxRenameTab(id); break;
+    case 'ctx-emoji-tab': ctxChangeEmojiTab(id); break;
+    case 'ctx-subtitle-tab': ctxEditSubtitleTab(id); break;
+    case 'ctx-delete-tab': ctxDeleteTab(id); break;
 
     case 'clear-search': state.search = ''; render(); break;
 
@@ -1894,7 +1655,7 @@ function handleClick(e) {
     }
     case 'edit-subsection': {
       const sec = currentSection();
-      const sub = sec.subsections.find(s => s.id === id);
+      const sub = sec.subsections.find(s => s.id === id); if (!sub) return;
       state.editing = { type: 'subsection', id, value: sub.title };
       render();
       setTimeout(() => document.getElementById('inline-edit-subsection-' + id)?.focus(), 30);
@@ -1914,7 +1675,7 @@ function handleClick(e) {
     case 'toggle-item': toggleItemDone(id); break;
     case 'change-prio': break;
     case 'edit-item': {
-      const item = findItem(id);
+      const item = findItem(id); if (!item) return;
       state.editing = { type: 'item', id, value: item.text };
       render();
       setTimeout(() => document.getElementById('inline-edit-item-' + id)?.focus(), 30);
@@ -1933,8 +1694,48 @@ function handleClick(e) {
     case 'toggle-notes-display': state.expandedNotes[id] = !state.expandedNotes[id]; render(); break;
     case 'toggle-subtasks-display': state.expandedSubtasks[id] = !state.expandedSubtasks[id]; render(); break;
     case 'manage-item-link': manageItemLink(id); break;
-    case 'manage-subtask-link': manageSubtaskLink(el.dataset.itemId, id); break;
+    case 'manage-item-price': manageItemPrice(id); break;
 
+    case 'toggle-location-editor': {
+      const key = el.dataset.key;
+      toggleLocationEditor(key);
+      break;
+    }
+    case 'cancel-location-editor': {
+      const key = el.dataset.key;
+      state.expandedLocation[key] = false;
+      render();
+      break;
+    }
+    case 'save-location': {
+      const kind = el.dataset.kind;
+      const key = el.dataset.key;
+      const itemId = el.dataset.itemId;
+      const subtaskId = el.dataset.subtaskId;
+      const editorId = kind === 'item' ? `loc-editor-${itemId}` : `loc-editor-st-${subtaskId}`;
+      const editor = document.getElementById(editorId);
+      const nameInput = editor.querySelector('[data-role="loc-name"]');
+      const selectedSwatch = editor.querySelector('.color-swatch.selected');
+      const name = nameInput.value;
+      const color = selectedSwatch ? selectedSwatch.dataset.color : COLOR_PALETTE[0];
+      state.expandedLocation[key] = false;
+      if (kind === 'item') updateItemLocation(itemId, name, color);
+      else updateSubtaskLocation(itemId, subtaskId, name, color);
+      break;
+    }
+    case 'remove-location': {
+      const kind = el.dataset.kind;
+      const key = el.dataset.key;
+      const itemId = el.dataset.itemId;
+      const subtaskId = el.dataset.subtaskId;
+      state.expandedLocation[key] = false;
+      if (kind === 'item') updateItemLocation(itemId, '', '');
+      else updateSubtaskLocation(itemId, subtaskId, '', '');
+      break;
+    }
+
+    case 'manage-subtask-link': manageSubtaskLink(el.dataset.itemId, id); break;
+    case 'manage-subtask-price': manageSubtaskPrice(el.dataset.itemId, id); break;
     case 'toggle-subtask': toggleSubtaskDone(el.dataset.itemId, id); break;
     case 'start-add-subtask': {
       state.adding = { type: 'subtask', parentId: id };
@@ -1951,8 +1752,8 @@ function handleClick(e) {
     }
     case 'edit-subtask': {
       const itemId = el.dataset.itemId;
-      const item = findItem(itemId);
-      const st = item.subtasks.find(s => s.id === id);
+      const item = findItem(itemId); if (!item) return;
+      const st = item.subtasks.find(s => s.id === id); if (!st) return;
       state.editing = { type: 'subtask', id, parentId: itemId, value: st.text };
       render();
       setTimeout(() => document.getElementById('inline-edit-subtask-' + id)?.focus(), 30);
@@ -1974,8 +1775,7 @@ function handleClick(e) {
 function handleChange(e) {
   const el = e.target.closest('[data-action]');
   if (!el) return;
-  const a = el.dataset.action;
-  const id = el.dataset.id;
+  const a = el.dataset.action; const id = el.dataset.id;
   if (a === 'change-prio') changeItemPriority(id, e.target.value);
   if (a === 'set-filter') { state.filter = e.target.value; render(); }
   if (a === 'set-prio-filter') { state.priorityFilter = e.target.value; render(); }
@@ -1987,109 +1787,112 @@ function handleInput(e) {
     state.search = el.value;
     const cursor = el.selectionStart;
     render();
-    const newInput = document.getElementById('search-input');
-    if (newInput) { newInput.focus(); newInput.setSelectionRange(cursor, cursor); }
+    const ni = document.getElementById('search-input');
+    if (ni) { ni.focus(); ni.setSelectionRange(cursor, cursor); }
     return;
   }
-  const actionEl = el.closest('[data-action]');
-  if (actionEl && actionEl.dataset.action === 'update-notes') {
-    updateItemNotes(actionEl.dataset.id, el.value);
-  }
+  const ae = el.closest('[data-action]');
+  if (ae && ae.dataset.action === 'update-notes') updateItemNotes(ae.dataset.id, el.value);
 }
 
 function handleKeydown(e) {
   const el = e.target;
   if (e.key === 'Enter' && !e.shiftKey) {
     if (el.id === 'inline-edit-title') { document.querySelector('[data-action="save-section-edit"]')?.click(); e.preventDefault(); }
-    if (el.id?.startsWith('inline-edit-subsection-')) {
-      const id = el.id.replace('inline-edit-subsection-', '');
-      document.querySelector(`[data-action="save-subsection-edit"][data-id="${id}"]`)?.click();
-      e.preventDefault();
-    }
-    if (el.id?.startsWith('inline-edit-item-')) {
-      const id = el.id.replace('inline-edit-item-', '');
-      document.querySelector(`[data-action="save-item-edit"][data-id="${id}"]`)?.click();
-      e.preventDefault();
-    }
-    if (el.id?.startsWith('inline-edit-subtask-')) {
-      const id = el.id.replace('inline-edit-subtask-', '');
-      document.querySelector(`[data-action="save-subtask-edit"][data-id="${id}"]`)?.click();
-      e.preventDefault();
-    }
+    if (el.id?.startsWith('inline-edit-subsection-')) { document.querySelector(`[data-action="save-subsection-edit"][data-id="${el.id.replace('inline-edit-subsection-','')}"]`)?.click(); e.preventDefault(); }
+    if (el.id?.startsWith('inline-edit-item-')) { document.querySelector(`[data-action="save-item-edit"][data-id="${el.id.replace('inline-edit-item-','')}"]`)?.click(); e.preventDefault(); }
+    if (el.id?.startsWith('inline-edit-subtask-')) { document.querySelector(`[data-action="save-subtask-edit"][data-id="${el.id.replace('inline-edit-subtask-','')}"]`)?.click(); e.preventDefault(); }
     if (el.id === 'new-item-text') { document.querySelector('[data-action="confirm-add-item"]')?.click(); e.preventDefault(); }
     if (el.id === 'new-subsection-title') { document.querySelector('[data-action="confirm-add-subsection"]')?.click(); e.preventDefault(); }
     if (el.id === 'new-subtask-text') { document.querySelector('[data-action="confirm-add-subtask"]')?.click(); e.preventDefault(); }
   }
   if (e.key === 'Escape') {
+    if (state.contextMenu) { closeContextMenu(); return; }
     if (state.editing) { state.editing = null; render(); }
     else if (state.adding) { state.adding = null; render(); }
   }
 }
 
 // ==============================================
-// Drag & Drop (tabs, subsections, items)
+// Context menu triggers (right-click, dblclick, long-press)
 // ==============================================
-function handleDragStart(e) {
-  const draggable = e.target.closest('[data-drag-type]');
-  if (!draggable) { return; }
-  const type = draggable.dataset.dragType;
-  const id = draggable.dataset.id;
-  state.draggedType = type;
-  state.draggedId = id;
-  e.dataTransfer.effectAllowed = 'move';
-  try { e.dataTransfer.setData('text/plain', id); } catch (err) {}
-  draggable.classList.add('dragging');
+function handleContextMenu(e) {
+  const tab = e.target.closest('.tab[data-drag-type="tab"]');
+  if (!tab) return;
+  e.preventDefault();
+  openTabContextMenu(tab.dataset.id, e.clientX, e.clientY);
+}
+function handleDblClick(e) {
+  const tab = e.target.closest('.tab[data-drag-type="tab"]');
+  if (!tab) return;
+  e.preventDefault();
+  ctxRenameTab(tab.dataset.id);
 }
 
+let longPressTimer = null;
+let longPressFired = false;
+function handleTouchStart(e) {
+  const tab = e.target.closest('.tab[data-drag-type="tab"]');
+  if (!tab) return;
+  longPressFired = false;
+  longPressTimer = setTimeout(() => {
+    const rect = tab.getBoundingClientRect();
+    longPressFired = true;
+    // Vibrate if available
+    if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) {}
+    openTabContextMenu(tab.dataset.id, rect.left + rect.width/2 - 100, rect.bottom + 6);
+  }, 500);
+}
+function clearLongPress() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } }
+function handleTouchEnd(e) {
+  clearLongPress();
+  if (longPressFired) { e.preventDefault(); longPressFired = false; }
+}
+
+// ==============================================
+// Drag & Drop
+// ==============================================
+function handleDragStart(e) {
+  const d = e.target.closest('[data-drag-type]');
+  if (!d) return;
+  state.draggedType = d.dataset.dragType;
+  state.draggedId = d.dataset.id;
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', d.dataset.id); } catch (err) {}
+  d.classList.add('dragging');
+}
 function handleDragOver(e) {
   if (!state.draggedType || !state.draggedId) return;
-  let target;
-  if (state.draggedType === 'item') target = e.target.closest('.item[data-drag-type="item"]');
-  else if (state.draggedType === 'subsection') target = e.target.closest('.subsection[data-drag-type="subsection"]');
-  else if (state.draggedType === 'tab') target = e.target.closest('.tab[data-drag-type="tab"]');
-  if (!target) return;
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  const id = target.dataset.id;
+  let t;
+  if (state.draggedType === 'item') t = e.target.closest('.item[data-drag-type="item"]');
+  else if (state.draggedType === 'subsection') t = e.target.closest('.subsection[data-drag-type="subsection"]');
+  else if (state.draggedType === 'tab') t = e.target.closest('.tab[data-drag-type="tab"]');
+  if (!t) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  const id = t.dataset.id;
   if (id !== state.draggedId && state.dropTargetId !== id) {
     state.dropTargetId = id;
     document.querySelectorAll('.drop-target').forEach(x => x.classList.remove('drop-target'));
-    target.classList.add('drop-target');
+    t.classList.add('drop-target');
   }
 }
-
 function handleDrop(e) {
   if (!state.draggedType || !state.draggedId) return;
-  let target;
-  if (state.draggedType === 'item') target = e.target.closest('.item[data-drag-type="item"]');
-  else if (state.draggedType === 'subsection') target = e.target.closest('.subsection[data-drag-type="subsection"]');
-  else if (state.draggedType === 'tab') target = e.target.closest('.tab[data-drag-type="tab"]');
-  if (!target) { handleDragEnd(); return; }
+  let t;
+  if (state.draggedType === 'item') t = e.target.closest('.item[data-drag-type="item"]');
+  else if (state.draggedType === 'subsection') t = e.target.closest('.subsection[data-drag-type="subsection"]');
+  else if (state.draggedType === 'tab') t = e.target.closest('.tab[data-drag-type="tab"]');
+  if (!t) { handleDragEnd(); return; }
   e.preventDefault();
-  const tId = target.dataset.id;
-  const dId = state.draggedId;
-  const type = state.draggedType;
-  state.draggedType = null;
-  state.draggedId = null;
-  state.dropTargetId = null;
+  const tId = t.dataset.id; const dId = state.draggedId; const type = state.draggedType;
+  state.draggedType = null; state.draggedId = null; state.dropTargetId = null;
   if (type === 'item') dropReorderItem(dId, tId);
   else if (type === 'subsection') dropReorderSubsection(dId, tId);
   else if (type === 'tab') dropReorderTab(dId, tId);
 }
-
 function handleDragEnd() {
-  // Clear state but don't trigger re-render if a drop already happened
-  const wasDragging = state.draggedType !== null;
-  state.draggedType = null;
-  state.draggedId = null;
-  state.dropTargetId = null;
-  document.querySelectorAll('.dragging, .drop-target').forEach(x => {
-    x.classList.remove('dragging'); x.classList.remove('drop-target');
-  });
-  // Prevent tab click after drag (slight delay)
-  if (wasDragging) {
-    setTimeout(() => {}, 0); // noop, just ensure sequence
-  }
+  state.draggedType = null; state.draggedId = null; state.dropTargetId = null;
+  document.querySelectorAll('.dragging, .drop-target').forEach(x => { x.classList.remove('dragging'); x.classList.remove('drop-target'); });
 }
 
 // ==============================================
@@ -2097,10 +1900,7 @@ function handleDragEnd() {
 // ==============================================
 (async function init() {
   let loaded = await loadData();
-  if (!loaded) {
-    loaded = JSON.parse(JSON.stringify(DEFAULT_DATA));
-    await saveData(loaded);
-  }
+  if (!loaded) { loaded = JSON.parse(JSON.stringify(DEFAULT_DATA)); await saveData(loaded); }
   state.data = loaded;
 
   const app = document.getElementById('app');
@@ -2112,6 +1912,12 @@ function handleDragEnd() {
   app.addEventListener('dragover', handleDragOver);
   app.addEventListener('drop', handleDrop);
   app.addEventListener('dragend', handleDragEnd);
+  app.addEventListener('contextmenu', handleContextMenu);
+  app.addEventListener('dblclick', handleDblClick);
+  app.addEventListener('touchstart', handleTouchStart, { passive: true });
+  app.addEventListener('touchend', handleTouchEnd);
+  app.addEventListener('touchmove', clearLongPress, { passive: true });
+  app.addEventListener('touchcancel', clearLongPress);
 
   render();
 })();
