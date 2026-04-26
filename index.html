@@ -304,6 +304,134 @@
   .ctx-menu button.danger:hover { background: var(--crit-bg); }
   .ctx-menu .ctx-separator { height: 1px; background: var(--line); margin: 4px 0; }
   .ctx-header { padding: 8px 12px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; }
+
+  /* FILTER BANNER (global location filter) */
+  .filter-banner {
+    margin: 0 0 16px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(194, 65, 12, 0.07), rgba(14, 42, 71, 0.05));
+    border: 1px solid rgba(194, 65, 12, 0.25);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .filter-banner-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; }
+  .filter-banner .location-pill { font-size: 12px; padding: 3px 12px; cursor: default; }
+  .filter-banner .location-pill:hover { opacity: 1; }
+  .filter-banner-count { font-size: 12px; opacity: 0.7; font-family: 'Fraunces', serif; font-style: italic; }
+  .filter-banner-clear {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,0,0,0.04);
+  }
+  .filter-banner-clear:hover { background: var(--crit-bg); color: var(--crit-fg); }
+
+  /* Image thumbnail */
+  .image-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: zoom-in;
+    border: 1px solid var(--line);
+    padding: 0;
+    background: white;
+    transition: transform 0.1s;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .image-thumb:hover { transform: scale(1.15); border-color: var(--accent); }
+  .image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* LIGHTBOX */
+  .lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    cursor: zoom-out;
+    animation: lbFade 0.15s ease-out;
+  }
+  @keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
+  .lightbox-content {
+    position: relative;
+    max-width: 96vw;
+    max-height: 96vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: default;
+  }
+  .lightbox-content img {
+    max-width: 96vw;
+    max-height: 78vh;
+    border-radius: 4px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    background: white;
+    display: block;
+  }
+  .lightbox-caption {
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.9;
+    max-width: 600px;
+    line-height: 1.4;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+  }
+  .lightbox-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .lightbox-actions button {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--ink);
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .lightbox-actions button:hover { background: white; }
+  .lightbox-actions button.btn-danger { background: rgba(220, 38, 38, 0.95); color: white; }
+  .lightbox-actions button.btn-danger:hover { background: #DC2626; }
+  .lightbox-close {
+    position: absolute;
+    top: -42px;
+    right: 0;
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .lightbox-close:hover { background: rgba(255, 255, 255, 0.32); }
+
+  /* Pill click vs editor: pill is clickable to filter, edit via tag icon button */
+  .location-pill {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 </style>
 </head>
 <body>
@@ -337,11 +465,11 @@ function genId() {
   return (crypto.randomUUID && crypto.randomUUID()) || 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2);
 }
 function I(text, priority, notes) {
-  return { id: genId(), text, priority: priority || 'medium', notes: notes || '', link: '', price: 0, location: null, done: false, subtasks: [] };
+  return { id: genId(), text, priority: priority || 'medium', notes: notes || '', link: '', price: 0, location: null, image: '', done: false, subtasks: [] };
 }
 function IwithFamily(text, priority) {
   const item = I(text, priority);
-  item.subtasks = FAMILY.map(name => ({ id: genId(), text: name, done: false, link: '', price: 0, location: null }));
+  item.subtasks = FAMILY.map(name => ({ id: genId(), text: name, done: false, link: '', price: 0, location: null, image: '' }));
   return item;
 }
 function SUB(title, items) { return { id: genId(), title, collapsed: false, items: items || [] }; }
@@ -635,16 +763,18 @@ const DEFAULT_DATA = {
 // ==============================================
 function migrate(data) {
   if (!data || !data.sections) return null;
-  data.version = 3;
+  data.version = 4;
   const fixItem = (i) => {
     if (!Array.isArray(i.subtasks)) i.subtasks = [];
     if (typeof i.link !== 'string') i.link = '';
     if (typeof i.price !== 'number') i.price = 0;
     if (!i.location || typeof i.location !== 'object') i.location = null;
+    if (typeof i.image !== 'string') i.image = '';
     i.subtasks.forEach(st => {
       if (typeof st.link !== 'string') st.link = '';
       if (typeof st.price !== 'number') st.price = 0;
       if (!st.location || typeof st.location !== 'object') st.location = null;
+      if (typeof st.image !== 'string') st.image = '';
     });
   };
   data.sections.forEach(s => {
@@ -687,6 +817,8 @@ const ICO = {
   plusSm: '<svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
   save: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
   refresh: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>',
+  image: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  filter: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
 };
 
 // ==============================================
@@ -698,6 +830,7 @@ let state = {
   search: '',
   filter: 'all',
   priorityFilter: 'all',
+  locationFilter: null,        // string (location name) or null
   expandedNotes: {},
   expandedSubtasks: {},
   expandedLocation: {},        // itemId or 'st:subtaskId' -> bool
@@ -708,6 +841,7 @@ let state = {
   dropTargetId: null,
   saving: false,
   contextMenu: null,           // { type: 'tab', id, x, y }
+  lightbox: null,              // { src, caption, kind, itemId, subtaskId }
 };
 let saveTimeout = null;
 
@@ -862,11 +996,65 @@ function matchSearch(item, q) {
   if (item.subtasks && item.subtasks.some(st => st.text.toLowerCase().includes(q) || (st.location && st.location.name && st.location.name.toLowerCase().includes(q)))) return true;
   return false;
 }
+function locationMatchesFilter(loc, filter) {
+  if (!filter) return true;
+  return !!(loc && loc.name === filter);
+}
+function itemMatchesLocationFilter(item) {
+  if (!state.locationFilter) return true;
+  if (locationMatchesFilter(item.location, state.locationFilter)) return true;
+  if (item.subtasks && item.subtasks.some(st => locationMatchesFilter(st.location, state.locationFilter))) return true;
+  return false;
+}
+function visibleSubtasks(item) {
+  if (!state.locationFilter) return item.subtasks || [];
+  // If parent matches the filter, show all subtasks (parent IS this location)
+  if (locationMatchesFilter(item.location, state.locationFilter)) return item.subtasks || [];
+  // Otherwise show only matching subtasks
+  return (item.subtasks || []).filter(st => locationMatchesFilter(st.location, state.locationFilter));
+}
+function getAllLocations() {
+  const map = new Map(); // name -> color
+  if (!state.data) return [];
+  state.data.sections.forEach(sec => {
+    const proc = (item) => {
+      if (item.location && item.location.name) {
+        if (!map.has(item.location.name)) map.set(item.location.name, item.location.color);
+      }
+      if (item.subtasks) item.subtasks.forEach(st => {
+        if (st.location && st.location.name) {
+          if (!map.has(st.location.name)) map.set(st.location.name, st.location.color);
+        }
+      });
+    };
+    sec.items.forEach(proc);
+    sec.subsections.forEach(sub => sub.items.forEach(proc));
+  });
+  return Array.from(map.entries())
+    .map(([name, color]) => ({ name, color: color || COLOR_PALETTE[0] }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+}
+function countLocationMatches(locName) {
+  if (!locName) return 0;
+  let count = 0;
+  state.data.sections.forEach(sec => {
+    const proc = (item) => {
+      if (item.location && item.location.name === locName) count++;
+      if (item.subtasks) item.subtasks.forEach(st => {
+        if (st.location && st.location.name === locName) count++;
+      });
+    };
+    sec.items.forEach(proc);
+    sec.subsections.forEach(sub => sub.items.forEach(proc));
+  });
+  return count;
+}
 function matchFilter(item) {
   const done = itemEffectiveDone(item);
   if (state.filter === 'todo' && done) return false;
   if (state.filter === 'done' && !done) return false;
   if (state.priorityFilter !== 'all' && item.priority !== state.priorityFilter) return false;
+  if (state.locationFilter && !itemMatchesLocationFilter(item)) return false;
   return true;
 }
 function filterItems(items) { return items.filter(i => matchFilter(i) && matchSearch(i, state.search)); }
@@ -954,6 +1142,16 @@ function updateSubtaskLocation(iid, sid, name, color) {
     const st = i.subtasks.find(x => x.id === sid); if (!st) return;
     if (!name || !name.trim()) st.location = null;
     else st.location = { name: name.trim(), color: color || COLOR_PALETTE[0] };
+  });
+}
+function updateItemImage(id, dataUrl) {
+  mutate(() => { const i = findItem(id); if (i) i.image = dataUrl || ''; });
+}
+function updateSubtaskImage(iid, sid, dataUrl) {
+  mutate(() => {
+    const i = findItem(iid); if (!i) return;
+    const st = i.subtasks.find(x => x.id === sid); if (!st) return;
+    st.image = dataUrl || '';
   });
 }
 function deleteSubtask(iid, sid) {
@@ -1085,6 +1283,104 @@ function toggleLocationEditor(key) {
 }
 
 // ==============================================
+// Image management
+// ==============================================
+function compressImage(file, maxWidth = 1400, quality = 0.78) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('Le fichier sélectionné n\'est pas une image.'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          let width = img.naturalWidth || img.width;
+          let height = img.naturalHeight || img.height;
+          if (width > maxWidth) {
+            height = Math.round(height * (maxWidth / width));
+            width = maxWidth;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          // White background for transparent images (since we're encoding as JPEG)
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        } catch (err) { reject(err); }
+      };
+      img.onerror = () => reject(new Error('Impossible de charger l\'image.'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Lecture du fichier échouée.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function pickImage(callback) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.onchange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    document.body.removeChild(input);
+    if (!file) return;
+    try {
+      const dataUrl = await compressImage(file);
+      // Estimate size: rough base64 → bytes
+      const sizeKb = Math.round((dataUrl.length * 3 / 4) / 1024);
+      if (sizeKb > 800) {
+        if (!confirm(`L'image fait ${sizeKb} Ko après compression. Cela peut alourdir le stockage. Continuer ?`)) return;
+      }
+      callback(dataUrl);
+    } catch (err) {
+      alert('Erreur : ' + (err.message || err));
+    }
+  };
+  input.click();
+}
+
+function manageItemImage(id) {
+  const item = findItem(id); if (!item) return;
+  if (item.image) {
+    // Open lightbox with manage actions
+    state.lightbox = { src: item.image, caption: item.text, kind: 'item', itemId: id };
+    render();
+  } else {
+    pickImage((dataUrl) => updateItemImage(id, dataUrl));
+  }
+}
+function manageSubtaskImage(iid, sid) {
+  const item = findItem(iid); if (!item) return;
+  const st = item.subtasks.find(x => x.id === sid); if (!st) return;
+  if (st.image) {
+    state.lightbox = { src: st.image, caption: st.text, kind: 'subtask', itemId: iid, subtaskId: sid };
+    render();
+  } else {
+    pickImage((dataUrl) => updateSubtaskImage(iid, sid, dataUrl));
+  }
+}
+function openLightboxItem(id) {
+  const item = findItem(id); if (!item || !item.image) return;
+  state.lightbox = { src: item.image, caption: item.text, kind: 'item', itemId: id };
+  render();
+}
+function openLightboxSubtask(iid, sid) {
+  const item = findItem(iid); if (!item) return;
+  const st = item.subtasks.find(x => x.id === sid); if (!st || !st.image) return;
+  state.lightbox = { src: st.image, caption: st.text, kind: 'subtask', itemId: iid, subtaskId: sid };
+  render();
+}
+function closeLightbox() { if (state.lightbox) { state.lightbox = null; render(); } }
+
+// ==============================================
 // Context menu
 // ==============================================
 function openTabContextMenu(tabId, x, y) {
@@ -1142,6 +1438,7 @@ function render() {
       <div class="wrap">
         ${renderSectionHeader(sec, s, sTotal)}
         ${renderToolbar()}
+        ${renderFilterBanner()}
         ${renderSectionBody(sec)}
         <div class="footer">
           <div class="quote">« Les voyages forment la jeunesse » — et les administrations aussi.</div>
@@ -1149,6 +1446,45 @@ function render() {
       </div>
     </main>
     ${renderContextMenu()}
+    ${renderLightbox()}
+  `;
+}
+
+function renderFilterBanner() {
+  if (!state.locationFilter) return '';
+  const allLocs = getAllLocations();
+  const loc = allLocs.find(l => l.name === state.locationFilter);
+  const color = loc ? loc.color : '#52525B';
+  const total = countLocationMatches(state.locationFilter);
+  return `
+    <div class="filter-banner">
+      <span class="filter-banner-label">${ICO.filter} Filtre actif</span>
+      <span class="location-pill" style="background:${color};">${escapeHtml(state.locationFilter)}</span>
+      <span class="filter-banner-count">${total} occurrence${total > 1 ? 's' : ''} sur l'ensemble du projet</span>
+      <button class="filter-banner-clear" data-action="clear-location-filter" title="Effacer le filtre">${ICO.x} Effacer</button>
+    </div>
+  `;
+}
+
+function renderLightbox() {
+  if (!state.lightbox) return '';
+  const lb = state.lightbox;
+  const canManage = (lb.kind === 'item' || lb.kind === 'subtask');
+  return `
+    <div class="lightbox-overlay" data-role="lightbox-overlay">
+      <div class="lightbox-content">
+        <button class="lightbox-close" data-action="close-lightbox" title="Fermer">${ICO.x}</button>
+        <img src="${lb.src}" alt="${escapeHtml(lb.caption || '')}">
+        ${lb.caption ? `<div class="lightbox-caption">${escapeHtml(lb.caption)}</div>` : ''}
+        ${canManage ? `
+          <div class="lightbox-actions">
+            <button data-action="replace-image" data-kind="${lb.kind}" data-item-id="${lb.itemId || ''}" data-subtask-id="${lb.subtaskId || ''}">Remplacer</button>
+            <button class="btn-danger" data-action="remove-image" data-kind="${lb.kind}" data-item-id="${lb.itemId || ''}" data-subtask-id="${lb.subtaskId || ''}">Supprimer</button>
+            <button data-action="close-lightbox">Fermer</button>
+          </div>
+        ` : ''}
+      </div>
+    </div>
   `;
 }
 
@@ -1259,6 +1595,7 @@ function renderSectionHeader(sec, s, sTotal) {
 }
 
 function renderToolbar() {
+  const allLocs = getAllLocations();
   return `
     <div class="toolbar">
       <div class="search-box">
@@ -1278,6 +1615,12 @@ function renderToolbar() {
         <option value="medium"${state.priorityFilter==='medium'?' selected':''}>Moyenne</option>
         <option value="low"${state.priorityFilter==='low'?' selected':''}>Basse</option>
       </select>
+      ${allLocs.length > 0 ? `
+      <select data-action="set-location-filter" title="Filtrer par lieu (sur tout le projet)">
+        <option value=""${!state.locationFilter ? ' selected' : ''}>Tous lieux</option>
+        ${allLocs.map(l => `<option value="${escapeHtml(l.name)}"${state.locationFilter === l.name ? ' selected' : ''}>📍 ${escapeHtml(l.name)}</option>`).join('')}
+      </select>
+      ` : ''}
     </div>
   `;
 }
@@ -1362,7 +1705,6 @@ function renderSubsection(sub) {
 function renderItem(item) {
   const isEditing = state.editing && state.editing.type === 'item' && state.editing.id === item.id;
   const notesOpen = state.expandedNotes[item.id];
-  const subtasksOpen = state.expandedSubtasks[item.id];
   const locationOpen = state.expandedLocation[item.id];
   const isDragged = state.draggedType === 'item' && state.draggedId === item.id;
   const isDropTarget = state.draggedType === 'item' && state.dropTargetId === item.id && state.draggedId !== item.id;
@@ -1373,10 +1715,17 @@ function renderItem(item) {
   const effectiveDone = itemEffectiveDone(item);
   const hasLink = !!item.link;
   const hasLocation = !!item.location;
+  const hasImage = !!item.image;
   const hasOwnPrice = item.price && item.price > 0;
   const itemTotal = computeItemTotal(item);
-  // Show computed total if item has subtasks with prices or own price
   const showTotal = itemTotal > 0;
+
+  // When location filter is active and parent doesn't itself match, auto-expand subtasks
+  // (so user can see the matching subtasks)
+  const matchingSubtasksForFilter = state.locationFilter && hasSubtasks
+    ? item.subtasks.some(st => locationMatchesFilter(st.location, state.locationFilter))
+    : false;
+  const subtasksOpen = state.expandedSubtasks[item.id] || (matchingSubtasksForFilter && !locationMatchesFilter(item.location, state.locationFilter));
 
   if (isEditing) {
     return `
@@ -1401,7 +1750,6 @@ function renderItem(item) {
     ? (effectiveDone ? ICO.checkFull : (progress.done > 0 ? ICO.checkPartial : ICO.circle))
     : (item.done ? ICO.checkFull : ICO.circle);
 
-  // Price display: show computed total if item has subtasks, else own price
   let priceDisplay = '';
   if (showTotal) {
     const isComputed = hasSubtasks && !hasOwnPrice;
@@ -1421,9 +1769,10 @@ function renderItem(item) {
         <button class="checkbox-btn" data-action="toggle-item" data-id="${item.id}">${checkIcon}</button>
         <div class="item-content">
           <div class="item-text-row">
+            ${hasImage ? `<button class="image-thumb" data-action="open-lightbox-item" data-id="${item.id}" title="Voir l'image"><img src="${item.image}" alt=""></button>` : ''}
             <span class="item-text${effectiveDone ? ' done' : ''}">${escapeHtml(item.text)}</span>
             ${hasLink ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer" class="link-inline" title="${escapeHtml(item.link)}">${ICO.linkSm}</a>` : ''}
-            ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(item.location.color)};" data-action="toggle-location-editor" data-key="${item.id}" title="Cliquer pour modifier">${escapeHtml(item.location.name)}</span>` : ''}
+            ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(item.location.color)};" data-action="filter-by-location" data-location="${escapeHtml(item.location.name)}" title="Cliquer pour filtrer par « ${escapeHtml(item.location.name)} »">${escapeHtml(item.location.name)}</span>` : ''}
             ${priceDisplay}
             ${hasSubtasks ? `<span class="subtask-badge${effectiveDone ? ' all-done' : ''}" data-action="toggle-subtasks-display" data-id="${item.id}">
               ${subtasksOpen ? ICO.chevronD : ICO.chevronR} ${progress.done}/${progress.total}
@@ -1443,6 +1792,7 @@ function renderItem(item) {
         </div>
         <div class="item-actions">
           ${!hasSubtasks ? `<button data-action="toggle-subtasks-display" data-id="${item.id}" title="Sous-tâches">${ICO.chevronR}</button>` : ''}
+          <button data-action="manage-item-image" data-id="${item.id}" title="${hasImage ? 'Voir ou gérer l’image' : 'Ajouter une image'}"${hasImage ? ' class="has-data"' : ''}>${ICO.image}</button>
           <button data-action="toggle-location-editor" data-key="${item.id}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter un lieu'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
           <button data-action="manage-item-price" data-id="${item.id}" title="${hasOwnPrice ? 'Modifier le prix' : 'Ajouter un prix'}"${hasOwnPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
           <button data-action="manage-item-link" data-id="${item.id}" title="${hasLink ? 'Modifier le lien' : 'Ajouter un lien'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
@@ -1481,12 +1831,18 @@ function renderLocationEditor(item, kind, parentItemId) {
 
 function renderSubtasks(item) {
   const adding = state.adding && state.adding.type === 'subtask' && state.adding.parentId === item.id;
+  const visibleSt = visibleSubtasks(item);
+  const filteringHidesSome = state.locationFilter && visibleSt.length < (item.subtasks || []).length;
   let html = '<div class="subtasks-container">';
-  item.subtasks.forEach(st => {
+  if (filteringHidesSome) {
+    html += `<div style="font-size:11px;opacity:0.55;font-style:italic;padding:2px 4px;">Affichage filtré : ${visibleSt.length}/${item.subtasks.length} sous-tâches (lieu « ${escapeHtml(state.locationFilter)} »)</div>`;
+  }
+  visibleSt.forEach(st => {
     const editingSt = state.editing && state.editing.type === 'subtask' && state.editing.id === st.id;
     const hasLink = !!st.link;
     const hasLocation = !!st.location;
     const hasPrice = st.price && st.price > 0;
+    const hasImage = !!st.image;
     const locKey = 'st:' + st.id;
     const locOpen = state.expandedLocation[locKey];
     if (editingSt) {
@@ -1503,11 +1859,13 @@ function renderSubtasks(item) {
           <button class="subtask-checkbox" data-action="toggle-subtask" data-item-id="${item.id}" data-id="${st.id}">
             ${st.done ? ICO.checkSm : ICO.circleSm}
           </button>
+          ${hasImage ? `<button class="image-thumb" style="width:22px;height:22px;" data-action="open-lightbox-subtask" data-item-id="${item.id}" data-id="${st.id}" title="Voir l'image"><img src="${st.image}" alt=""></button>` : ''}
           <span class="subtask-text${st.done?' done':''}">${escapeHtml(st.text)}</span>
           ${hasLink ? `<a href="${escapeHtml(st.link)}" target="_blank" rel="noopener noreferrer" class="link-inline" title="${escapeHtml(st.link)}">${ICO.linkSm}</a>` : ''}
-          ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(st.location.color)};" data-action="toggle-location-editor" data-key="${locKey}">${escapeHtml(st.location.name)}</span>` : ''}
+          ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(st.location.color)};" data-action="filter-by-location" data-location="${escapeHtml(st.location.name)}" title="Cliquer pour filtrer par « ${escapeHtml(st.location.name)} »">${escapeHtml(st.location.name)}</span>` : ''}
           ${hasPrice ? `<span class="price-pill" data-action="manage-subtask-price" data-item-id="${item.id}" data-id="${st.id}">${formatPrice(st.price)}</span>` : ''}
           <span class="subtask-actions">
+            <button data-action="manage-subtask-image" data-item-id="${item.id}" data-id="${st.id}" title="${hasImage ? 'Voir ou gérer l’image' : 'Ajouter image'}"${hasImage ? ' class="has-data"' : ''}>${ICO.image}</button>
             <button data-action="toggle-location-editor" data-key="${locKey}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter lieu'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
             <button data-action="manage-subtask-price" data-item-id="${item.id}" data-id="${st.id}" title="${hasPrice ? 'Modifier prix' : 'Ajouter prix'}"${hasPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
             <button data-action="manage-subtask-link" data-item-id="${item.id}" data-id="${st.id}" title="${hasLink ? 'Modifier lien' : 'Ajouter lien'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
@@ -1529,7 +1887,8 @@ function renderSubtasks(item) {
         <button class="btn-ghost" style="padding:4px 8px;" data-action="cancel-add">✕</button>
       </div>
     `;
-  } else {
+  } else if (!state.locationFilter) {
+    // Don't show "add subtask" button when in filter mode (could be confusing)
     html += `<button class="add-subtask-btn" data-action="start-add-subtask" data-id="${item.id}">${ICO.plusSm} Ajouter une sous-tâche</button>`;
   }
   html += '</div>';
@@ -1557,6 +1916,13 @@ function renderAddItemForm(parentType, parentId) {
 // ==============================================
 function handleClick(e) {
   const el = e.target.closest('[data-action]');
+
+  // Lightbox overlay click (outside content) closes
+  const overlay = e.target.closest('[data-role="lightbox-overlay"]');
+  if (overlay && e.target === overlay) {
+    closeLightbox();
+    return;
+  }
 
   // Color swatch click
   const sw = e.target.closest('[data-role="loc-color"]');
@@ -1739,6 +2105,56 @@ function handleClick(e) {
     case 'manage-subtask-link': manageSubtaskLink(el.dataset.itemId, id); break;
     case 'manage-subtask-price': manageSubtaskPrice(el.dataset.itemId, id); break;
     case 'toggle-subtask': toggleSubtaskDone(el.dataset.itemId, id); break;
+
+    // Image actions
+    case 'manage-item-image': manageItemImage(id); break;
+    case 'manage-subtask-image': manageSubtaskImage(el.dataset.itemId, id); break;
+    case 'open-lightbox-item': openLightboxItem(id); break;
+    case 'open-lightbox-subtask': openLightboxSubtask(el.dataset.itemId, id); break;
+    case 'close-lightbox': closeLightbox(); break;
+    case 'replace-image': {
+      const kind = el.dataset.kind;
+      const itemId = el.dataset.itemId;
+      const subtaskId = el.dataset.subtaskId;
+      // Close lightbox first
+      state.lightbox = null;
+      render();
+      // Then pick a new image
+      pickImage((dataUrl) => {
+        if (kind === 'item') updateItemImage(itemId, dataUrl);
+        else updateSubtaskImage(itemId, subtaskId, dataUrl);
+      });
+      break;
+    }
+    case 'remove-image': {
+      const kind = el.dataset.kind;
+      const itemId = el.dataset.itemId;
+      const subtaskId = el.dataset.subtaskId;
+      if (!confirm('Supprimer l\'image attachée ?')) return;
+      state.lightbox = null;
+      if (kind === 'item') updateItemImage(itemId, '');
+      else updateSubtaskImage(itemId, subtaskId, '');
+      break;
+    }
+
+    // Location filter actions
+    case 'filter-by-location': {
+      const locName = el.dataset.location;
+      // Toggle: if same filter is active, clear it
+      if (state.locationFilter === locName) {
+        state.locationFilter = null;
+      } else {
+        state.locationFilter = locName;
+      }
+      render();
+      break;
+    }
+    case 'clear-location-filter': {
+      state.locationFilter = null;
+      render();
+      break;
+    }
+
     case 'start-add-subtask': {
       state.adding = { type: 'subtask', parentId: id };
       state.expandedSubtasks[id] = true;
@@ -1781,6 +2197,7 @@ function handleChange(e) {
   if (a === 'change-prio') changeItemPriority(id, e.target.value);
   if (a === 'set-filter') { state.filter = e.target.value; render(); }
   if (a === 'set-prio-filter') { state.priorityFilter = e.target.value; render(); }
+  if (a === 'set-location-filter') { state.locationFilter = e.target.value || null; render(); }
 }
 
 function handleInput(e) {
@@ -1809,6 +2226,7 @@ function handleKeydown(e) {
     if (el.id === 'new-subtask-text') { document.querySelector('[data-action="confirm-add-subtask"]')?.click(); e.preventDefault(); }
   }
   if (e.key === 'Escape') {
+    if (state.lightbox) { closeLightbox(); return; }
     if (state.contextMenu) { closeContextMenu(); return; }
     if (state.editing) { state.editing = null; render(); }
     else if (state.adding) { state.adding = null; render(); }
