@@ -475,285 +475,3773 @@ function IwithFamily(text, priority) {
 function SUB(title, items) { return { id: genId(), title, collapsed: false, items: items || [] }; }
 
 // ==============================================
-// Default data (unchanged from v3)
+// Mamad section (pièce sécurisée — autonomie 72h)
+// Définie comme fonction pour pouvoir être ré-injectée à la migration
+// ==============================================
+function MAMAD_SECTION() { return {
+  id: 'mamad', emoji: '🛡️', title: 'Mamad (pièce sécurisée)',
+  subtitle: "Aménagement et autonomie 72h dans la pièce de sécurité du logement",
+  items: [
+    I("Inventaire complet du mamad à l'arrivée (porte blindée, fenêtre/volet, ventilation, joint d'étanchéité)", 'critical'),
+    I("Tester l'ouverture/fermeture de la porte blindée et du volet de fenêtre", 'critical'),
+    I("Récupérer les masques NBC auprès du Pikud Haoref pour les 4 membres", 'critical'),
+    I("Installer l'app Pikud Haoref / Home Front Command + test des alertes", 'critical'),
+    I("Mémoriser numéros d'urgence : 101 (MDA), 100 (police), 102 (pompiers)", 'critical'),
+    I("Définir l'aménagement permanent (lit modulable, étagères fixées, espace dégagé vers la porte)", 'high'),
+    I("Identifier l'hôpital de référence (Wolfson Medical Center à Holon)", 'high'),
+    I("Premier exercice familial : simulation d'alerte chronométrée < 60s", 'high'),
+    I("Constituer la pochette documents étanche \"grab and go\"", 'high'),
+    I("Attribuer un rôle à chaque membre en cas d'alerte (porte / décompte / téléphones / animaux)", 'high'),
+    I("Imprimer un poster checklist alerte à l'entrée du mamad", 'medium'),
+    I("Plan évacuation logement si bâtiment inhabitable (itinéraire + point de regroupement famille)", 'medium'),
+    I("Tester le réseau mobile depuis l'intérieur du mamad (le béton armé atténue le signal)", 'medium'),
+  ],
+  subsections: [
+    SUB('Eau (cible 100 L pour 72h)', [
+      I('5 jerricans alimentaires 20 L PEHD opaque avec robinet', 'critical'),
+      I('Pack bouteilles 1,5 L pour mobilité (24 unités)', 'high'),
+      I('Pastilles purification eau (Aquatabs / Micropur, 50-100 unités)', 'high'),
+      I('2 filtres LifeStraw ou Sawyer Mini (un par adulte, backup)', 'medium'),
+      I('Marquage feutre indélébile date de remplissage sur chaque bidon', 'low'),
+      I('Calendrier rotation eau tous les 6 mois', 'medium'),
+    ]),
+    SUB('Alimentation 72h (~30 000 kcal famille)', [
+      I('Conserves protéines : thon, sardines, maquereau (12-15 boîtes)', 'high'),
+      I('Conserves poulet / jambon (6-8 boîtes)', 'high'),
+      I('Conserves légumineuses : pois chiches, haricots rouges, lentilles (6-8 boîtes)', 'high'),
+      I('Beurre de cacahuète gros pot (calorique, longue durée, apprécié ados)', 'high'),
+      I('Crackers / biscottes / pain de seigle Wasa', 'high'),
+      I('Pain longue conservation (type Brot in der Dose)', 'medium'),
+      I("Riz précuit en sachet (Uncle Ben's micro-ondes)", 'medium'),
+      I('Pâtes / nouilles instantanées', 'medium'),
+      I('Couscous instantané (réhydratation eau froide possible)', 'medium'),
+      I('Conserves légumes (macédoine, maïs, petits pois, tomates pelées)', 'medium'),
+      I('Compotes en gourde (24-30 unités, pas de vaisselle)', 'high'),
+      I('Fruits secs (abricots, dattes, raisins) 1-2 kg', 'medium'),
+      I('Fruits oléagineux (amandes, noix, noisettes) 1 kg', 'medium'),
+      I('Barres de céréales (30-40 unités)', 'high'),
+      I('Chocolat noir (résiste mieux à la chaleur que chocolat au lait)', 'medium'),
+      I('Bonbons / sucettes (réconfort psychologique ados)', 'low'),
+      I('Miel (énergie rapide, conservation infinie)', 'low'),
+      I('Lait UHT 1 L (6-8 briques) + lait en poudre backup', 'high'),
+      I('Café soluble + thé en sachets (réconfort psychologique majeur)', 'medium'),
+      I('4-6 rations militaires complètes (RCIR / MRE) — 5 ans de DLC', 'medium'),
+      I('2 ouvre-boîtes manuels (un primaire, un secours)', 'critical'),
+      I('Couverts, assiettes, bols, gobelets isothermes', 'medium'),
+      I('Couteau de cuisine + planche à découper légère', 'medium'),
+      I('Sopalin (2-3 rouleaux) + sacs zip pour conserves entamées', 'low'),
+      I('Bouilloire électrique (si prise mamad fonctionnelle)', 'low'),
+    ]),
+    SUB('Éclairage', [
+      I('2 lanternes LED rechargeables avec port USB sortie (Goal Zero ou équiv.)', 'high'),
+      I('4 frontales LED (une par personne, mode rouge si possible)', 'critical'),
+      I('10-15 bâtons cyalumes (durée 8-12h, aucune pile)', 'medium'),
+      I('Bougies veilleuses longue durée + briquet tempête', 'low'),
+      I("Boîte d'allumettes étanches", 'low'),
+    ]),
+    SUB('Énergie électrique', [
+      I("Station d'énergie portable 256-500 Wh (EcoFlow River 2 / Anker 521)", 'high'),
+      I('Panneau solaire pliable 60-100 W avec sortie USB', 'high'),
+      I('3 power banks USB 20 000 mAh', 'high'),
+      I('Câbles USB-C, Lightning, micro-USB (2 de chaque, 1m + 2m)', 'high'),
+      I('Chargeur secteur multi-port USB (4+ ports)', 'medium'),
+      I('Adaptateurs prises israéliennes type H (différent du type C européen)', 'critical'),
+      I('30 piles AA + 30 piles AAA qualité (Energizer Lithium / Eneloop)', 'medium'),
+      I('Piles bouton CR2032 (4-6 unités)', 'low'),
+      I('Câble allume-cigare 12V → USB (backup véhicule)', 'low'),
+    ]),
+    SUB('Communication', [
+      I('App Pikud Haoref configurée pour Holon + Tel Aviv (zones école / travail)', 'critical'),
+      I('Application Red Alert: Israel en backup tierce', 'medium'),
+      I('Radio à manivelle/solaire/piles (Eton, RunningSnail)', 'critical'),
+      I('Fréquences mémorisées : Galei Tzahal 102.3 FM, Reshet Bet 95.5 FM', 'high'),
+      I("Liste contacts d'urgence imprimée et plastifiée dans le mamad", 'critical'),
+      I('Numéros médecins, écoles, ambassade, consulat de France', 'high'),
+      I('4 walkie-talkies PMR446 (Motorola TLKR T82 ou Midland G7)', 'medium'),
+      I('Sifflet par personne (accroché à la frontale ou au sac)', 'high'),
+      I('Casques audio filaires (un par personne, économie batterie)', 'medium'),
+      I("Inscription consulaire registre des Français de l'étranger", 'critical'),
+      I('Activation iMessage / WhatsApp / Signal (fonctionnent en data si voix saturée)', 'high'),
+      I('Compte famille partagé localisation (Find My / Google Family Link)', 'medium'),
+    ]),
+    SUB('Trousse médicale', [
+      I('Pansements assortis 50 unités + compresses stériles 5x5 et 10x10', 'high'),
+      I('Bandes gaze élastiques + bandes cohésives Coban', 'high'),
+      I('Sutures adhésives Steri-Strip', 'medium'),
+      I('Pansements brûlures (Tulle gras, Brulstop)', 'high'),
+      I('Pansements hydrocolloïdes (cloques, plaies suintantes)', 'medium'),
+      I('Désinfectant Bétadine ou chlorhexidine', 'high'),
+      I('Sérum physiologique (10 dosettes)', 'medium'),
+      I('Crème antibiotique Fucidine (sur ordonnance)', 'medium'),
+      I('Crème cortisone 1% (piqûres, eczéma)', 'medium'),
+      I('Compresses froides instantanées x 2', 'low'),
+      I('Paracétamol 500 et 1000 mg (Doliprane / Acamol en IL)', 'critical'),
+      I('Ibuprofène 200 et 400 mg (Nurofen / Advil)', 'high'),
+      I('Antihistaminique (Cétirizine ou Loratadine)', 'medium'),
+      I('Antidiarrhéique (lopéramide / Imodium)', 'high'),
+      I('Antinauséeux (Vogalène) + antispasmodique (Spasfon)', 'medium'),
+      I('Pansement gastrique (Gaviscon, Maalox)', 'medium'),
+      I('Sels de réhydratation orale (6-10 sachets OMS)', 'high'),
+      I('Charbon activé en gélules (intoxication alimentaire)', 'medium'),
+      I('Réserve 30 jours traitements chroniques de la famille', 'critical'),
+      I('Ordonnances copiées et stockées dans le mamad', 'critical'),
+      I('Pommade antibrûlure (Biafine ou équivalent)', 'high'),
+      I('Collyre stérile + thermomètre digital + piles', 'medium'),
+      I('Saturomètre / oxymètre de pouls', 'low'),
+      I('Tire-tique + pince à épiles + ciseaux bouts ronds', 'low'),
+      I("Kit dentaire d'urgence (cire, ciment temporaire)", 'low'),
+    ]),
+    SUB('Hygiène', [
+      I('Lingettes humides corporelles (3-4 paquets, douche sèche)', 'high'),
+      I('Gel hydroalcoolique (2 grands flacons)', 'high'),
+      I('Lingettes désinfectantes pour mains', 'medium'),
+      I('Savon liquide + brosses à dents (1 par personne) + dentifrice', 'high'),
+      I('Bain de bouche + déodorant', 'medium'),
+      I('Shampoing sec en spray', 'low'),
+      I('Crème hydratante + baume à lèvres', 'low'),
+      I('Protections hygiéniques (1 cycle minimum, tampons + serviettes)', 'high'),
+      I('Coupe menstruelle réutilisable backup', 'low'),
+      I('Serviettes microfibre x 4 (séchage rapide)', 'medium'),
+      I('Sac étanche pour linge sale', 'low'),
+    ]),
+    SUB("Toilettes d'urgence", [
+      I('Toilettes portables ou seau hermétique 20 L avec abattant clipsable', 'critical'),
+      I('Sacs WC absorbants Cleanwaste Go Anywhere (~50 unités pour 72h famille)', 'high'),
+      I('Litière chat agglomérante en backup (1 sac, anti-odeurs)', 'medium'),
+      I('Sacs poubelle épais 30 L', 'high'),
+      I('Désodorisant + bicarbonate de soude', 'medium'),
+      I('Spray désinfectant', 'medium'),
+      I('Gants jetables (boîte de 100)', 'high'),
+      I('Papier toilette dédié mamad (4-6 rouleaux)', 'critical'),
+      I('Rideau séparation toilettes (corde + drap, intimité 72h)', 'low'),
+    ]),
+    SUB('Documents et valeurs', [
+      I('Pochette étanche zippée type Sea to Summit', 'high'),
+      I('Passeports famille (originaux ou copies couleur)', 'critical'),
+      I("Cartes d'identité françaises + Teudat Zehut (CI israélienne)", 'critical'),
+      I('Visas / titres de séjour', 'critical'),
+      I('Actes de naissance enfants + acte de mariage (apostillés)', 'high'),
+      I('Livret de famille + permis de conduire (FR + international)', 'high'),
+      I('Cartes groupe sanguin + carnet vaccination + ordonnances', 'high'),
+      I('Diplômes professionnels', 'medium'),
+      I('Contrat de bail israélien + assurances (logement, santé, rapatriement)', 'high'),
+      I('Polices assurance vie', 'medium'),
+      I('Copies cartes bancaires (recto-verso, masquer CVV)', 'high'),
+      I('IBAN et coordonnées bancaires', 'high'),
+      I('Numéros comptes courtage / crypto / ClubFunding', 'medium'),
+      I('Codes récupération 2FA imprimés (Google Authenticator etc.)', 'medium'),
+      I('Espèces : 2 000-5 000 ₪ + 500-1 000 € + 200-500 $', 'critical'),
+      I('Clé USB chiffrée VeraCrypt (scans documents + photos famille)', 'high'),
+      I('Disque SSD externe backup', 'medium'),
+      I('Coffre boulonné dans le mamad (originaux + valeurs)', 'medium'),
+    ]),
+    SUB('Confort et couchage', [
+      I('4 matelas fins / autogonflants randonnée', 'high'),
+      I('4 sacs de couchage légers ou couvertures', 'high'),
+      I('4 oreillers (ou gonflables voyage en backup)', 'medium'),
+      I('Drap-housse propre par personne', 'medium'),
+      I('Petit ventilateur USB rechargeable', 'high'),
+      I("Brumisateur d'eau 250 ml", 'low'),
+      I("Bouchons d'oreilles (4 paires + rechange)", 'high'),
+      I('Masques de sommeil', 'low'),
+      I('Casque antibruit type chantier (1 unité)', 'low'),
+      I('Album photos famille imprimé / cadre numérique', 'low'),
+      I('Doudou ou objet symbolique enfants', 'medium'),
+    ]),
+    SUB('Activités (anti-ennui ados)', [
+      I("Cartes classiques + UNO + Skyjo + Time's Up", 'medium'),
+      I('Échecs magnétiques / dés / Yams', 'low'),
+      I('Livres papier (1 par personne minimum)', 'medium'),
+      I('Cahiers Sudoku / mots croisés / mots fléchés', 'low'),
+      I('Carnet dessin + crayons / feutres', 'low'),
+      I('Carnets de notes + stylos (journal de crise)', 'low'),
+      I('Tablette avec films téléchargés offline (Netflix download / VLC)', 'medium'),
+      I('Console portable (Steam Deck / Switch / jeux mobiles offline)', 'low'),
+      I('Audiobooks téléchargés (économie batterie écran)', 'low'),
+    ]),
+    SUB('Étanchéité et NBC', [
+      I('2-3 rouleaux scotch masquage large + gaffer tape', 'high'),
+      I('Bâche / film polyane 100 microns prédécoupé fenêtre + ventilation', 'high'),
+      I('Serviettes éponges (à humidifier sous porte)', 'medium'),
+      I('Sacs poubelle épais (couvrir grilles ventilation)', 'medium'),
+      I('20+ masques chirurgicaux + FFP3/N95', 'high'),
+      I('4 masques à gaz NBC (distribution Pikud Haoref)', 'critical'),
+      I('Filtres NBC neufs en stock (durée limitée après ouverture)', 'high'),
+      I('4 combinaisons Tyvek jetables', 'medium'),
+      I('Gants nitrile ou butyle épais', 'medium'),
+      I('Lunettes protection étanches', 'medium'),
+      I("Solution hypochlorite 0,5% (eau de Javel diluée) pour décontamination surfaces", 'low'),
+      I('Procédure étanchéification mémorisée et imprimée dans le mamad', 'high'),
+    ]),
+    SUB('Outillage et sécurité', [
+      I('2 multitools (Leatherman Wave / Victorinox)', 'high'),
+      I('Hache pompier compacte ou pied de biche (sortie après impact)', 'medium'),
+      I('Tournevis multi-embouts + pince universelle', 'medium'),
+      I('Cordelette paracorde 30 m (550 paracord)', 'medium'),
+      I('Marqueur indélébile + bloc-notes papier + stylos', 'low'),
+      I('Lampe tactique 1000+ lumens (signalisation depuis fenêtre)', 'medium'),
+      I('Miroir de signalisation', 'low'),
+      I('Extincteur 2 kg poudre ABC ou CO₂ dans le mamad', 'high'),
+      I('Détecteur de fumée à pile sur le mamad', 'high'),
+      I('Détecteur monoxyde de carbone', 'medium'),
+      I('Couverture anti-feu (M1)', 'low'),
+    ]),
+    SUB("Sac d'évacuation (Bug Out Bag)", [
+      I("1 sac d'évacuation par personne, prêt en permanence", 'high'),
+      I('Vêtements rechange complets + chaussures fermées robustes', 'high'),
+      I('Bouteille eau 1 L par sac', 'high'),
+      I('Barres énergétiques 24h par sac', 'medium'),
+      I('Frontale + piles dans chaque sac', 'high'),
+      I('Mini-pharmacie individuelle', 'medium'),
+      I('Copies documents principaux + argent liquide', 'high'),
+      I('Téléphone et chargeur', 'critical'),
+      I('Sifflet', 'medium'),
+      I('4 casques chantier ou casques moto (traverser décombres)', 'medium'),
+      I('Gants de manutention', 'low'),
+      I('Tente compacte 4 places (à proximité, hors mamad)', 'low'),
+      I('Réchaud gaz outdoor + cartouches (usage extérieur uniquement, JAMAIS dans le mamad)', 'low'),
+    ]),
+    SUB('Maintenance périodique', [
+      I('Trimestriel : test verrouillage porte blindée', 'high'),
+      I('Trimestriel : test frontales et lampes', 'medium'),
+      I('Trimestriel : inventaire visuel rapide du stock', 'medium'),
+      I('Semestriel : rotation eau (vidange + remplissage jerricans)', 'critical'),
+      I('Semestriel : test toutes piles + power banks (charge/décharge complète)', 'high'),
+      I('Semestriel : test radio toutes bandes', 'medium'),
+      I('Semestriel : vérification DLC alimentation + rotation à 6 mois restants', 'high'),
+      I('Annuel : audit complet du stock', 'high'),
+      I("Annuel : renouvellement pharmacie d'urgence", 'high'),
+      I('Annuel : vérification masques NBC et filtres', 'critical'),
+      I('Annuel : mise à jour documents (ordonnances, contrats, contacts)', 'medium'),
+      I('Annuel : exercice famille complet', 'high'),
+      I("Annuel : vérification joint d'étanchéité porte blindée", 'high'),
+    ]),
+  ]
+}; }
+
+// ==============================================
+// Default data — embarque les 15 sections de Jérémie (seed pour nouveaux devices)
+// Migrate() injectera la section mamad au premier chargement
 // ==============================================
 const DEFAULT_DATA = {
-  version: 3,
-  sections: [
+  "version": 4,
+  "sections": [
     {
-      id: 'status', emoji: '🔑', title: 'Statut & prérequis RH',
-      subtitle: "Point de départ : tout découle du statut retenu par le MEAE",
-      items: [
-        I("Confirmer le statut exact (titulaire MEAE / contractuel CDD / expatrié EAF)", 'critical'),
-        I("Confirmer le type de passeport attribué (service / diplomatique)", 'critical'),
-        I("Obtenir l'arrêté d'affectation / ordre de mission", 'critical'),
-        I("Confirmer si le logement est concédé par le poste ou sous indemnité de résidence", 'critical'),
-        I("Vérifier les droits déménagement (franchise barème MEAE, devis payé par le poste)", 'high'),
-        I("Enregistrer Jérémie et les enfants comme ayants droit au dossier RH", 'critical'),
-        I("Demander le livret d'accueil \"agent expatrié Tel Aviv\"", 'high'),
-        I("Demander à la RH les modalités concrètes de l'échange de notes France-Israël (travail du conjoint)", 'critical'),
-        I("Identifier l'interlocuteur RH dédié au poste Tel Aviv", 'high'),
-        I("Prendre contact avec le SG sortant pour un handover", 'high'),
-        I("Se faire communiquer la grille indemnités (résidence, majorations familiales)", 'high'),
-      ], subsections: [],
-    },
-    {
-      id: 'admin-fr', emoji: '📄', title: 'Démarches administratives France',
-      subtitle: "Papiers, visas, impôts, banque côté français",
-      items: [
-        IwithFamily("Vérifier validité passeports famille (≥ 6 mois après arrivée)", 'critical'),
-        IwithFamily("Renouveler passeports si besoin (via consulat à Sydney)", 'high'),
-        IwithFamily("Vérifier / refaire CNI à jour", 'medium'),
-        I("Dépôt dossier visa diplo/service (MEAE → ambassade Israël Paris)", 'critical'),
-        I("Traduction assermentée + apostille acte de mariage", 'high'),
-        I("Apostille actes de naissance enfants", 'high'),
-        I("Apostille diplômes (Jérémie — utile pour travail sur place)", 'medium'),
-        I("Transfert inscription registre des Français établis hors de France (Sydney → Tel Aviv)", 'high'),
-        I("Signaler changement de résidence fiscale (service des impôts)", 'high'),
-        I("Se renseigner sur affiliation CFE (Caisse des Français de l'Étranger)", 'high'),
-        I("Souscrire mutuelle complémentaire internationale (MGEN / April / Allianz Care)", 'high'),
-        I("Prévenir banque française du changement de résidence", 'critical'),
-        I("Conserver au moins un compte bancaire FR actif", 'critical'),
-        I("Vérifier conséquences assurance emprunteur (crédit immo FR, non-résident)", 'high'),
-        I("Informer ClubFunding du changement de résidence fiscale", 'medium'),
-        I("Déclarer comptes crypto à l'étranger (formulaire 3916 bis)", 'high'),
-        I("Procuration notariale en France", 'medium'),
-        I("Redirection courrier postal FR (La Poste expat ou famille)", 'low'),
-      ], subsections: [],
-    },
-    {
-      id: 'sydney', emoji: '🇦🇺', title: 'Départ de Sydney',
-      subtitle: "Clôture ordonnée des 3 ans à Sydney",
-      items: [
-        I("Donner préavis au Lycée Condorcet", 'critical'),
-        I("Obtenir attestation employeur + certificat de travail", 'high'),
-        I("Résiliation du bail Sydney (préavis NSW : 14 à 21 jours selon cas)", 'critical'),
-        I("État des lieux de sortie (photos détaillées)", 'high'),
-        I("Récupération du bond (caution) via NSW Fair Trading", 'medium'),
-        I("Résilier électricité", 'high'),
-        I("Résilier gaz", 'high'),
-        I("Résilier internet / NBN", 'high'),
-        I("Résilier abonnement mobile AU", 'high'),
-        I("Résilier assurance habitation", 'high'),
-        I("Résilier assurance auto", 'high'),
-        I("Vendre / expédier le véhicule", 'medium'),
-        I("Résilier abonnements divers (gym, streaming, etc.)", 'medium'),
-        I("Tax return australien \"departing Australia\" (ATO)", 'high'),
-        I("Lancer la demande DASP (Superannuation) après départ", 'high'),
-        I("Désinscription Medicare", 'medium'),
-        I("Informer Centrelink / Services Australia si applicable", 'low'),
-        I("Changer adresse postale / mail forwarding Australia Post", 'medium'),
-        I("Clôturer ou maintenir les comptes bancaires AU", 'medium'),
-        I("Devis déménageurs internationaux Sydney → Tel Aviv (3 devis mini)", 'high'),
-        I("Inventaire douanier précis (franchise agents accrédités)", 'high'),
-        I("Don / vente des meubles non déplacés", 'medium'),
-        I("Tri des documents papier + numérisation cloud sécurisé", 'medium'),
-        I("Pot de départ / au revoir collègues + famille d'accueil", 'low'),
-      ], subsections: [],
-    },
-    {
-      id: 'housing', emoji: '🏠', title: 'Logement Tel Aviv',
-      subtitle: "Recherche, bail, installation",
-      items: [
-        I("Définir budget loyer (centre : 1 700-2 500 €/mois pour 3 pièces)", 'critical'),
-        I("Identifier quartiers cibles (Neve Tzedek, Florentin, Lev HaIr, Ramat Aviv, Jaffa nord)", 'high'),
-        I("Contacter un relocation agent francophone spécialisé expat/diplo", 'high'),
-        I("Voyage de repérage si budget le permet (1 semaine)", 'medium'),
-        I("Vérifier présence Mamad (pièce blindée) — non négociable", 'critical'),
-        I("Vérifier proximité école AEFE (Raymond-Leven, Chagall)", 'high'),
-        I("Vérifier proximité Institut français (7 bd Rothschild) et ambassade", 'medium'),
-        I("Vérifier état des lieux / équipements meublés ou non", 'high'),
-        I("Négocier bail (durée, clauses de sortie, indexation annuelle)", 'high'),
-        I("Prévoir dépôt de garantie (2 à 3 mois de loyer en général)", 'high'),
-        I("Comprendre Vaad Bayit (charges de copropriété)", 'medium'),
-        I("Signer le bail", 'critical'),
-        I("État des lieux d'entrée (photos + vidéo)", 'high'),
-        I("Souscrire assurance habitation IL", 'high'),
-      ], subsections: [],
-    },
-    {
-      id: 'travel', emoji: '✈️', title: 'Voyage & déménagement',
-      subtitle: "La logistique physique du déménagement",
-      items: [
-        I("Réserver billets avion (pris en charge MEAE sur justificatif)", 'critical'),
-        I("Vérifier franchise bagages famille (soute + cabine)", 'high'),
-        I("Organiser le voyage d'installation MEAE", 'high'),
-        I("Date de déménagement conteneur confirmée", 'critical'),
-        I("Confirmer adresse de livraison Tel Aviv", 'critical'),
-        I("Préparer une valise \"30 premiers jours\" (hors conteneur)", 'high'),
-        IwithFamily("Check-up médical complet avant départ", 'high'),
-        IwithFamily("Vaccins à jour (hépatite A/B, DTP, ROR)", 'medium'),
-        I("Ordonnances longue durée + réserve médicaments (3 mois)", 'high'),
-        I("Permis de conduire international (IDP) — via NRMA Australie", 'high'),
-        I("Préparer pet passport + titrage FAVN 3 mois avant (si animaux)", 'critical'),
-        I("Certificat vétérinaire officiel < 10 jours (si animaux)", 'high'),
-        I("Numériser tous les documents importants + cloud chiffré", 'medium'),
-        I("Préparer clé USB \"survie\" avec scans de passeports, diplômes, etc.", 'medium'),
-        I("Informer proches de l'itinéraire et adresse temporaire", 'low'),
-      ], subsections: [],
-    },
-    {
-      id: 'arrival', emoji: '🛂', title: 'Arrivée Tel Aviv (J à J+30)',
-      subtitle: "Les 30 premiers jours — priorité absolue",
-      items: [
-        I("Contact SCAC / service du personnel de l'ambassade", 'critical'),
-        I("Notification d'arrivée au Protocole MFA israélien (par l'ambassade, < 7j)", 'critical'),
-        IwithFamily("Préparer 4 photos d'identité par personne", 'high'),
-        I("Dossier accréditation MFA (passeports, acte mariage, actes naissance)", 'critical'),
-        IwithFamily("Récupération carte MFA ID (titre de séjour)", 'critical'),
-        I("Demander explicitement l'autorisation de travail pour le conjoint (Jérémie)", 'high'),
-        I("Ouverture compte bancaire israélien (Hapoalim / Leumi / Discount / Mizrahi)", 'critical'),
-        I("Choix cartes bancaires (débit + crédit — souvent séparées en IL)", 'high'),
-        IwithFamily("Souscription mobile (Cellcom / Partner / Pelephone)", 'high'),
-        I("Souscription fibre internet (Bezeq / HOT / Partner)", 'high'),
-        I("Inscription consulaire définitive Tel Aviv (1 rue Ben Yehuda)", 'high'),
-        I("Récupérer numéro d'urgence sécurité de l'ambassade", 'critical'),
-        I("Briefing sécurité par l'officier sécurité ambassade", 'critical'),
-        IwithFamily("Télécharger Home Front Command (app alertes)", 'critical'),
-        I("Repérer l'abri le plus proche du logement (90s d'alerte à Tel Aviv)", 'critical'),
-        I("Rejoindre Israël Accueil (association francophone)", 'medium'),
-        I("Rejoindre groupes Facebook / WhatsApp Français à Tel Aviv", 'low'),
-        I("Ouvrir Google Maps perso avec POI (médecin, supermarché, école, abri)", 'low'),
-      ], subsections: [],
-    },
-    {
-      id: 'furniture', emoji: '🪑', title: 'Ameublement',
-      subtitle: "Équipement et mobilier à acquérir sur place",
-      items: [
-        I("Inventaire de ce qu'on garde / laisse / vend à Sydney", 'high'),
-        I("Estimer budget global ameublement Tel Aviv", 'high'),
-        I("Identifier magasins de référence (IKEA Rishon, ACE, Fox Home, Hashmal, etc.)", 'medium'),
+      "id": "status",
+      "emoji": "🔑",
+      "title": "Statut & prérequis RH",
+      "subtitle": "Point de départ : tout découle du statut retenu par le MEAE",
+      "items": [
+        {
+          "id": "b6556602-9f96-4353-8fd5-212095409edc",
+          "text": "Confirmer le type de passeport attribué (service / diplomatique)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "4663a5bd-b618-401d-bab2-0d3a62848dbd",
+          "text": "Obtenir l'arrêté d'affectation / ordre de mission",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "ade8fb7a-c359-42b4-a404-e656f6a7d952",
+          "text": "Vérifier les droits déménagement (franchise barème MEAE, devis payé par le poste)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2cf5d7c6-786d-4e91-b11d-af31271c5779",
+          "text": "Enregistrer Jérémie et les enfants comme ayants droit au dossier RH",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "9a764036-a168-4a63-be9f-f05a82e33804",
+          "text": "Demander le livret d'accueil \"agent expatrié Tel Aviv\"",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "0861059b-cfa4-4aac-b88e-4e865e108d79",
+          "text": "Demander à la RH les modalités concrètes de l'échange de notes France-Israël (travail du conjoint)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "cfaa0e5e-74fc-4801-973b-820f9eaa9fc6",
+          "text": "Identifier l'interlocuteur RH dédié au poste Tel Aviv",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "4961c799-aa15-470a-a1bd-cec9b4ad6582",
+          "text": "Prendre contact avec le SG sortant pour un handover",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "471d3d75-1797-4997-bef5-c47546409cd7",
+          "text": "Se faire communiquer la grille indemnités (résidence, majorations familiales)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
       ],
-      subsections: [
-        SUB('Électroménager', [
-          I('Réfrigérateur / congélateur', 'high'), I('Lave-linge', 'high'),
-          I('Sèche-linge', 'medium'), I('Four (souvent inclus en IL)', 'medium'),
-          I('Micro-ondes', 'medium'), I('Lave-vaisselle', 'medium'),
-          I('Bouilloire', 'low'), I('Cafetière', 'low'),
-          I('Petit électroménager (grille-pain, blender, mixeur)', 'low'),
-          I('Aspirateur', 'medium'), I('Climatiseur (souvent inclus dans logement)', 'medium'),
-        ]),
-        SUB('Chambre parents (Préma & Jérémie)', [
-          I('Lit + matelas (queen ou king)', 'critical'), I('Armoire / penderie', 'high'),
-          I('Tables de chevet (x2)', 'medium'), I('Linge de lit (draps, couette, oreillers)', 'high'),
-          I('Rideaux occultants', 'medium'), I('Luminaires', 'low'),
-        ]),
-        SUB('Chambre Matthieu', [
-          I('Lit + matelas', 'critical'), I('Bureau + chaise', 'high'),
-          I('Armoire / rangements vêtements', 'high'), I('Étagères / rangements jouets', 'medium'),
-          I('Linge de lit', 'high'), I('Luminaires / veilleuse', 'low'),
-        ]),
-        SUB('Chambre Baptiste', [
-          I('Lit + matelas', 'critical'), I('Bureau + chaise', 'high'),
-          I('Armoire / rangements vêtements', 'high'), I('Étagères / rangements jouets', 'medium'),
-          I('Linge de lit', 'high'), I('Luminaires / veilleuse', 'low'),
-        ]),
-        SUB('Salon / salle à manger', [
-          I('Canapé', 'critical'), I('Table basse', 'medium'),
-          I('Table à manger + chaises', 'high'), I('TV + meuble TV', 'medium'),
-          I('Bibliothèque / étagères', 'medium'),
-          I('Luminaires (plafond + lampes d\'appoint)', 'medium'),
-          I('Tapis', 'low'), I('Décoration / cadres', 'low'),
-        ]),
-        SUB('Cuisine équipement', [
-          I('Vaisselle complète (assiettes, bols, verres)', 'high'),
-          I('Casseroles, poêles, cocottes', 'high'), I('Ustensiles de cuisine', 'medium'),
-          I('Couteaux', 'medium'), I('Conteneurs de stockage / Tupperware', 'low'),
-          I('Linge de cuisine (torchons, maniques)', 'low'),
-        ]),
-        SUB('Salle de bain', [
-          I('Serviettes famille (parents + enfants)', 'high'),
-          I('Tapis de bain', 'low'), I('Accessoires (porte-savon, poubelle, panière)', 'low'),
-        ]),
-        SUB('Bureau Jérémie', [
-          I('Bureau', 'high'), I('Chaise ergonomique', 'high'),
-          I('Écrans supplémentaires + supports', 'medium'),
-          I('Rangements / étagères', 'low'), I('Multiprise + onduleur (UPS)', 'medium'),
-        ]),
+      "subsections": []
+    },
+    {
+      "id": "admin-fr",
+      "emoji": "📄",
+      "title": "Démarches administratives France",
+      "subtitle": "Papiers, visas, impôts, banque côté français",
+      "items": [
+        {
+          "id": "f0208011-b825-4e5b-8be4-ed285a103935",
+          "text": "Vérifier / refaire CNI à jour",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "d25ee808-0a4b-4546-a74a-5bfcb4925ce7",
+              "text": "Préma",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "4fdbbfc4-5203-4cb5-bd88-3dc8961dea7f",
+              "text": "Jérémie",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "ab346a5b-0eb3-4864-b642-748a61c5248e",
+              "text": "Matthieu",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "a74c7884-f089-48db-a27b-f2490657472c",
+              "text": "Baptiste",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "ae0d19fb-7798-4f78-bd64-39f58df89fbe",
+          "text": "Dépôt dossier visa diplo/service (MEAE → ambassade Israël Paris)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "a7ab205c-485b-4911-9583-aaa52997654e",
+          "text": "Traduction assermentée + apostille acte de mariage",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "1a13f2af-ff66-4eef-9cd2-ba7a311097e8",
+          "text": "Apostille actes de naissance enfants",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "6b62bf6d-a995-47da-b9f0-75ddc88dace4",
+          "text": "Apostille diplômes (Jérémie — utile pour travail sur place)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f6ddbc72-428a-4a42-b1f4-d30f76a55e4a",
+          "text": "Transfert inscription registre des Français établis hors de France (Sydney → Tel Aviv)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "5c4d0007-3bf8-4105-8bc9-2a8f7c78a335",
+          "text": "Signaler changement de résidence fiscale (service des impôts)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "33179ec3-35ca-4494-9e11-f6c397a2e008",
+          "text": "Se renseigner sur affiliation CFE (Caisse des Français de l'Étranger)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "881a0825-7f1c-419b-b6b2-df9f83c2ff55",
+          "text": "Souscrire mutuelle complémentaire internationale (MGEN / April / Allianz Care)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "397ce088-31ab-45a1-8718-90c8c631156c",
+          "text": "Prévenir banque française du changement de résidence",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "8d2d215c-6217-4321-bbfa-f468fd9522ac",
+          "text": "Conserver au moins un compte bancaire FR actif",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "89043744-e6a5-47ce-be52-58fc5308affe",
+          "text": "Vérifier conséquences assurance emprunteur (crédit immo FR, non-résident)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "7fb21978-798f-4b86-90c6-58c0a89ef503",
+          "text": "Informer ClubFunding du changement de résidence fiscale",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "13a2663a-5fb3-4356-b9d9-80d5ae688a23",
+          "text": "Déclarer comptes crypto à l'étranger (formulaire 3916 bis)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "a717af87-1b1b-4b28-8248-f118afdd80d6",
+          "text": "Procuration notariale en France",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "66b123d1-df7e-4589-b34a-1c0ccfa908b7",
+          "text": "Redirection courrier postal FR (La Poste expat ou famille)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
       ],
+      "subsections": []
     },
     {
-      id: 'school', emoji: '👦', title: 'Enfants & École',
-      subtitle: "Réseau AEFE à Tel Aviv",
-      items: [
-        I("Identifier école AEFE cible (Raymond-Leven / Chagall / Collège des Frères)", 'critical'),
-        I("Contacter les écoles le plus tôt possible (places limitées)", 'critical'),
-        I("Préparer dossier d'inscription (bulletins 2 dernières années, justificatifs)", 'high'),
-        I("Entretien / visite école", 'high'),
-        I("Organiser transport scolaire (bus scolaire ou solution perso)", 'medium'),
-        I("Inscrire aux activités extrascolaires", 'low'),
-        I("Trouver un pédiatre francophone / anglophone", 'medium'),
-        I("Évaluer besoin Ulpan enfants (cours hébreu adapté)", 'low'),
-        I("Préparer l'adaptation émotionnelle (discussion changement de pays)", 'medium'),
-      ], subsections: [],
+      "id": "sydney",
+      "emoji": "🇦🇺",
+      "title": "Départ de Sydney",
+      "subtitle": "Clôture ordonnée des 3 ans à Sydney",
+      "items": [
+        {
+          "id": "b0e29ea3-7197-4430-8648-b50b771f1c90",
+          "text": "Donner préavis au Lycée Condorcet",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "570e315a-b814-4381-b076-570d503a2dde",
+          "text": "Obtenir attestation employeur + certificat de travail",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "9324f7c6-be0d-4106-b77a-44d785e978a3",
+          "text": "Contacter l'agence pour rendre l'appartement",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "87bc2d9a-9c27-4cea-919a-df09a7b4f897",
+          "text": "État des lieux de sortie (photos détaillées)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "46ae2380-d621-4200-93be-f8ce453544a8",
+          "text": "Récupération du bond (caution) via NSW Fair Trading",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "055dfa76-41c0-496c-bdd9-4536dbda66fe",
+          "text": "Résilier électricité",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "a32e58f3-841e-44f8-a103-cebff1ebf91b",
+          "text": "Résilier gaz",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "bf950f81-9bf9-4f3d-8157-cbfa9f6648bf",
+          "text": "Résilier internet / NBN",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "58cf6165-fa81-412e-94c5-24a471a4dab8",
+          "text": "Résilier abonnement mobile AU",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "78bc612d-d777-4f81-877e-68d7c5920502",
+          "text": "Résilier abonnements Cafeyn appeler Boursorama",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "c5c9bfce-ca5d-49cd-bfbe-72616fe5aeba",
+          "text": "Tax return australien \"departing Australia\" (ATO)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "c51c1368-c85c-4f85-8283-e2c103c39f6c",
+          "text": "Lancer la demande DASP (Superannuation) après départ",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "d15defc7-f0b7-4f81-9504-95c1fdada3e7",
+          "text": "Informer Centrelink / Services Australia si applicable",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "548f9996-3d03-4c9a-b2b7-5cbbeba569cb",
+          "text": "Clôturer les comptes bancaires AU",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "1f56052c-5de5-411a-8479-333a69a75a96",
+          "text": "Don / vente des meubles non déplacés",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "70c78474-135c-455a-931c-597f70eddf92",
+          "text": "Tri des documents papier + numérisation cloud sécurisé",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "b3f306bc-09fd-4612-ade8-9a4e582f0a3f",
+          "text": "Pot de départ / au revoir collègues + famille d'accueil",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
     },
     {
-      id: 'work', emoji: '💼', title: 'Travail sur place (Jérémie)',
-      subtitle: "Quel scénario et quelles démarches",
-      items: [
-        I("Choisir le scénario : A (travail local) / B (télétravail FR) / C (indépendant IL) / D (revenus patrimoniaux)", 'critical'),
-        I("[A] Demander l'autorisation spécifique au MFA israélien via l'ambassade", 'high'),
-        I("[A] Analyser conséquences fiscales et perte partielle d'immunité", 'high'),
-        I("[B] Identifier clients ou employeur français (télétravail)", 'high'),
-        I("[B] Choisir structure juridique (portage salarial / auto-entrepreneur / SASU)", 'high'),
-        I("[B] Vérifier compatibilité avec statut d'accrédité (déclaration RH)", 'high'),
-        I("[C] Demander numéro Tik Nikuyim", 'medium'),
-        I("[C] Statut osek patur ou osek murshe selon CA prévisionnel", 'medium'),
-        I("[D] Analyser fiscalité \"nouveau résident\" IL (exonération 10 ans revenus étrangers)", 'high'),
-        I("Consulter un fiscaliste franco-israélien (rendez-vous prioritaire)", 'high'),
-        I("Mettre à jour LinkedIn / CV en anglais et en hébreu", 'medium'),
-        I("Réseautage local : French Tech Tel Aviv, meetups tech", 'medium'),
-        I("Évaluer compatibilité portefeuille crypto avec nouvelle résidence fiscale", 'high'),
-        I("Dimensionner activité marchand de biens FR à distance", 'medium'),
-      ], subsections: [],
+      "id": "housing",
+      "emoji": "🏠",
+      "title": "Logement Tel Aviv",
+      "subtitle": "Recherche, bail, installation",
+      "items": [
+        {
+          "id": "30ea1fe1-eb43-4791-91c2-708e3d3d3eb4",
+          "text": "Définir budget loyer (centre : 1 700-2 500 €/mois pour 3 pièces)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "611e15be-27f8-4460-9d1a-dff7cc7fa077",
+          "text": "Identifier quartiers cibles (Neve Tzedek, Florentin, Lev HaIr, Ramat Aviv, Jaffa nord)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "19fb1802-8214-4d63-9fc7-5b22210b5b6a",
+          "text": "Contacter un relocation agent francophone spécialisé expat/diplo",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "4c0b1449-b356-45ba-a56a-cb9f3083d61b",
+          "text": "Voyage de repérage si budget le permet (1 semaine)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "98ef0da6-fffb-4de4-bdd6-345aa29838e7",
+          "text": "Vérifier présence Mamad (pièce blindée) — non négociable",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "c89f16f4-4435-4cab-b3db-013752972091",
+          "text": "Vérifier proximité école AEFE (Raymond-Leven, Chagall)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "85697069-5e58-4236-8c21-de413d52b37e",
+          "text": "Vérifier proximité Institut français (7 bd Rothschild) et ambassade",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f928952a-fae1-46ba-8a7c-3a2a9be3bc8f",
+          "text": "Vérifier état des lieux / équipements meublés ou non",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2b2476fa-c005-4156-a900-e2eab5a87228",
+          "text": "Négocier bail (durée, clauses de sortie, indexation annuelle)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "817b6e5e-9bf0-4266-9768-841c75d61de5",
+          "text": "Prévoir dépôt de garantie (2 à 3 mois de loyer en général)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "44f6d625-10bd-48ad-befb-4bcef3ca32a2",
+          "text": "Comprendre Vaad Bayit (charges de copropriété)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "541d4998-9645-4769-b2fc-4508cd626c50",
+          "text": "Signer le bail",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f33585a7-b786-4068-8e85-bf6c7a37f0da",
+          "text": "État des lieux d'entrée (photos + vidéo)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "7c65e6ac-c26a-416d-a1cb-e1bbb794b268",
+          "text": "Souscrire assurance habitation IL",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
     },
     {
-      id: 'tax', emoji: '💰', title: 'Fiscalité & Patrimoine',
-      subtitle: "Optimiser le changement de résidence fiscale",
-      items: [
-        I("Déterminer date exacte de résidence fiscale IL (règle des 183 jours)", 'critical'),
-        I("Demander le statut \"oleh hadash\" / nouveau résident (exo 10 ans)", 'high'),
-        I("Déclaration 3916 / 3916 bis (comptes et crypto à l'étranger)", 'high'),
-        I("Déclaration plus-values crypto FR (2086) année N", 'high'),
-        I("Étudier convention fiscale France-Israël (non double imposition)", 'high'),
-        I("Consulter expert-comptable franco-israélien avant toute opération", 'critical'),
-        I("Audit crédit immobilier FR (assurance emprunteur, statut non-résident)", 'high'),
-        I("Point sur ClubFunding (traitement fiscal nouveau résident)", 'medium'),
-        I("KYC MEXC / exchanges crypto : mettre à jour avec nouvelle adresse", 'medium'),
-        I("Déclaration de revenus FR année du départ (2042 + 2042-NR)", 'critical'),
-        I("Prévoir archivage fiscal 10 ans (docs FR + IL)", 'low'),
-      ], subsections: [],
+      "id": "travel",
+      "emoji": "✈️",
+      "title": "Voyage & déménagement",
+      "subtitle": "La logistique physique du déménagement",
+      "items": [
+        {
+          "id": "b2ab1b53-9b15-4efd-af24-be33b4b08771",
+          "text": "Réserver billets avion (pris en charge MEAE sur justificatif)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "324ebe82-7a10-4672-802d-6b8710ec53d7",
+          "text": "Vérifier franchise bagages famille (soute + cabine)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "586cc2d7-1c2f-43e7-8f66-ea1c999dee6a",
+          "text": "Organiser le voyage d'installation MEAE",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "a97f4a2b-2d88-4af8-bf6f-62aac360c3a7",
+          "text": "Date de déménagement conteneur confirmée",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "ff772695-8f6f-4b69-8cba-a12351e35c0b",
+          "text": "Confirmer adresse de livraison Tel Aviv",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "38431476-922d-4387-ae00-88a290a83be7",
+          "text": "Préparer une valise \"30 premiers jours\" (hors conteneur)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "632275b4-1bec-40f9-b0d1-d906f7e9df76",
+          "text": "Check-up médical complet avant départ",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "dc3fd3ea-c999-4db3-a4a9-412d633078ee",
+              "text": "Préma",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "81537cab-0234-4631-a7c9-807b5ff0881d",
+              "text": "Jérémie",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "15f584bb-5e98-4ed5-bb0f-18608f2646e8",
+              "text": "Matthieu",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "76df4ce4-75fc-4a4e-b9ae-a0cb565121e1",
+              "text": "Baptiste",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "b27204a4-2e87-45d2-a36e-b4f96d49e9e0",
+          "text": "Vaccins à jour (hépatite A/B, DTP, ROR)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "cd6954be-0d98-41c4-a5dd-f43c622f769a",
+              "text": "Préma",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "783dc85f-e590-43b0-a1fe-c3ce7f5c786a",
+              "text": "Jérémie",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "f8202f12-b6e4-4726-9c57-7e31ed4d2954",
+              "text": "Matthieu",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "e0bd3875-8965-4383-9278-7bc11792caca",
+              "text": "Baptiste",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "cf0f503c-a368-4b6c-86a8-48aee34f433a",
+          "text": "Ordonnances longue durée + réserve médicaments (3 mois)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "a255b361-ccda-4a7a-92d7-767e759b9c37",
+          "text": "Permis de conduire international (IDP) — via NRMA Australie",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "d67859a8-f681-455e-898b-dc4b5b8d84df",
+          "text": "Préparer pet passport + titrage FAVN 3 mois avant (si animaux)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "7412998b-9db4-495e-85df-38aecad9d05b",
+          "text": "Certificat vétérinaire officiel < 10 jours (si animaux)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "97b7fd6d-801f-4420-9ec3-daf93452dcd4",
+          "text": "Numériser tous les documents importants + cloud chiffré",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "affe0183-1dad-4ae4-957c-4a3dbbf5f012",
+          "text": "Préparer clé USB \"survie\" avec scans de passeports, diplômes, etc.",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2a4aaae2-8718-4ca7-acab-10c14f463af8",
+          "text": "Informer proches de l'itinéraire et adresse temporaire",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
     },
     {
-      id: 'health', emoji: '❤️', title: 'Santé, Sécurité, Intégration',
-      subtitle: "Vivre bien et en sécurité à Tel Aviv",
-      items: [
-        I("Vérifier couverture CFE famille complète", 'critical'),
-        I("Souscrire mutuelle complémentaire internationale", 'high'),
-        I("Identifier médecins francophones (généraliste, dentiste, gynéco, pédiatre)", 'medium'),
-        I("Identifier hôpitaux privés de référence (Ichilov / Assuta)", 'medium'),
-        I("Constituer trousse de secours / urgence maison", 'medium'),
-        I("Briefing famille consignes sirènes (90s d'alerte à Tel Aviv)", 'critical'),
-        I("S'inscrire à un Ulpan (cours d'hébreu intensif)", 'high'),
-        I("Vérifier si Ulpan subventionné par l'ambassade pour les conjoints", 'medium'),
-        I("Acheter adaptateurs électriques (prises israéliennes type H)", 'low'),
-        I("Carte Rav-Kav (transports en commun Israël)", 'medium'),
-        I("Carte de bibliothèque / médiathèque IFI (La Closerie)", 'low'),
-      ], subsections: [],
+      "id": "arrival",
+      "emoji": "🛂",
+      "title": "Arrivée Tel Aviv (J à J+30)",
+      "subtitle": "Les 30 premiers jours — priorité absolue",
+      "items": [
+        {
+          "id": "9911eae0-246d-45e9-8579-fad578ceb5c1",
+          "text": "Contact SCAC / service du personnel de l'ambassade",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "c27e45b9-8a2f-4357-bbe4-a8e9b11d48c3",
+          "text": "Notification d'arrivée au Protocole MFA israélien (par l'ambassade, < 7j)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "fc4d0807-dd76-4deb-a3d5-3893394e579f",
+          "text": "Préparer 4 photos d'identité par personne",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "fed2119c-3685-4b0e-8b5b-bfe30a1b6968",
+              "text": "Préma",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "0050f72d-5374-4e2d-a077-405e6461d45d",
+              "text": "Jérémie",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "dd7c9298-53f2-4ae8-8668-6f1f21c5c40b",
+              "text": "Matthieu",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "660fc67f-620c-4bd5-b912-94b6db7d8749",
+              "text": "Baptiste",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "c852457b-786f-44af-8854-9d24cdec9edc",
+          "text": "Dossier accréditation MFA (passeports, acte mariage, actes naissance)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "3f68be81-0fc1-4c17-9bd2-895d120fba9b",
+          "text": "Récupération carte MFA ID (titre de séjour)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "349ae424-8d8c-40a4-8ac1-4928978730aa",
+              "text": "Préma",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "5d6f2267-726c-4a69-9fd7-793a7be7c655",
+              "text": "Jérémie",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "044310aa-60e3-4f84-8808-3fb751f51f12",
+              "text": "Matthieu",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "d5f7918a-2d0e-476f-ad47-61cd417cac1d",
+              "text": "Baptiste",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "7e6e3c61-d63d-42ef-9db5-72ca8a550e38",
+          "text": "Demander explicitement l'autorisation de travail pour le conjoint (Jérémie)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "da466967-3d09-455a-af59-b0859ba0ee6a",
+          "text": "Ouverture compte bancaire israélien (Hapoalim / Leumi / Discount / Mizrahi)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "1b152bd2-9308-46a0-9895-9fdcdeb7eeb7",
+          "text": "Choix cartes bancaires (débit + crédit — souvent séparées en IL)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "be926970-195c-4988-a828-b0ae0337b038",
+          "text": "Souscription mobile (Cellcom / Partner / Pelephone)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "19e97338-3ddd-4c13-b73f-c5bafde97c32",
+              "text": "Préma",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "3444348c-d68d-4cd0-87b6-bf09504a206f",
+              "text": "Jérémie",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "8693f222-abbc-4ea1-be62-8fb467d9f0e5",
+              "text": "Matthieu",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "fd81c9da-7c3c-491f-bd8f-6d3ddad35f6b",
+              "text": "Baptiste",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "fc182672-9d8e-4c89-9ad6-4dca08c1eb27",
+          "text": "Souscription fibre internet (Bezeq / HOT / Partner)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "8904c02c-ec62-4a20-8a46-b432a30a1420",
+          "text": "Inscription consulaire définitive Tel Aviv (1 rue Ben Yehuda)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2fe06741-56b1-44fe-b513-eaf835c8be0e",
+          "text": "Récupérer numéro d'urgence sécurité de l'ambassade",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "af6e23ca-7f47-4a0f-8099-60e09c175551",
+          "text": "Briefing sécurité par l'officier sécurité ambassade",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f5650ff4-ac32-4e78-a973-95b7b7603e69",
+          "text": "Télécharger Home Front Command (app alertes)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "6fa13326-06f2-45de-9ef8-914d1b54fa59",
+              "text": "Préma",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "cfe868e4-040f-4509-9ec4-dc5bcec6a7e3",
+              "text": "Jérémie",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "e54e0778-b439-4372-9e15-c955eb477709",
+              "text": "Matthieu",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "f3794fed-1953-4487-b284-2e26ff55df42",
+              "text": "Baptiste",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "d65aa52a-7701-4925-a113-98428483cbcb",
+          "text": "Repérer l'abri le plus proche du logement (90s d'alerte à Tel Aviv)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "db46f80c-f2e0-4db4-86e8-bd45f70ebbab",
+          "text": "Rejoindre Israël Accueil (association francophone)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "351a1b28-e08f-426f-b3e3-3ecce662e6ad",
+          "text": "Rejoindre groupes Facebook / WhatsApp Français à Tel Aviv",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "44afd91a-c2ef-4e30-926c-3069783ee1a9",
+          "text": "Ouvrir Google Maps perso avec POI (médecin, supermarché, école, abri)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
     },
     {
-      id: 'post', emoji: '🔧', title: 'Post-installation (M+1 à M+3)',
-      subtitle: "Ce qui se fait une fois posé",
-      items: [
-        I("Conversion permis de conduire (si séjour > 1 an)", 'high'),
-        I("Acheter voiture ou location longue durée si besoin", 'medium'),
-        I("Mettre à jour adresses partout (banque FR, admin, ClubFunding, etc.)", 'medium'),
-        I("Transmission nouveau RIB aux interlocuteurs FR si besoin", 'low'),
-        I("Premier bilan d'installation (M+3)", 'low'),
-        I("Planifier premier retour en France (famille, vacances)", 'low'),
-        I("Renouvellement annuel accréditation MFA", 'medium'),
-        I("Explorer le pays (Jérusalem, Néguev, Mer Morte, Haïfa, Eilat)", 'low'),
-      ], subsections: [],
+      "id": "furniture",
+      "emoji": "🪑",
+      "title": "Ameublement",
+      "subtitle": "Équipement et mobilier à acquérir sur place",
+      "items": [
+        {
+          "id": "c5cb6f64-319a-4c48-b952-ac7e4fca40f8",
+          "text": "Inventaire de ce qu'on garde / laisse / vend à Sydney",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "aa5f743d-5413-48a1-8e6a-cadacec41e9c",
+          "text": "Estimer budget global ameublement Tel Aviv",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2421f564-dcb7-4b28-886d-240f597d26b5",
+          "text": "Identifier magasins de référence (IKEA Rishon, ACE, Fox Home, Hashmal, etc.)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": [
+        {
+          "id": "5aa891e8-325b-400a-9732-b8f56bb88aae",
+          "title": "Electronique / high tech",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "e6d31ba8-e468-48e7-a41c-2f9e624d9550",
+              "text": "Téléphones Préma et Jérémie",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "519c2102-eee1-4025-bd56-de3576f51a9f",
+                  "text": "2 Pixels 11 Pro XL",
+                  "done": false,
+                  "link": "",
+                  "price": 2500,
+                  "location": null,
+                  "image": ""
+                },
+                {
+                  "id": "b4cf85f2-4df7-4a12-8c69-3c7d6675a04e",
+                  "text": "Pixel 9 Pro XL de Jérémie → Matthieu (attention aux applis bancaires CM + Key Generator pour Mexc)",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null,
+                  "image": ""
+                },
+                {
+                  "id": "f5ae6125-6ef5-453b-b62e-c707c71c99be",
+                  "text": "Pixel 7 de Préma → Baptiste",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null,
+                  "image": ""
+                }
+              ],
+              "image": ""
+            },
+            {
+              "id": "995a81f4-1845-4354-badb-ed30d88fd28d",
+              "text": "Routeur Asus GT-BE19000",
+              "priority": "critical",
+              "notes": "",
+              "link": "https://www.amazon.fr/ASUS-ROG-GT-BE19000-Tri-Bande-acc%C3%A9l%C3%A9rateur/dp/B07MNZNPLZ/ref=sr_1_2?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&sr=8-2",
+              "price": 450,
+              "location": {
+                "name": "Amazon",
+                "color": "#D97706"
+              },
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "536cefd9-271b-4b19-ad63-150658e3795a",
+              "text": "Vidéoprojecteur Hisense PT1 OU Samsung QN90C 75\" Neo QLED (TV 75'') ou 85''",
+              "priority": "medium",
+              "notes": "",
+              "link": "https://www.azuri.co.il/items/6139868",
+              "price": 1800,
+              "location": {
+                "name": "Azuri",
+                "color": "#4F46E5"
+              },
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "7f3d3f2e-29f3-4698-8c12-605445b3aa5a",
+              "text": "Ampli Denon 5.1 Channel 4K Ultra HD AV Receiver + Bluetooth AVR-X250BT",
+              "priority": "medium",
+              "notes": "",
+              "link": "https://ksp.co.il/web/item/184904",
+              "price": 500,
+              "location": {
+                "name": "KSP",
+                "color": "#16A34A"
+              },
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "ab4bc0f6-accb-4a84-83b7-4d52739adf11",
+              "text": "Enceintes",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "855eb500-980b-4360-a5cf-36b8fd991ae2",
+                  "text": "Monitor Audio Bronze 500 (paire)",
+                  "done": false,
+                  "link": "https://www.tmaudio.co.il/items/3292676-%D7%96%D7%95%D7%92-%D7%A8%D7%9E%D7%A7%D7%95%D7%9C%D7%99%D7%9D-%D7%A8%D7%A6%D7%A4%D7%AA%D7%99%D7%99%D7%9D-%D7%9E%D7%91%D7%99%D7%AA-Monitor-Audio-%D7%93%D7%92%D7%9D-Bronze-500",
+                  "price": 1200,
+                  "location": {
+                    "name": "TM Audio",
+                    "color": "#9333EA"
+                  },
+                  "image": ""
+                },
+                {
+                  "id": "dbfca853-2d3f-4155-ba66-3e4f82d5051d",
+                  "text": "Monitor Audio Bronze Center",
+                  "done": false,
+                  "link": "https://www.tmaudio.co.il/items/830701-%D7%A8%D7%9E%D7%A7%D7%95%D7%9C-%D7%A1%D7%A0%D7%98%D7%A8-BRONZE-CENTER-%D7%9E%D7%91%D7%99%D7%AA-MONITOR-AUDIO",
+                  "price": 1000,
+                  "location": {
+                    "name": "TM Audio",
+                    "color": "#9333EA"
+                  },
+                  "image": ""
+                },
+                {
+                  "id": "49b1a3fe-aa0b-4187-9897-a1b0f23f22ca",
+                  "text": "Subwoofer SVS SB-1000 Pro",
+                  "done": false,
+                  "link": "https://www.tmaudio.co.il/items/7428320-%D7%A8%D7%9E%D7%A7%D7%95%D7%9C-%D7%A1%D7%90%D7%91-%D7%95%D7%95%D7%A4%D7%A8-%D7%9E%D7%91%D7%99%D7%AA-SVS-%D7%93%D7%92%D7%9D-SB-1000-Pro-Black-Gloss",
+                  "price": 850,
+                  "location": {
+                    "name": "TM Audio",
+                    "color": "#9333EA"
+                  },
+                  "image": ""
+                }
+              ],
+              "image": ""
+            },
+            {
+              "id": "865fc938-12c8-4738-ab89-d87be30ff3f9",
+              "text": "2 PC pour Baptiste et Matthieu",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "45b7af5e-3b51-43ac-bf8c-fd98cf000a70",
+              "text": "6 écrans LG 27US500-W UltraFine UHD 4K",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 1800,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "c6027418-4a94-404f-aa64-4c7895e32a83",
+              "text": "Système écran tactile calendrier familial",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "04b61856-4480-4fa6-af7d-7ca819c5ab9c",
+                  "text": "ViewSonic TD2760 27\" tactile",
+                  "done": false,
+                  "link": "https://tms.co.il/brand-viewsonic?product_id=106414",
+                  "price": 650,
+                  "location": {
+                    "name": "TMS",
+                    "color": "#52525B"
+                  },
+                  "image": ""
+                },
+                {
+                  "id": "ac0cfd41-f01a-47d2-9d57-64d65c46f99b",
+                  "text": "Pied VESA",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null,
+                  "image": ""
+                },
+                {
+                  "id": "bdd63495-525a-4ca3-8832-5a8accfc995d",
+                  "text": "PC actuel de Baptiste connecté avec interface Mango avec abonnement (Plug and play) + créer sous calendriers pour chacun dans Gmail / Avec tache + emoji",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null,
+                  "image": ""
+                }
+              ],
+              "image": ""
+            },
+            {
+              "id": "e364719a-114b-4468-927f-34ff9e8a289b",
+              "text": "Hub USB",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": "",
+              "done": false,
+              "subtasks": []
+            }
+          ]
+        },
+        {
+          "id": "69159c36-11a3-4b1c-b7ef-07a3f4af41fe",
+          "title": "Sport / déplacement",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "76c45d8b-da79-4d69-9334-b191fc45e2bb",
+              "text": "4 vélos",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": {
+                "name": "Décathlon",
+                "color": "#2563EB"
+              },
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "343b7b8f-6c05-44c2-be47-14fe6445d8d5",
+              "text": "Scooter ?",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "361f40ed-2cb4-4c11-b35b-eefddd047ab4",
+              "text": "Machine de Sport CORENGTH (Décathlon) ou Speediance Gym Monster 2.0",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 4500,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "da16213b-1862-4a48-8cd0-035f6eb22c27",
+          "title": "Outillage",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "ddec285b-330e-454d-8787-3390cf60f334",
+              "text": "Télémètre laser",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "a2263616-fae0-4e34-8361-e4bd9a5ebcfa",
+              "text": "Perceuse",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "50e6e364-fd78-4dc0-9e2f-87bc1fe8ec35",
+              "text": "Visseuse",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "529ac32c-d0c9-401d-916f-a335d5d66bf4",
+          "title": "Électroménager",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "8e5fa19f-f532-4174-875c-86ca67c5d5b4",
+              "text": "Réfrigérateur / congélateur Blomberg KND3955X (554 L)",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 1150,
+              "location": {
+                "name": "Azuri",
+                "color": "#4F46E5"
+              },
+              "image": ""
+            },
+            {
+              "id": "37de7c7b-272a-4e0c-bfc5-ff851a7fca40",
+              "text": "Lave-linge LG F94D15WHS 9KG",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 550,
+              "location": {
+                "name": "Azuri",
+                "color": "#4F46E5"
+              },
+              "image": ""
+            },
+            {
+              "id": "ba809ffb-e4df-412c-96dc-94f21dd48c5a",
+              "text": "Sèche-linge BEKO DRXS827A (Heat Pump)",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 600,
+              "location": {
+                "name": "Azuri",
+                "color": "#4F46E5"
+              },
+              "image": ""
+            },
+            {
+              "id": "cfd36c91-f1bb-42c5-9ac3-313402a6cd28",
+              "text": "Four (souvent inclus en IL)",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "1624ff83-c1ee-4df8-b41d-2a583597f146",
+              "text": "Lave-vaisselle",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "ce2f715d-5592-4353-b343-ab00712c38c8",
+              "text": "Bouilloire Russell Hobbs ADVENTURE modèle 23912-70",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 40,
+              "location": {
+                "name": "Switchy",
+                "color": "#DC2626"
+              },
+              "image": ""
+            },
+            {
+              "id": "d1005728-e507-4222-b005-0c6e536edad2",
+              "text": "Cafetière Delonghi Magnificas Smart Espresso Machine ECAM250.23.SB Silver/Black",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "https://ksp.co.il/web/item/214093",
+              "price": 600,
+              "location": {
+                "name": "KSP",
+                "color": "#16A34A"
+              },
+              "image": ""
+            },
+            {
+              "id": "5bdf356d-4721-4298-9def-cda03ab269ea",
+              "text": "Petit électroménager (grille-pain, blender, mixeur)",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "4d3af725-9c18-4a15-8dd9-0ffb16389a83",
+                  "text": "Extracteur KUVINGS REVO830",
+                  "done": false,
+                  "link": "https://www.topmarket.co.il/fr/kuvings-revo830-juicer-black-fr/",
+                  "price": 600,
+                  "location": {
+                    "name": "Top Market",
+                    "color": "#EA580C"
+                  },
+                  "image": ""
+                },
+                {
+                  "id": "7b26e7d2-cf6b-42b3-9b2f-089f24576e70",
+                  "text": "Grille pain VENTURE 4 tranches noir",
+                  "done": false,
+                  "link": "https://www.switchy.co.il/items/5713777-%D7%9E%D7%A6%D7%A0%D7%9D-%D7%98%D7%95%D7%A1%D7%98%D7%A8-%D7%A7%D7%95%D7%A4%D7%A5-%D7%97%D7%A9%D7%9E%D7%9C%D7%99-4-%D7%A4%D7%A8%D7%95%D7%A1%D7%95%D7%AA-Morphy-Richards-VENTURE-%D7%A9%D7%97%D7%95%D7%A8",
+                  "price": 100,
+                  "location": {
+                    "name": "Switchy",
+                    "color": "#DC2626"
+                  },
+                  "image": ""
+                },
+                {
+                  "id": "3eac4f88-7090-4b05-ae8f-3a663149e681",
+                  "text": "Blender BL682 Auto IQ 3 IN 1 NINJA",
+                  "done": false,
+                  "link": "https://www.switchy.co.il/items/5714118-%D7%9E%D7%A2%D7%91%D7%93-%D7%9E%D7%96%D7%95%D7%9F-%D7%9E%D7%A9%D7%95%D7%9C%D7%91-%D7%91%D7%9C%D7%A0%D7%93%D7%A8-%D7%A0%D7%99%D7%A0%D7%92-%D7%94-BL682-Auto-IQ-3-IN-1-NINJA-%D7%99%D7%91%D7%95%D7%90%D7%9F-%D7%A8%D7%A9%D7%9E%D7%99-",
+                  "price": 250,
+                  "location": {
+                    "name": "Switchy",
+                    "color": "#DC2626"
+                  },
+                  "image": ""
+                }
+              ],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "ba56b022-404a-40ad-8269-96d79b97d2ef",
+              "text": "Aspirateur Shark Stratos IQ IZ423",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "https://www.azuri.co.il/items/5852966-%D7%A9%D7%95%D7%90%D7%91-%D7%90%D7%91%D7%A7-%D7%A0%D7%98%D7%A2%D7%9F-STRATOS-IQ-SHARK-IZ423-%D7%A9%D7%90%D7%A8%D7%A7",
+              "price": 470,
+              "location": {
+                "name": "Azuri",
+                "color": "#4F46E5"
+              },
+              "image": ""
+            },
+            {
+              "id": "525caaca-9bf3-41eb-94f2-f2ab07984062",
+              "text": "Repassage",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "05beccc2-5594-4ed5-996b-396d77208504",
+              "text": "Weber Spirit II E-210 2 Burners 26,500 BTU Gas Grill Black /// Prévoir housse",
+              "priority": "medium",
+              "notes": "",
+              "link": "https://ksp.co.il/web/item/250282",
+              "price": 650,
+              "location": {
+                "name": "KSP",
+                "color": "#16A34A"
+              },
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "1d9e3030-ade2-4eb4-83ac-ee8548a369ff",
+          "title": "Chambre parents (Préma & Jérémie)",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "4d70e8d9-86ed-4e3a-ab5e-a64792ebce0c",
+              "text": "Lit + matelas (queen ou king)",
+              "priority": "critical",
+              "notes": "",
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "f2cfed5e-ffed-4f2e-abce-8252e93d61ab",
+                  "text": "Lit IDANÄS 160X200 Cadre de lit avec compartiment de rangement",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/idanaes-bed-frame-with-storage-white-30458870/",
+                  "price": 750,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  },
+                  "image": ""
+                },
+                {
+                  "id": "c577d0a8-576d-4b0a-8161-3b3b5ea054f5",
+                  "text": "Matelas",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  },
+                  "image": ""
+                },
+                {
+                  "id": "3cf1a514-dfac-4eac-8d67-c1b45698024a",
+                  "text": "2 oreillers",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null,
+                  "image": ""
+                }
+              ],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "7a986c67-8173-40ac-a841-4e3cdcadee6d",
+              "text": "Tables de chevet Idanas(x2)",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "https://www.ikea.com/il/he/p/idanaes-bedside-table-white-90458810/",
+              "price": 300,
+              "location": {
+                "name": "Ikea",
+                "color": "#52525B"
+              },
+              "image": ""
+            },
+            {
+              "id": "066bf638-8993-483f-ac6f-111919ae5b0b",
+              "text": "Lampes de chevets Svallet (X2)",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "https://www.ikea.com/il/he/p/svallet-work-lamp-dark-grey-white-70358487/",
+              "price": 25,
+              "location": {
+                "name": "Ikea",
+                "color": "#52525B"
+              },
+              "image": ""
+            },
+            {
+              "id": "2cfa78c5-97bf-4b0d-8a1e-981f0de5b604",
+              "text": "Armoire / penderie",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "5e3e7ebc-49b1-4bf4-a468-2dd015b0469b",
+              "text": "Linge de lit (draps, couette, oreillers)",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "ce08b9db-cfd5-42ca-844b-0ad8e16bbd3c",
+                  "text": "Parure de lit X2",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null,
+                  "image": ""
+                },
+                {
+                  "id": "ba16d2a2-a510-4a74-8188-1f4fc868428a",
+                  "text": "Housse de protection",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null,
+                  "image": ""
+                }
+              ],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "1611f168-ef1b-45f5-9f17-abdccd33e705",
+          "title": "Chambre Matthieu",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "ac4623d3-168b-4012-bab4-7827e86538b8",
+              "text": "Lit + matelas",
+              "priority": "critical",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "ceeb2c25-c3ae-4f1f-8027-816d7e2a0d26",
+              "text": "Bureau + chaise",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "d6e7da61-be97-4831-b13d-230e34d48a8b",
+              "text": "Armoire / rangements vêtements",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "d352981c-48dd-4298-a506-2dbf808b5e06",
+              "text": "Étagères / rangements jouets",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "ea764383-d590-4cfa-b633-6b0012498f59",
+              "text": "Linge de lit",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "0fad6287-2a3b-4ea9-b706-4d271c0103c5",
+              "text": "Luminaires / veilleuse",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "9f62cb70-4196-4c54-82b2-f53ad7d2d13b",
+          "title": "Chambre Baptiste",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "1d29b181-3acb-420f-96f7-abcad1ccaf8f",
+              "text": "Lit + matelas",
+              "priority": "critical",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "aeb25054-7dbb-4f04-b0cb-9dc741121965",
+              "text": "Bureau + chaise",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "8a54861c-54c4-4215-81e5-70e4acc30dab",
+              "text": "Armoire / rangements vêtements",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "010dc649-792a-4753-98ad-0ebdbff669ce",
+              "text": "Étagères / rangements jouets",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "6467989c-bef3-44fc-9cc7-efd22fca22be",
+              "text": "Linge de lit",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "584f969d-4f28-4ccc-89c5-9e268240dfd0",
+              "text": "Luminaires / veilleuse",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "c85013c5-3514-435f-8bc5-ccd0b0c3d1bf",
+          "title": "Salon / salle à manger",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "91e74e8b-d2da-4f0a-a40e-9b85982b4849",
+              "text": "Canapé",
+              "priority": "critical",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "4a1706b4-6e9b-41a9-8b22-224fcd7a3da6",
+              "text": "Table basse",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "db6a4a65-9b4b-4316-a659-5856db0452cc",
+              "text": "Table à manger + chaises",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "e7d9a423-6c46-4864-b0cf-63920c25cd04",
+                  "text": "Table SKOGSTA",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/skogsta-dining-table-acacia-black-70419264/",
+                  "price": 700,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "f88f988f-c01d-4053-ad0e-233cf51add36",
+                  "text": "Chaises NORDVIKEN X8",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/nordviken-chair-black-40369109/",
+                  "price": 700,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                }
+              ],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "ffbbeea3-273c-4cd5-bf91-b087291bd1c7",
+              "text": "Vaisselles",
+              "priority": "critical",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": "",
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "40460a9c-2fa5-466d-bc27-15cb96559acb",
+                  "text": "Petites assiettes bleues Gladelig X8 Diamètre 20",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/gladelig-side-plate-blue-70600720/",
+                  "price": 25,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "b4dba9f6-67fa-44c9-83fc-78de13f23425",
+                  "text": "Grandes assiettes bleues Gladelig X8 Diamètre 25",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/gladelig-plate-blue-50600721/#content",
+                  "price": 32,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "d01a8fe4-444d-4471-8ea3-559a242ffeeb",
+                  "text": "Bols bleus Gladelig X8 Diamètre 14",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/gladelig-bowl-blue-40600712/",
+                  "price": 25,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "0800954e-e626-4d5d-ac14-9ed51d95044a",
+                  "text": "Tasses Bleues Gladelig X8",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/gladelig-mug-blue-40503626/#content",
+                  "price": 25,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "a3457ccb-5ba8-4a6e-8b72-710420b1da15",
+                  "text": "Saladier Gladelig",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/gladelig-serving-bowl-beige-green-30599587/",
+                  "price": 20,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "06a81f40-1d5e-43c0-bd13-7fb0bf09291d",
+                  "text": "Plats bleus de présentation Gladelig X2",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/gladelig-plate-blue-30503636/",
+                  "price": 20,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "ab921b25-0a63-4803-a569-24a29db7e2de",
+                  "text": "Verres X2",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/ivrig-glass-grey-00445228/",
+                  "price": 60,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "d21d865a-d62e-45f4-8147-72310bcf7282",
+                  "text": "Pichet Vardagen",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/vardagen-jug-patterned-dark-grey-green-20576652/",
+                  "price": 20,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                },
+                {
+                  "id": "4e8f4cb6-33d6-4352-9a9f-bf86121c34c7",
+                  "text": "Sets couverts X2",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/martorp-30-piece-cutlery-set-stainless-steel-30167507/",
+                  "price": 75,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "0fd2adb3-5eae-4262-8432-9f8c293203fa",
+              "text": "TV + meuble TV",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "22d1e8c8-ede5-45d2-96d2-1e1f157e10c1",
+                  "text": "TV",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null
+                },
+                {
+                  "id": "6e888882-eb14-48b8-8d36-258912987f7d",
+                  "text": "Meuble TV FJÄLLBO 198cm de large",
+                  "done": false,
+                  "link": "https://www.ikea.com/il/he/p/fjaellbo-tv-bench-black-40579032/",
+                  "price": 260,
+                  "location": {
+                    "name": "Ikea",
+                    "color": "#52525B"
+                  }
+                }
+              ],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "d5c8438e-5761-453c-a890-08c6ae6f52fa",
+              "text": "Bibliothèque / étagères",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "b9f546f3-8016-4a8b-a894-28e85c32f7a7",
+              "text": "Luminaires (plafond + lampes d'appoint)",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "2edf5e3d-6737-40ab-a7ed-0b071eb27185",
+              "text": "Tapis",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "f30a31be-79c2-42a2-a684-c133a75473ca",
+              "text": "Décoration / cadres",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "ea6e4ed5-0d94-4ebc-b80b-1ccc9ccd37a4",
+          "title": "Cuisine équipement",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "868480e6-553f-4c36-a1bc-b01d58fe1fb5",
+              "text": "Vaisselle complète (assiettes, bols, verres)",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "775c4c47-34b1-4dc1-9ed9-a52033084e33",
+              "text": "Casseroles, poêles, cocottes",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "fffdd6d1-32ed-4243-8b01-34e19fafaed3",
+              "text": "Ustensiles de cuisine",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "611a19f7-468e-4586-ba0a-e61358183678",
+              "text": "Couteaux",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "3d64ab48-4cdc-478b-b476-e19aaa643608",
+              "text": "Conteneurs de stockage / Tupperware",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "d7b58337-16ea-4925-813e-ba2ea1d76430",
+              "text": "Linge de cuisine (torchons, maniques)",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "0be52e05-9a02-40b9-b8c2-fa01e2a09cfd",
+          "title": "Salle de bain",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "bcd8db02-c3d8-4bef-a84c-a3dae217a9dd",
+              "text": "Serviettes famille (parents + enfants)",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "aba7a1cd-c079-4b4f-b32b-6b7c53f57be4",
+              "text": "Tapis de bain",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "824e4226-1759-4878-b54a-17644ef38459",
+              "text": "Accessoires (porte-savon, poubelle, panière)",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "4a1371e3-dbfe-42e6-8949-160dbb1f7d80",
+          "title": "Bureau Jérémie",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "c7468b28-c832-44dc-a499-494080bad0c1",
+              "text": "Bureau",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "ac8fb157-5a7a-4e9d-929a-19c022ff0770",
+              "text": "Chaise ergonomique",
+              "priority": "high",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "703538b8-a159-4c81-b0e9-e99ab59e97ae",
+              "text": "Écrans supplémentaires + supports",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "6ffb2af1-59df-43fa-aa02-b8cd1dc11306",
+              "text": "Rangements / étagères",
+              "priority": "low",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "835d880c-752e-406d-bca1-b1fb74a2b12a",
+              "text": "Multiprise + onduleur (UPS)",
+              "priority": "medium",
+              "notes": "",
+              "done": false,
+              "subtasks": [],
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ]
+        },
+        {
+          "id": "c3e6a6f6-74a8-46b0-b369-8f1aafb9fcdb",
+          "title": "Linge de maison",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "a1ea1163-b6ca-46c8-8734-32f96cd8bb6a",
+              "text": "Serviettes de toilette X10",
+              "priority": "medium",
+              "notes": "",
+              "link": "https://www.ikea.com/il/he/p/brokglim-bath-towel-beige-80612096/",
+              "price": 180,
+              "location": {
+                "name": "Ikea",
+                "color": "#52525B"
+              },
+              "done": false,
+              "subtasks": [
+                {
+                  "id": "a19532a8-66b1-4f54-87f8-07472939eda5",
+                  "text": "2 de chaque sauf blanc et rose",
+                  "done": false,
+                  "link": "",
+                  "price": 0,
+                  "location": null
+                }
+              ],
+              "image": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "school",
+      "emoji": "👦",
+      "title": "Enfants & École",
+      "subtitle": "Réseau AEFE à Tel Aviv",
+      "items": [
+        {
+          "id": "65ddfb02-90d1-4846-9cc3-ef99f334bcf8",
+          "text": "Identifier école AEFE cible (Raymond-Leven / Chagall / Collège des Frères)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "5faa0f9e-a3b5-40db-903a-443515701ea7",
+          "text": "Contacter les écoles le plus tôt possible (places limitées)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "1d0e85b4-2dc0-40cb-87cb-d507b01dcf1c",
+          "text": "Préparer dossier d'inscription (bulletins 2 dernières années, justificatifs)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "842bba4f-2b77-4d16-aa23-7d600c26e510",
+          "text": "Entretien / visite école",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "cf9f704b-5f94-4b6f-8fba-4232c218c374",
+          "text": "Organiser transport scolaire (bus scolaire ou solution perso)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "9fef211d-0e2c-4eb2-a77d-3336a482cb16",
+          "text": "Inscrire aux activités extrascolaires",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [
+            {
+              "id": "629d81aa-b182-4ee0-8375-0d0a79ddc1ab",
+              "text": "Violon",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "71b8ddf3-4921-4659-8c01-caedee9f7b41",
+              "text": "Équitation",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "733094f0-4da4-41e3-adfa-84850ac0ff31",
+              "text": "Athlétisme",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "cca23016-47b2-4e4e-9ec9-e873cca54335",
+              "text": "Théâtre",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            },
+            {
+              "id": "5e27d0d2-0c18-4e9e-9776-391bc3f2b010",
+              "text": "Comédie musicale",
+              "done": false,
+              "link": "",
+              "price": 0,
+              "location": null,
+              "image": ""
+            }
+          ],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "ac91dd70-9eed-4c45-92f4-b3b851739734",
+          "text": "Évaluer besoin Ulpan enfants (cours hébreu adapté)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "17bba15e-53fb-4ce0-b648-cad2139e0719",
+          "text": "Préparer l'adaptation émotionnelle (discussion changement de pays)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "id": "work",
+      "emoji": "💼",
+      "title": "Travail sur place (Jérémie)",
+      "subtitle": "Quel scénario et quelles démarches",
+      "items": [
+        {
+          "id": "2713b2f7-ed54-4e9e-a7fc-2250e5991d0f",
+          "text": "Choisir le scénario : A (travail local) / B (télétravail FR) / C (indépendant IL) / D (revenus patrimoniaux)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2a5a8b71-e5f2-4ba5-af16-04ec8ddbe3a7",
+          "text": "[A] Demander l'autorisation spécifique au MFA israélien via l'ambassade",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "074ca3df-85a6-40b3-8f21-df498949c7fe",
+          "text": "[A] Analyser conséquences fiscales et perte partielle d'immunité",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "626d4233-12b4-476a-a3b6-d0dde74a6dae",
+          "text": "[B] Identifier clients ou employeur français (télétravail)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "e425dbe3-12eb-4196-8510-d74c239fc46e",
+          "text": "[B] Choisir structure juridique (portage salarial / auto-entrepreneur / SASU)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f0d941cf-b819-45bd-a2d3-8cf5578214a9",
+          "text": "[B] Vérifier compatibilité avec statut d'accrédité (déclaration RH)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "257735ab-aaa3-423d-9097-cc26b0a4aef4",
+          "text": "[C] Demander numéro Tik Nikuyim",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "b05de725-5670-4378-a3d9-f31ec209c961",
+          "text": "[C] Statut osek patur ou osek murshe selon CA prévisionnel",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "05d21239-10a1-418a-ab9f-d39ff259ea04",
+          "text": "[D] Analyser fiscalité \"nouveau résident\" IL (exonération 10 ans revenus étrangers)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "4cede6b1-1410-4f59-8844-e57d629b26a9",
+          "text": "Consulter un fiscaliste franco-israélien (rendez-vous prioritaire)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "5a0e2aa7-94f7-491d-9bd7-2f5781578999",
+          "text": "Mettre à jour LinkedIn / CV en anglais et en hébreu",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f095bd61-450f-44fe-82aa-ae8e4237b7a9",
+          "text": "Réseautage local : French Tech Tel Aviv, meetups tech",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "3f82e5e2-82ed-4706-8f82-fa0e58b96514",
+          "text": "Évaluer compatibilité portefeuille crypto avec nouvelle résidence fiscale",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "bdab715f-8318-4c98-8bb0-cbde385bdb30",
+          "text": "Dimensionner activité marchand de biens FR à distance",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "id": "tax",
+      "emoji": "💰",
+      "title": "Fiscalité & Patrimoine",
+      "subtitle": "Optimiser le changement de résidence fiscale",
+      "items": [
+        {
+          "id": "b5e683b7-0d1e-41ab-a5e9-b9b7c4fd0eeb",
+          "text": "Déterminer date exacte de résidence fiscale IL (règle des 183 jours)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "8f456e05-5bc7-480d-97c0-55b66452a36f",
+          "text": "Demander le statut \"oleh hadash\" / nouveau résident (exo 10 ans)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "868e14de-b091-46ff-bcf3-bf34abf28a09",
+          "text": "Déclaration 3916 / 3916 bis (comptes et crypto à l'étranger)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2ac0b196-27f1-49b7-97b5-195832e02a20",
+          "text": "Déclaration plus-values crypto FR (2086) année N",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "85064b2d-d2e0-44f2-8326-d71dcf2fd1f0",
+          "text": "Étudier convention fiscale France-Israël (non double imposition)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "3ef19f25-090b-4d6e-811e-f50f06c175e0",
+          "text": "Consulter expert-comptable franco-israélien avant toute opération",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "427243cb-fc9e-4e15-b1ef-d5c628ecf0af",
+          "text": "KYC MEXC / exchanges crypto : mettre à jour avec nouvelle adresse",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "2487aca7-7a4e-4596-ba31-1dc1d81ceecb",
+          "text": "Déclaration de revenus FR année du départ (2042 + 2042-NR)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "d848c876-2206-4fd3-901d-f7dd6e67bbd0",
+          "text": "Prévoir archivage fiscal 10 ans (docs FR + IL)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "id": "health",
+      "emoji": "❤️",
+      "title": "Santé, Sécurité, Intégration",
+      "subtitle": "Vivre bien et en sécurité à Tel Aviv",
+      "items": [
+        {
+          "id": "c616388a-0f0e-4a24-bb19-195bd06c4f8a",
+          "text": "Vérifier couverture CFE famille complète",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "6cf58b38-50cf-45ae-9502-bb753e8247e3",
+          "text": "Souscrire mutuelle complémentaire internationale",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "5fe2fc21-852f-4e0c-9b42-4291bf8c276d",
+          "text": "Identifier médecins francophones (généraliste, dentiste, gynéco, pédiatre)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "4d65e306-a847-44b3-909c-772b71d659d6",
+          "text": "Identifier hôpitaux privés de référence (Ichilov / Assuta)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "b1f1ae40-830a-412b-bf36-a23b32f7ef5d",
+          "text": "Constituer trousse de secours / urgence maison",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "d71cf20c-de06-495f-92fd-bf4ff539f6cd",
+          "text": "Briefing famille consignes sirènes (90s d'alerte à Tel Aviv)",
+          "priority": "critical",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "d8ea04fd-b6e4-44dc-a8e2-13b3dcb960d5",
+          "text": "S'inscrire à un Ulpan (cours d'hébreu intensif)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "82e1ea0e-4b18-405d-b472-15ab7cd2673c",
+          "text": "Vérifier si Ulpan subventionné par l'ambassade pour les conjoints",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "316aa064-b5a5-43d7-ac8f-719eb3ca8c15",
+          "text": "Acheter adaptateurs électriques (prises israéliennes type H)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "cf8404b7-62a9-4084-aa29-26533bb375d4",
+          "text": "Carte Rav-Kav (transports en commun Israël)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "7c9819e8-fde8-4780-8285-fdfda25cc71b",
+          "text": "Carte de bibliothèque / médiathèque IFI (La Closerie)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "id": "post",
+      "emoji": "🔧",
+      "title": "Post-installation (M+1 à M+3)",
+      "subtitle": "Ce qui se fait une fois posé",
+      "items": [
+        {
+          "id": "0c77b3bf-52fa-46f0-8223-920944b2dc90",
+          "text": "Conversion permis de conduire (si séjour > 1 an)",
+          "priority": "high",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "1ab18403-d1bc-4953-b721-5e1dfa3b26e9",
+          "text": "Acheter voiture ou location longue durée si besoin",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "867fae96-d5eb-4181-bb44-9526e9a655d3",
+          "text": "Mettre à jour adresses partout (banque FR, admin, ClubFunding, etc.)",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "038e291a-6b68-4ca0-b896-62e26b3967b9",
+          "text": "Transmission nouveau RIB aux interlocuteurs FR si besoin",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "b2d7f34a-6b53-4354-a5b9-212e04acbca9",
+          "text": "Premier bilan d'installation (M+3)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "3aed8542-9094-482d-a69b-c1fcc3c5ef38",
+          "text": "Planifier premier retour en France (famille, vacances)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f9c63b26-e649-490f-b05b-5f4ed47abf8a",
+          "text": "Renouvellement annuel accréditation MFA",
+          "priority": "medium",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        },
+        {
+          "id": "f286eb72-1d94-411c-bf8e-87a5d5715a57",
+          "text": "Explorer le pays (Jérusalem, Néguev, Mer Morte, Haïfa, Eilat)",
+          "priority": "low",
+          "notes": "",
+          "done": false,
+          "subtasks": [],
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": ""
+        }
+      ],
+      "subsections": [
+        {
+          "id": "b0c352a2-07aa-42f1-8459-e5fbb8a389c9",
+          "title": "test",
+          "collapsed": false,
+          "items": []
+        },
+        {
+          "id": "dc5a6e81-2466-4dda-9dc9-ba90da44d31e",
+          "title": "sgswgw",
+          "collapsed": false,
+          "items": []
+        }
+      ]
+    },
+    {
+      "id": "8d297ef8-92d2-4d89-9e5a-474fd0dbd3e0",
+      "emoji": "🇮🇱​",
+      "title": "Holon",
+      "subtitle": "",
+      "items": [
+        {
+          "id": "cd949439-9975-4634-8584-57e6c0381c1b",
+          "text": "Demander une carte de résident, elle offre des réductions de 10 à 20% sur les activités municipales",
+          "priority": "medium",
+          "notes": "",
+          "link": "",
+          "price": 0,
+          "location": null,
+          "done": false,
+          "subtasks": [],
+          "image": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "id": "76693a8d-4d07-4ad5-baa7-d6c7a57cdc9c",
+      "emoji": "💸",
+      "title": "Banque",
+      "subtitle": "",
+      "items": [],
+      "subsections": [
+        {
+          "id": "4c2647a8-4596-449b-a65f-74fcd55b4138",
+          "title": "Revolut",
+          "collapsed": false,
+          "items": [
+            {
+              "id": "04e9960b-5ae3-4501-84fd-3e8f53e893b7",
+              "text": "Transférer résidence d'Australie à Israël",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "c2a06333-bedb-4d1d-8d5c-78cb45cef419",
+              "text": "Créer un compte pour Préma avec carte gratuite",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "9f8df748-50df-4224-b806-2e0e544b4360",
+              "text": "Souscrire à l'offre Ultra",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            },
+            {
+              "id": "5af3aee5-338b-4458-b611-8a0cc9a83090",
+              "text": "Mettre l'épargne sur Revolut USD à 3,5/4%",
+              "priority": "medium",
+              "notes": "",
+              "link": "",
+              "price": 0,
+              "location": null,
+              "done": false,
+              "subtasks": [],
+              "image": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4c2d65aa-32ae-45de-9380-55ccb37479ee",
+      "emoji": "📁",
+      "title": "Oulpan",
+      "subtitle": "",
+      "items": [
+        {
+          "id": "41699846-241d-4082-a85b-5a91cb08eaa7",
+          "text": "Ulpan4U",
+          "priority": "medium",
+          "notes": "Ulpan4U est particulièrement réputé pour sa méthode \"Spoken Hebrew\".\n\nLa méthode : C'est le \"speed-dating\" de l'hébreu. L'objectif est de briser la barrière de la langue dès le premier jour. On utilise des jeux de rôle, des situations réelles (faire ses courses, commander un café) et on insiste peu sur la grammaire complexe.\n\nLocalisation : Bat Yam (limitrophe de Holon, accessible en 10-15 min en voiture ou bus).\n\nContact :\nWhatsApp / Tel : +972 58-425-2028\n\nSite : ulpan4u.co.il\n\nPrix (Tarifs 2026 indicatifs) :\nFormule Standard : Environ 590 NIS / mois (engagement de 3 mois).\nFormule Expert (Intensif) : Environ 500 NIS / mois (engagement de 6 mois).\nCours à l'unité / sans engagement : Autour de 750 NIS / mois.\n\nRythme : Plus flexible. Souvent 2 sessions par semaine de 1h30 ou 2h. Petits groupes (maximum 8-10 personnes).\n\nAdresse :\nRue Ha-Amal 11, Bat Yam, Israël\n(En hébreu : העמל 11, בת ים)",
+          "link": "https://ulpan4u.co.il",
+          "price": 0,
+          "location": null,
+          "image": "",
+          "done": false,
+          "subtasks": []
+        },
+        {
+          "id": "1af89f9b-b0e6-438d-85f9-125e3ea0cb50",
+          "text": "Oulpan Holon (public)",
+          "priority": "medium",
+          "notes": "C’est l’oulpan municipal classique. Il est géré par la mairie et le ministère de l’Éducation.\n\nLe style : Très académique. On apprend les bases de la lecture (les points-voyelles), l'écriture cursive et la grammaire. C’est efficace pour les fondations, mais frustrant si l'on veut parler immédiatement.\n\nAdresse : Rue Geyula 11, Holon.\n\nContact :\n\nTéléphone : +972 3-504-1845\n\nEmail : info@holon.muni.il (ou via le département \"Alya\" de la mairie).\n\nHoraires : Généralement le matin (8h30 - 13h00) ou le soir (17h30 - 20h30), 2 à 3 fois par semaine.\n\nPrix : Très abordable. Pour les nouveaux résidents, c’est souvent gratuit ou subventionné (environ 500 à 800 NIS pour une session de 5 mois).\n\nLe bémol pour vous : Classes chargées (20-25 personnes) et rythme axé sur l'écrit.",
+          "link": "",
+          "price": 0,
+          "location": null,
+          "image": "",
+          "done": false,
+          "subtasks": []
+        }
+      ],
+      "subsections": []
     }
   ]
 };
@@ -763,7 +4251,8 @@ const DEFAULT_DATA = {
 // ==============================================
 function migrate(data) {
   if (!data || !data.sections) return null;
-  data.version = 4;
+  const fromVersion = data.version || 0;
+  data.version = 5;
   const fixItem = (i) => {
     if (!Array.isArray(i.subtasks)) i.subtasks = [];
     if (typeof i.link !== 'string') i.link = '';
@@ -787,6 +4276,26 @@ function migrate(data) {
       sub.items.forEach(fixItem);
     });
   });
+  // v5 : injection de la section Mamad si absente (uniquement à la première migration vers v5,
+  // ce qui permet à l'utilisateur de la supprimer ensuite sans qu'elle ne réapparaisse)
+  if (fromVersion < 5 && !data.sections.find(s => s.id === 'mamad')) {
+    data.sections.push(MAMAD_SECTION());
+  }
+  // Top-up : ajouter toute section DEFAULT manquante (pour les appareils ouverts pour la 1re fois,
+  // ou les caches navigateurs avec des versions anciennes du fichier).
+  // ⚠️ Effet de bord : si l'utilisateur supprime une section qui figure dans DEFAULT_DATA,
+  // elle réapparaîtra au prochain reload. Pour la supprimer définitivement, il faut aussi
+  // la retirer de DEFAULT_DATA.
+  try {
+    if (typeof DEFAULT_DATA !== 'undefined' && DEFAULT_DATA && Array.isArray(DEFAULT_DATA.sections)) {
+      const existingIds = new Set(data.sections.map(s => s.id));
+      for (const defaultSection of DEFAULT_DATA.sections) {
+        if (!existingIds.has(defaultSection.id)) {
+          data.sections.push(JSON.parse(JSON.stringify(defaultSection)));
+        }
+      }
+    }
+  } catch(e) { console.warn('Top-up defaults failed:', e); }
   return data;
 }
 
@@ -850,7 +4359,236 @@ let saveTimeout = null;
 // ==============================================
 const hasWindowStorage = typeof window !== 'undefined' && typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
 
+// ==============================================
+// Synchronisation cross-device via jsonblob.com
+// Pas de compte, pas de clé : un blob anonyme + URL fragment comme identifiant partagé
+// ==============================================
+const SYNC_HASH_PREFIX = '#sync=';
+const JSONBLOB_BASE = 'https://jsonblob.com/api/jsonBlob';
+const SYNC_POLL_INTERVAL = 15000; // 15s
+
+const syncState = {
+  enabled: false,
+  blobId: null,
+  lastRemoteHash: null,
+  lastError: null,
+  pollHandle: null,
+  pushTimeout: null,
+  isPushing: false,
+  isPulling: false,
+};
+
+(function detectSyncFromUrl() {
+  try {
+    const h = window.location.hash || '';
+    if (h.startsWith(SYNC_HASH_PREFIX)) {
+      const id = h.slice(SYNC_HASH_PREFIX.length).trim();
+      if (id) {
+        syncState.enabled = true;
+        syncState.blobId = id;
+      }
+    }
+  } catch(e) {}
+})();
+
+async function fetchRemoteData() {
+  if (!syncState.enabled || !syncState.blobId) return null;
+  syncState.isPulling = true;
+  updateSyncIndicator();
+  try {
+    const resp = await fetch(JSONBLOB_BASE + '/' + syncState.blobId, {
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store'
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    syncState.lastError = null;
+    return data;
+  } catch(e) {
+    console.warn('[sync] pull failed:', e);
+    syncState.lastError = e.message;
+    return null;
+  } finally {
+    syncState.isPulling = false;
+    updateSyncIndicator();
+  }
+}
+
+async function pushRemoteData(data) {
+  if (!syncState.enabled || !syncState.blobId) return false;
+  syncState.isPushing = true;
+  updateSyncIndicator();
+  try {
+    const json = JSON.stringify(data);
+    const resp = await fetch(JSONBLOB_BASE + '/' + syncState.blobId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: json
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    syncState.lastRemoteHash = json;
+    syncState.lastError = null;
+    return true;
+  } catch(e) {
+    console.warn('[sync] push failed:', e);
+    syncState.lastError = e.message;
+    return false;
+  } finally {
+    syncState.isPushing = false;
+    updateSyncIndicator();
+  }
+}
+
+function debouncedPushRemote(data) {
+  if (!syncState.enabled) return;
+  clearTimeout(syncState.pushTimeout);
+  syncState.pushTimeout = setTimeout(() => { pushRemoteData(data); }, 1500);
+}
+
+async function pollAndMerge() {
+  if (!syncState.enabled) return;
+  if (typeof state === 'undefined' || !state.data) return;
+  if (syncState.isPushing) return;
+  const remote = await fetchRemoteData();
+  if (!remote) return;
+  const remoteJson = JSON.stringify(remote);
+  const localJson = JSON.stringify(state.data);
+  if (remoteJson === localJson) {
+    syncState.lastRemoteHash = remoteJson;
+    return;
+  }
+  if (remoteJson === syncState.lastRemoteHash) return;
+  const migrated = migrate(remote);
+  if (!migrated) return;
+  state.data = migrated;
+  syncState.lastRemoteHash = JSON.stringify(migrated);
+  try {
+    const json = JSON.stringify(migrated);
+    if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
+    else localStorage.setItem(STORAGE_KEY, json);
+  } catch(e) {}
+  if (typeof render === 'function') render();
+}
+
+function startSyncPolling() {
+  if (!syncState.enabled) return;
+  if (syncState.pollHandle) clearInterval(syncState.pollHandle);
+  syncState.pollHandle = setInterval(pollAndMerge, SYNC_POLL_INTERVAL);
+}
+
+async function activateSync() {
+  if (syncState.enabled) {
+    showMagicLinkModal();
+    return;
+  }
+  if (typeof state === 'undefined' || !state.data) {
+    alert('Données pas encore chargées, attends une seconde…');
+    return;
+  }
+  const btn = document.getElementById('sync-indicator');
+  if (btn) { btn.textContent = 'Création…'; btn.disabled = true; }
+  try {
+    const resp = await fetch(JSONBLOB_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(state.data)
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const location = resp.headers.get('Location') || '';
+    const id = location.split('/').filter(Boolean).pop();
+    if (!id) throw new Error('ID non récupéré');
+    syncState.blobId = id;
+    syncState.enabled = true;
+    syncState.lastRemoteHash = JSON.stringify(state.data);
+    history.replaceState(null, '', window.location.pathname + window.location.search + SYNC_HASH_PREFIX + id);
+    startSyncPolling();
+    if (btn) btn.disabled = false;
+    showMagicLinkModal();
+    updateSyncIndicator();
+  } catch(e) {
+    alert('Échec de l\'activation de la sync : ' + e.message + '\n\nVérifie ta connexion et réessaie.');
+    if (btn) btn.disabled = false;
+    updateSyncIndicator();
+  }
+}
+
+function showMagicLinkModal() {
+  const url = window.location.origin + window.location.pathname + window.location.search + SYNC_HASH_PREFIX + syncState.blobId;
+  const existing = document.getElementById('magic-link-modal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'magic-link-modal';
+  modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px;';
+  modal.innerHTML = '<div style="background:var(--bg); border-radius:10px; max-width:560px; width:100%; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35);">'
+    + '<h2 style="font-family:\'Fraunces\',serif; font-size:24px; font-weight:400; margin-bottom:8px;">Synchronisation activée 🛰️</h2>'
+    + '<p style="font-size:13px; opacity:0.75; margin-bottom:18px; line-height:1.55;">Voici ton <strong>lien magique</strong>. Ouvre-le sur tous tes appareils (PC, mobile) et envoie-le à Préma. Toutes les modifications seront partagées automatiquement (vérification toutes les 15 secondes).</p>'
+    + '<div style="background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:14px; font-family:monospace; font-size:12px; word-break:break-all; margin-bottom:18px; user-select:all; line-height:1.4;">' + url + '</div>'
+    + '<div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:14px;">'
+    + '<button id="magic-copy-btn" style="padding:9px 16px; background:var(--ink); color:var(--bg); border-radius:6px; font-weight:500; border:none; cursor:pointer;">Copier le lien</button>'
+    + '<button id="magic-close-btn" style="padding:9px 16px; background:transparent; border:1px solid var(--line); border-radius:6px; cursor:pointer;">Fermer</button>'
+    + '</div>'
+    + '<p style="font-size:11px; opacity:0.55; line-height:1.5; border-top:1px solid var(--line-soft); padding-top:12px;">⚠️ Ce lien contient un identifiant qui donne accès à tes données. Garde-le confidentiel. Stockage : jsonblob.com (gratuit, sans compte). Les blobs inactifs >30 jours sont effacés ; toute modification réinitialise ce délai.</p>'
+    + '</div>';
+  document.body.appendChild(modal);
+  document.getElementById('magic-copy-btn').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      const b = document.getElementById('magic-copy-btn');
+      if (b) { b.textContent = 'Copié ✓'; setTimeout(() => { if (b) b.textContent = 'Copier le lien'; }, 2000); }
+    } catch(e) {
+      alert('Sélectionne le lien manuellement et copie-le (Ctrl+C).');
+    }
+  };
+  document.getElementById('magic-close-btn').onclick = () => modal.remove();
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+}
+
+function updateSyncIndicator() {
+  const el = document.getElementById('sync-indicator');
+  if (!el) return;
+  if (!syncState.enabled) {
+    el.innerHTML = '🛰️ Activer la sync';
+    el.title = 'Activer la synchronisation entre tous tes appareils';
+    return;
+  }
+  if (syncState.lastError) {
+    el.innerHTML = '⚠️ Sync (erreur)';
+    el.title = 'Erreur sync : ' + syncState.lastError + ' — clique pour voir le lien magique';
+    return;
+  }
+  if (syncState.isPushing) {
+    el.innerHTML = '⇈ Sync…';
+    el.title = 'Envoi en cours';
+    return;
+  }
+  if (syncState.isPulling) {
+    el.innerHTML = '⇊ Sync…';
+    el.title = 'Réception en cours';
+    return;
+  }
+  el.innerHTML = '🛰️ Sync active';
+  el.title = 'Synchronisation active — clique pour revoir le lien magique';
+}
+
 async function loadData() {
+  // Si sync activée via URL fragment, on essaie d'abord le remote
+  if (syncState.enabled) {
+    const remote = await fetchRemoteData();
+    if (remote) {
+      const migrated = migrate(remote);
+      if (migrated) {
+        syncState.lastRemoteHash = JSON.stringify(migrated);
+        // Sauvegarder localement aussi pour fallback offline
+        try {
+          const json = JSON.stringify(migrated);
+          if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
+          else localStorage.setItem(STORAGE_KEY, json);
+        } catch(e) {}
+        return migrated;
+      }
+    }
+    // Si remote KO, fallback sur localStorage
+  }
   try {
     if (hasWindowStorage) {
       try { const r = await window.storage.get(STORAGE_KEY, true); if (r && r.value) return migrate(JSON.parse(r.value)); } catch (e) {}
@@ -867,6 +4605,8 @@ async function saveData(data) {
     const json = JSON.stringify(data);
     if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
     else localStorage.setItem(STORAGE_KEY, json);
+    // Pousser vers remote (debounced) si sync active
+    if (syncState.enabled) debouncedPushRemote(data);
   } catch (e) { console.error('Save error', e); }
 }
 function scheduleSave() {
@@ -1500,6 +5240,7 @@ function renderHeader(g, gTotal) {
           <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
             <span id="save-indicator" class="save-indicator">${ICO.checkSm} Synchronisé</span>
             <button class="refresh-btn" data-action="refresh" title="Rafraîchir">${ICO.refresh} Rafraîchir</button>
+            <button id="sync-indicator" class="refresh-btn" data-action="toggle-sync" title="Activer la synchronisation entre appareils">🛰️ ${syncState.enabled ? 'Sync active' : 'Activer la sync'}</button>
           </div>
         </div>
         <div class="progress-row">
@@ -1945,6 +5686,7 @@ function handleClick(e) {
 
   switch (a) {
     case 'refresh': refresh(); break;
+    case 'toggle-sync': activateSync(); break;
     case 'select-section': {
       if (state.draggedType) return;
       state.currentSectionId = id;
@@ -2340,6 +6082,14 @@ function handleDragEnd() {
   app.addEventListener('touchcancel', clearLongPress);
 
   render();
+
+  // Démarrer la synchronisation cross-device si activée par URL fragment
+  updateSyncIndicator();
+  if (syncState.enabled) {
+    startSyncPolling();
+    // Pull immédiat pour récupérer la version la plus récente
+    pollAndMerge();
+  }
 })();
 </script>
 </body>
