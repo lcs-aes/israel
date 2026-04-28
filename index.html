@@ -152,6 +152,57 @@
   #undo-btn:not(:disabled) { transition: opacity 0.2s, color 0.2s; }
   #undo-btn:not(:disabled):hover { color: var(--accent); }
 
+  /* Bandeau de rappel sauvegarde JSON */
+  .backup-banner {
+    margin: 14px 0 18px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .backup-banner-warn {
+    background: var(--high-bg);
+    color: var(--high-fg);
+    border: 1px solid rgba(194, 65, 12, 0.25);
+  }
+  .backup-banner-crit {
+    background: var(--crit-bg);
+    color: var(--crit-fg);
+    border: 1px solid rgba(185, 28, 28, 0.35);
+    animation: backupBannerPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes backupBannerPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0); }
+    50% { box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.12); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .backup-banner-crit { animation: none; }
+  }
+  .backup-banner-msg {
+    flex: 1; min-width: 200px;
+  }
+  .backup-banner-btn {
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .backup-banner-btn:hover { opacity: 0.85; }
+  .backup-banner-btn:active { transform: translateY(1px); }
+  /* Bouton indicator dans le header — couleur selon statut sauvegarde */
+  #backup-indicator { transition: color 0.2s; }
+  #backup-indicator:hover { opacity: 1; }
+
   .progress-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; gap:10px; flex-wrap:wrap; }
   .progress-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.6; }
   @media (min-width: 640px) { .progress-label { font-size: 11px; } }
@@ -4989,250 +5040,196 @@ let saveTimeout = null;
 // ==============================================
 const hasWindowStorage = typeof window !== 'undefined' && typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
 
-// ==============================================
-// Synchronisation cross-device via jsonblob.com
-// Pas de compte, pas de clé : un blob anonyme + URL fragment comme identifiant partagé
-// ==============================================
-const SYNC_HASH_PREFIX = '#sync=';
-const JSONBLOB_BASE = 'https://jsonblob.com/api/jsonBlob';
-const SYNC_POLL_INTERVAL = 15000; // 15s
+// Note : la synchronisation cloud (anciennement jsonblob.com) a été retirée.
+// Voir le système de sauvegarde manuelle JSON via le bouton 💾 du header :
+// l'utilisateur exporte régulièrement son état dans un fichier JSON qu'il
+// stocke où il veut (cloud personnel, clé USB, etc.). Un bandeau rappelle
+// l'utilisateur s'il n'a pas sauvegardé depuis 24h+.
 
-const syncState = {
-  enabled: false,
-  blobId: null,
-  lastRemoteHash: null,
-  lastError: null,
-  pollHandle: null,
-  pushTimeout: null,
-  isPushing: false,
-  isPulling: false,
-};
+// =================================================================
+// Système de sauvegarde manuelle JSON
+// =================================================================
+// Stocké dans localStorage :
+//   expat-backup-last-export : timestamp (ms) du dernier téléchargement JSON réussi
+//   expat-backup-last-modif : timestamp (ms) de la dernière modification de données
+//
+// L'idée : on suit l'écart entre la dernière modif et le dernier export.
+// Si > 24h depuis le dernier export ET au moins une modif depuis → bandeau orange
+// Si > 3 jours depuis le dernier export → bandeau rouge bloquant en haut
+// =================================================================
 
-(function detectSyncFromUrl() {
+const BACKUP_LAST_EXPORT_KEY = 'expat-backup-last-export';
+const BACKUP_LAST_MODIF_KEY = 'expat-backup-last-modif';
+const BACKUP_WARN_HOURS = 24;
+const BACKUP_CRIT_DAYS = 3;
+let _backupFreshnessTimer = null;
+
+function getLastExportTs() {
   try {
-    const h = window.location.hash || '';
-    if (h.startsWith(SYNC_HASH_PREFIX)) {
-      const id = h.slice(SYNC_HASH_PREFIX.length).trim();
-      if (id) {
-        syncState.enabled = true;
-        syncState.blobId = id;
-      }
+    const v = localStorage.getItem(BACKUP_LAST_EXPORT_KEY);
+    return v ? parseInt(v, 10) : 0;
+  } catch(e) { return 0; }
+}
+function setLastExportTs(ts) {
+  try { localStorage.setItem(BACKUP_LAST_EXPORT_KEY, String(ts)); } catch(e) { console.warn('[backup] persist export ts failed:', e); }
+}
+function getLastModifTs() {
+  try {
+    const v = localStorage.getItem(BACKUP_LAST_MODIF_KEY);
+    return v ? parseInt(v, 10) : 0;
+  } catch(e) { return 0; }
+}
+function setLastModifTs(ts) {
+  try { localStorage.setItem(BACKUP_LAST_MODIF_KEY, String(ts)); } catch(e) { console.warn('[backup] persist modif ts failed:', e); }
+}
+// L'utilisateur a-t-il fait des modifications depuis le dernier export ?
+function hasUnsavedChanges() {
+  const lastModif = getLastModifTs();
+  const lastExport = getLastExportTs();
+  return lastModif > lastExport;
+}
+
+// Calcule le statut de fraîcheur de la sauvegarde
+// Retourne { kind, hours, label, color }
+//   kind: 'fresh' | 'never' | 'warn' | 'crit'
+function backupStatus() {
+  const last = getLastExportTs();
+  if (!last) return { kind: 'never', hours: Infinity, label: 'Jamais sauvegardé', color: 'var(--crit-fg)' };
+  const hours = (Date.now() - last) / 3600000;
+  const days = hours / 24;
+  if (days >= BACKUP_CRIT_DAYS) {
+    const d = Math.floor(days);
+    return { kind: 'crit', hours, label: 'Pas sauvegardé depuis ' + d + 'j', color: 'var(--crit-fg)' };
+  }
+  if (hours >= BACKUP_WARN_HOURS) {
+    const h = Math.floor(hours);
+    if (h >= 24) {
+      const d = Math.floor(h / 24);
+      return { kind: 'warn', hours, label: 'Sauvegardé il y a ' + d + 'j', color: 'var(--high-fg)' };
     }
-  } catch(e) { console.warn('[sync] URL fragment parse failed:', e); }
-})();
+    return { kind: 'warn', hours, label: 'Sauvegardé il y a ' + h + 'h', color: 'var(--high-fg)' };
+  }
+  // Fresh : moins de 24h
+  if (hours < 1) {
+    const m = Math.max(1, Math.floor(hours * 60));
+    return { kind: 'fresh', hours, label: 'Sauvegardé il y a ' + m + ' min', color: '' };
+  }
+  const h = Math.floor(hours);
+  return { kind: 'fresh', hours, label: 'Sauvegardé il y a ' + h + 'h', color: '' };
+}
 
-async function fetchRemoteData() {
-  if (!syncState.enabled || !syncState.blobId) return null;
-  syncState.isPulling = true;
-  updateSyncIndicator();
+// Rendu compact pour le bouton du header
+function renderBackupIndicator() {
+  const s = backupStatus();
+  let icon = '💾';
+  if (s.kind === 'never' || s.kind === 'crit') icon = '🔴';
+  else if (s.kind === 'warn') icon = '⚠️';
+  else icon = '✓';
+  return icon + ' ' + s.label;
+}
+
+// Met à jour le bouton du header sans full render
+function updateBackupIndicator() {
+  const btn = document.getElementById('backup-indicator');
+  if (!btn) return;
+  btn.innerHTML = renderBackupIndicator();
+  const s = backupStatus();
+  btn.style.color = s.color || '';
+  // Title pour hover
+  if (s.kind === 'never') btn.title = 'Aucune sauvegarde JSON faite. Cliquer pour télécharger maintenant.';
+  else if (s.kind === 'crit') btn.title = 'Sauvegarde ancienne — il est temps de télécharger un nouveau JSON.';
+  else if (s.kind === 'warn') btn.title = 'Sauvegarde > 24h. Cliquer pour télécharger un JSON frais.';
+  else btn.title = 'Cliquer pour télécharger un fichier de sauvegarde JSON.';
+}
+
+// Bandeau de rappel en haut de la page
+function renderBackupBanner() {
+  const s = backupStatus();
+  // On affiche le bandeau seulement si on a fait des modifs depuis le dernier export
+  // (pas de bandeau si aucune modif récente, même si > 24h)
+  // Exception : si jamais sauvegardé ET au moins une modif (data exists), bandeau direct
+  const hasModifs = hasUnsavedChanges();
+  if (s.kind === 'fresh') return ''; // récent, pas de bandeau
+  if (s.kind === 'warn' && !hasModifs) return ''; // > 24h mais pas de modif depuis l'export
+  if (s.kind === 'never' && !hasModifs) return ''; // jamais sauvegardé mais pas de modif
+
+  const cls = (s.kind === 'crit' || s.kind === 'never') ? 'backup-banner backup-banner-crit' : 'backup-banner backup-banner-warn';
+  const msg = s.kind === 'never'
+    ? '🔴 Aucune sauvegarde n\'a encore été faite. Pense à télécharger ton fichier JSON régulièrement pour sécuriser tes données.'
+    : (s.kind === 'crit'
+      ? '🔴 ' + s.label + '. Sauvegarde devient critique : pense à télécharger ton fichier JSON.'
+      : '⚠️ ' + s.label + ' et tu as fait des modifications depuis. Pense à télécharger un fichier JSON pour les sécuriser.');
+  return '<div class="' + cls + '" role="alert">'
+       + '<span class="backup-banner-msg">' + msg + '</span>'
+       + '<button class="backup-banner-btn" data-action="export-backup" type="button">💾 Sauvegarder maintenant</button>'
+       + '</div>';
+}
+
+// Met à jour bouton + bandeau (sans full render)
+function refreshBackupUI() {
+  updateBackupIndicator();
+  // Le bandeau est rendu dans renderHeader, donc on doit le rebuilder
+  const existing = document.querySelector('.backup-banner');
+  const newHtml = renderBackupBanner();
+  if (!existing && !newHtml) return; // rien à faire
+  if (existing && !newHtml) { existing.remove(); return; } // banner doit disparaître
+  // Insérer ou remplacer
+  const wrap = document.querySelector('.wrap');
+  if (!wrap) return;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = newHtml;
+  const newBanner = tempDiv.firstElementChild;
+  if (existing) {
+    existing.replaceWith(newBanner);
+  } else if (newBanner) {
+    wrap.insertBefore(newBanner, wrap.firstChild);
+  }
+}
+
+// Démarre le ticker qui rafraîchit le label du bouton header toutes les minutes
+// (sinon "il y a 23h" reste affiché alors qu'on est passé à "il y a 1j")
+function startBackupFreshnessTicker() {
+  if (_backupFreshnessTimer) clearInterval(_backupFreshnessTimer);
+  _backupFreshnessTimer = setInterval(() => {
+    refreshBackupUI();
+  }, 60000); // 1 min
+}
+
+// Action principale : exporter le JSON et noter le timestamp
+function exportBackupNow() {
+  if (!state.data) {
+    showToast('Données pas encore chargées.', 2500);
+    return;
+  }
   try {
-    const resp = await fetch(JSONBLOB_BASE + '/' + syncState.blobId, {
-      headers: { 'Accept': 'application/json' },
-      cache: 'no-store'
-    });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    syncState.lastError = null;
-    return data;
+    const json = JSON.stringify(state.data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    // Nom de fichier avec date+heure pour ne pas écraser les snapshots successifs
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    a.href = url;
+    a.download = 'expat-tracker-' + yyyy + '-' + mm + '-' + dd + '-' + hh + 'h' + min + '.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+    // Marquer le timestamp d'export
+    setLastExportTs(Date.now());
+    refreshBackupUI();
+    const sizeStr = json.length > 1024 ? Math.round(json.length / 1024) + ' KB' : json.length + ' B';
+    showToast('✓ Sauvegarde téléchargée (' + sizeStr + ')', 2800, 'success');
   } catch(e) {
-    console.warn('[sync] pull failed:', e);
-    syncState.lastError = e.message;
-    return null;
-  } finally {
-    syncState.isPulling = false;
-    updateSyncIndicator();
+    console.warn('[backup] export failed:', e);
+    showToast('Erreur lors de l\'export : ' + e.message, 4000, 'error');
   }
-}
-
-async function pushRemoteData(data) {
-  if (!syncState.enabled || !syncState.blobId) return false;
-  syncState.isPushing = true;
-  updateSyncIndicator();
-  try {
-    const json = JSON.stringify(data);
-    const resp = await fetch(JSONBLOB_BASE + '/' + syncState.blobId, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: json
-    });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    syncState.lastRemoteHash = json;
-    syncState.lastError = null;
-    syncState.lastSyncSuccessAt = Date.now();
-    syncState.consecutiveFailures = 0;
-    // Si on était en erreur récente, signaler la reprise
-    if (syncState.wasInError) {
-      showToast('✓ Synchronisation rétablie');
-      syncState.wasInError = false;
-    }
-    return true;
-  } catch(e) {
-    console.warn('[sync] push failed:', e);
-    syncState.lastError = e.message;
-    syncState.consecutiveFailures = (syncState.consecutiveFailures || 0) + 1;
-    // Premier échec : avertir l'utilisateur (sinon il croit que c'est synchronisé)
-    if (!syncState.wasInError) {
-      syncState.wasInError = true;
-      showToast('⚠️ Échec de synchronisation — modifications gardées en local, retry dans 30s', 4500, 'error');
-    }
-    // Retry automatique avec backoff exponentiel : 30s, 60s, 120s, 240s, max 300s
-    const retryDelay = Math.min(30000 * Math.pow(2, Math.min(syncState.consecutiveFailures - 1, 4)), 300000);
-    if (syncState.retryHandle) clearTimeout(syncState.retryHandle);
-    syncState.retryHandle = setTimeout(() => {
-      if (syncState.enabled && state.data) pushRemoteData(state.data);
-    }, retryDelay);
-    return false;
-  } finally {
-    syncState.isPushing = false;
-    updateSyncIndicator();
-  }
-}
-
-function debouncedPushRemote(data) {
-  if (!syncState.enabled) return;
-  clearTimeout(syncState.pushTimeout);
-  syncState.pushTimeout = setTimeout(() => { pushRemoteData(data); }, 1500);
-}
-
-async function pollAndMerge() {
-  if (!syncState.enabled) return;
-  if (typeof state === 'undefined' || !state.data) return;
-  if (syncState.isPushing) return;
-  const remote = await fetchRemoteData();
-  if (!remote) return;
-  const remoteJson = JSON.stringify(remote);
-  const localJson = JSON.stringify(state.data);
-  if (remoteJson === localJson) {
-    syncState.lastRemoteHash = remoteJson;
-    return;
-  }
-  if (remoteJson === syncState.lastRemoteHash) {
-    // Pas de changement, mais on a tout de même réussi à fetch : marque la fraîcheur
-    syncState.lastSyncSuccessAt = Date.now();
-    return;
-  }
-  const migrated = migrate(remote);
-  if (!migrated) return;
-  state.data = migrated;
-  syncState.lastRemoteHash = JSON.stringify(migrated);
-  syncState.lastSyncSuccessAt = Date.now();
-  // Données distantes reçues : on vide la pile undo locale (Q3 — l'undo n'annule
-  // que les actions locales, pas celles d'autres devices). Sinon Ctrl+Z restaurerait
-  // un état qui ne correspondrait plus à ce que voit Préma.
-  if (typeof undoStack !== 'undefined') {
-    undoStack.length = 0;
-    redoStack.length = 0;
-    if (typeof updateUndoIndicator === 'function') updateUndoIndicator();
-  }
-  try {
-    const json = JSON.stringify(migrated);
-    if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
-    else localStorage.setItem(STORAGE_KEY, json);
-  } catch(e) { console.warn('[sync] local persist after pull failed:', e); }
-  if (typeof render === 'function') render();
-}
-
-function startSyncPolling() {
-  if (!syncState.enabled) return;
-  if (syncState.pollHandle) clearInterval(syncState.pollHandle);
-  syncState.pollHandle = setInterval(pollAndMerge, SYNC_POLL_INTERVAL);
-}
-
-async function activateSync() {
-  if (syncState.enabled) {
-    showMagicLinkModal();
-    return;
-  }
-  if (typeof state === 'undefined' || !state.data) {
-    showToast('Données pas encore chargées, attends une seconde…');
-    return;
-  }
-  const btn = document.getElementById('sync-indicator');
-  if (btn) { btn.textContent = 'Création…'; btn.disabled = true; }
-  try {
-    const resp = await fetch(JSONBLOB_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(state.data)
-    });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const location = resp.headers.get('Location') || '';
-    const id = location.split('/').filter(Boolean).pop();
-    if (!id) throw new Error('ID non récupéré');
-    syncState.blobId = id;
-    syncState.enabled = true;
-    syncState.lastRemoteHash = JSON.stringify(state.data);
-    syncState.lastSyncSuccessAt = Date.now();
-    history.replaceState(null, '', window.location.pathname + window.location.search + SYNC_HASH_PREFIX + id);
-    startSyncPolling();
-    startSyncFreshnessTicker();
-    if (btn) btn.disabled = false;
-    showMagicLinkModal();
-    updateSyncIndicator();
-  } catch(e) {
-    alertDialog('Échec de l\'activation de la sync : ' + e.message + '\n\nVérifie ta connexion et réessaie.', { title: 'Erreur de synchronisation' });
-    if (btn) btn.disabled = false;
-    updateSyncIndicator();
-  }
-}
-
-function showMagicLinkModal() {
-  const url = window.location.origin + window.location.pathname + window.location.search + SYNC_HASH_PREFIX + syncState.blobId;
-  const existing = document.getElementById('magic-link-modal');
-  if (existing) existing.remove();
-  const previouslyFocused = document.activeElement;
-  const modal = document.createElement('div');
-  modal.id = 'magic-link-modal';
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-modal', 'true');
-  modal.setAttribute('aria-labelledby', 'magic-link-title');
-  modal.setAttribute('aria-describedby', 'magic-link-desc');
-  modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px;';
-  modal.innerHTML = '<div style="background:var(--bg); border-radius:10px; max-width:560px; width:100%; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35); max-height:calc(100dvh - 40px); overflow-y:auto;">'
-    + '<h2 id="magic-link-title" style="font-family:\'Fraunces\',serif; font-size:24px; font-weight:400; margin-bottom:8px;">Synchronisation activée 🛰️</h2>'
-    + '<p id="magic-link-desc" style="font-size:13px; opacity:0.75; margin-bottom:18px; line-height:1.55;">Voici ton <strong>lien magique</strong>. Ouvre-le sur tous tes appareils (PC, mobile) et envoie-le à Préma. Toutes les modifications seront partagées automatiquement (vérification toutes les 15 secondes).</p>'
-    + '<div role="textbox" aria-readonly="true" aria-label="Lien magique de synchronisation" tabindex="0" style="background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:14px; font-family:monospace; font-size:12px; word-break:break-all; margin-bottom:18px; user-select:all; line-height:1.4;">' + url + '</div>'
-    + '<div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:14px;">'
-    + '<button id="magic-copy-btn" style="padding:9px 16px; background:var(--ink); color:var(--bg); border-radius:6px; font-weight:500; border:none; cursor:pointer;">Copier le lien</button>'
-    + '<button id="magic-close-btn" style="padding:9px 16px; background:transparent; border:1px solid var(--line); border-radius:6px; cursor:pointer;">Fermer</button>'
-    + '</div>'
-    + '<p style="font-size:11px; opacity:0.55; line-height:1.5; border-top:1px solid var(--line-soft); padding-top:12px;">⚠️ Ce lien contient un identifiant qui donne accès à tes données. Garde-le confidentiel. Stockage : jsonblob.com (gratuit, sans compte). Les blobs inactifs &gt;30 jours sont effacés ; toute modification réinitialise ce délai.</p>'
-    + '</div>';
-  document.body.appendChild(modal);
-
-  const closeModal = () => {
-    modal.remove();
-    document.removeEventListener('keydown', handleKey);
-    if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
-      try { previouslyFocused.focus(); } catch(e) { console.warn('[a11y] restore focus magic-link failed:', e); }
-    }
-  };
-  const focusables = modal.querySelectorAll('button, [tabindex="0"]');
-  const first = focusables[0], last = focusables[focusables.length - 1];
-  const handleKey = (e) => {
-    if (e.key === 'Escape') { e.preventDefault(); closeModal(); return; }
-    if (e.key === 'Tab' && focusables.length > 0) {
-      // Focus trap
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    }
-  };
-  document.addEventListener('keydown', handleKey);
-
-  document.getElementById('magic-copy-btn').onclick = async () => {
-    try {
-      await navigator.clipboard.writeText(url);
-      const b = document.getElementById('magic-copy-btn');
-      if (b) { b.textContent = 'Copié ✓'; setTimeout(() => { if (b) b.textContent = 'Copier le lien'; }, 2000); }
-      showToast('Lien copié dans le presse-papier');
-    } catch(e) {
-      alertDialog('Sélectionne le lien manuellement et copie-le (Ctrl+C).', { title: 'Copie impossible' });
-    }
-  };
-  document.getElementById('magic-close-btn').onclick = closeModal;
-  modal.onclick = (e) => { if (e.target === modal) closeModal(); };
-  // Focus initial sur le bouton "Copier"
-  setTimeout(() => { const b = document.getElementById('magic-copy-btn'); if (b) b.focus(); }, 50);
 }
 
 // Toast notification pour feedback non-intrusif
@@ -5590,6 +5587,13 @@ async function importDataFromJson(file) {
     const migrated = migrate(parsed);
     if (!migrated) throw new Error('Migration impossible.');
     mutate(() => { state.data = migrated; }, 'Import depuis fichier JSON');
+    // Important : on aligne lastExport sur lastModif pour que le bandeau ne s'affiche
+    // pas immédiatement après un import (le contenu importé est par définition à jour
+    // au moment où on l'importe, c'est le scénario PC fixe → portable et inverse).
+    const now = Date.now();
+    setLastExportTs(now);
+    setLastModifTs(now);
+    refreshBackupUI();
     showToast('Import réussi : ' + sectionCount + ' section(s) chargée(s)', 3000, 'success');
   } catch(e) {
     console.warn('[import] failed:', e);
@@ -5625,15 +5629,6 @@ function openSettingsView() {
   body += '<input type="file" id="settings-import-input" accept="application/json,.json" style="display:none;" />';
   body += '<button id="settings-import-btn" class="btn-ghost" style="width:100%; padding:10px; font-size:14px; margin-bottom:18px;">📤 Sélectionner un fichier à importer…</button>';
 
-  if (syncState.enabled) {
-    body += '<h3 style="font-family:\'Fraunces\',serif; font-size:15px; font-weight:500; margin-bottom:8px; padding-bottom:4px; border-bottom:1px dashed var(--line);">🛰️ Synchronisation</h3>';
-    body += '<p style="font-size:13px; opacity:0.75; margin-bottom:10px;">Sync active vers jsonblob. Identifiant : <code style="background:var(--surface); padding:2px 6px; border-radius:3px; font-size:11px;">' + escapeHtml(syncState.blobId || '?') + '</code></p>';
-    if (syncState.lastSyncSuccessAt) {
-      const ageS = Math.floor((Date.now() - syncState.lastSyncSuccessAt) / 1000);
-      body += '<p style="font-size:12px; opacity:0.65; margin-bottom:18px;">Dernière sync réussie : il y a ' + ageS + ' s</p>';
-    }
-  }
-
   body += '</div>';
 
   const { modal } = openCustomModal({
@@ -5664,88 +5659,10 @@ function openSettingsView() {
   }, 60);
 }
 
-function updateSyncIndicator() {
-  const el = document.getElementById('sync-indicator');
-  if (!el) return;
-  if (!syncState.enabled) {
-    el.innerHTML = '🛰️ Activer la sync';
-    el.title = 'Activer la synchronisation entre tous tes appareils';
-    el.style.color = '';
-    return;
-  }
-  if (syncState.lastError && syncState.wasInError) {
-    el.innerHTML = '⚠️ Sync (erreur)';
-    el.title = 'Erreur sync : ' + syncState.lastError + ' — retry automatique en cours. Clic pour voir le lien magique.';
-    el.style.color = 'var(--crit-fg)';
-    return;
-  }
-  if (syncState.isPushing) {
-    el.innerHTML = '⇈ Sync…';
-    el.title = 'Envoi en cours';
-    el.style.color = '';
-    return;
-  }
-  if (syncState.isPulling) {
-    el.innerHTML = '⇊ Sync…';
-    el.title = 'Réception en cours';
-    el.style.color = '';
-    return;
-  }
-  // Indicateur de fraîcheur : "Synchronisé il y a Xs"
-  if (syncState.lastSyncSuccessAt) {
-    const ageMs = Date.now() - syncState.lastSyncSuccessAt;
-    const ageS = Math.floor(ageMs / 1000);
-    let label, color = '';
-    if (ageS < 60) label = '🛰️ Sync (' + ageS + 's)';
-    else if (ageS < 3600) {
-      label = '🛰️ Sync (' + Math.floor(ageS / 60) + ' min)';
-      if (ageS > 120) color = 'var(--high-fg)'; // dégrade après 2 min sans sync
-    } else {
-      label = '🛰️ Sync (' + Math.floor(ageS / 3600) + ' h)';
-      color = 'var(--crit-fg)';
-    }
-    el.innerHTML = label;
-    el.title = 'Dernière synchronisation réussie : il y a ' + ageS + ' s. Clic pour voir le lien magique.';
-    el.style.color = color;
-    return;
-  }
-  el.innerHTML = '🛰️ Sync active';
-  el.title = 'Synchronisation active — clique pour voir le lien magique';
-  el.style.color = '';
-}
-
-// Met à jour l'indicateur de fraîcheur toutes les 10 secondes
-// (sinon "5s" reste affiché alors qu'en réalité 30 secondes ont passé)
-let _syncFreshnessTimer = null;
-function startSyncFreshnessTicker() {
-  if (_syncFreshnessTimer) clearInterval(_syncFreshnessTimer);
-  _syncFreshnessTimer = setInterval(() => {
-    if (syncState.enabled && !syncState.isPushing && !syncState.isPulling) {
-      updateSyncIndicator();
-    }
-  }, 10000);
-}
-
 async function loadData() {
-  // Si sync activée via URL fragment, on essaie d'abord le remote
-  if (syncState.enabled) {
-    const remote = await fetchRemoteData();
-    if (remote) {
-      const migrated = migrate(remote);
-      if (migrated) {
-        syncState.lastRemoteHash = JSON.stringify(migrated);
-        syncState.lastSyncSuccessAt = Date.now();
-        // Sauvegarder localement aussi pour fallback offline
-        try {
-          const json = JSON.stringify(migrated);
-          if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
-          else localStorage.setItem(STORAGE_KEY, json);
-        } catch(e) { console.warn('[load] cache after sync pull failed:', e); }
-        return migrated;
-      }
-    }
-    // Si remote KO, fallback sur localStorage
-  }
+  // Charge les données depuis le localStorage (ou window.storage si dispo).
+  // Plus de sync distante : la persistence est purement locale, l'utilisateur exporte
+  // manuellement le JSON via le bouton 💾 du header pour archiver/synchroniser.
   try {
     if (hasWindowStorage) {
       try { const r = await window.storage.get(STORAGE_KEY, true); if (r && r.value) return migrate(JSON.parse(r.value)); } catch (e) { console.warn('[load] window.storage v2 failed:', e); }
@@ -5762,8 +5679,6 @@ async function saveData(data) {
     const json = JSON.stringify(data);
     if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
     else localStorage.setItem(STORAGE_KEY, json);
-    // Pousser vers remote (debounced) si sync active
-    if (syncState.enabled) debouncedPushRemote(data);
   } catch (e) { console.error('Save error', e); }
 }
 function scheduleSave() {
@@ -6180,9 +6095,11 @@ function updateUndoIndicator() {
 function mutate(fn, label) {
   pushUndoSnapshot(label || 'Modification');
   fn(state.data);
+  setLastModifTs(Date.now()); // pour le système de rappel sauvegarde
   scheduleSave();
   render();
   updateUndoIndicator();
+  refreshBackupUI();
 }
 
 // =================================================================
@@ -6198,8 +6115,10 @@ function mutate(fn, label) {
 function lightMutate(fn, label) {
   pushUndoSnapshot(label || 'Modification');
   fn(state.data);
+  setLastModifTs(Date.now());
   scheduleSave();
   updateUndoIndicator();
+  refreshBackupUI();
 }
 
 // Recalcule et met à jour la barre de progression globale + le pourcentage de la section courante.
@@ -7173,6 +7092,7 @@ function render() {
     ${renderTabs()}
     <main id="tabpanel-content" role="tabpanel" aria-labelledby="tab-aria-${escapeHtml(sec.id)}" tabindex="0">
       <div class="wrap">
+        ${renderBackupBanner()}
         ${renderSectionHeader(sec, s, sTotal)}
         ${renderToolbar()}
         ${renderFilterBanner()}
@@ -7290,7 +7210,7 @@ function renderHeader(g, gTotal) {
                 return overdue > 0 ? ' <span class="badge-overdue" aria-label="' + overdue + ' tâche' + (overdue > 1 ? 's' : '') + ' en retard">' + overdue + '</span>' : '';
               } catch(e) { return ''; }
             })()}</button>
-            <button id="sync-indicator" class="refresh-btn" data-action="toggle-sync" title="Activer la synchronisation entre appareils" aria-label="${syncState.enabled ? 'Synchronisation active. Cliquer pour revoir le lien magique' : 'Activer la synchronisation entre tous tes appareils'}">🛰️ ${syncState.enabled ? 'Sync active' : 'Activer la sync'}</button>
+            <button id="backup-indicator" class="refresh-btn" data-action="export-backup" title="Télécharger un fichier de sauvegarde JSON" aria-label="Télécharger une sauvegarde JSON">${renderBackupIndicator()}</button>
             <button class="refresh-btn" data-action="open-settings" title="Réglages, sauvegarde, import/export" aria-label="Ouvrir les réglages">⚙️ Réglages</button>
           </div>
         </div>
@@ -7785,7 +7705,7 @@ function handleClick(e) {
   const id = el.dataset.id;
 
   switch (a) {
-    case 'toggle-sync': activateSync(); break;
+    case 'export-backup': exportBackupNow(); break;
     case 'undo': performUndo(); break;
     case 'redo': performRedo(); break;
     case 'open-agenda': openAgendaView(); break;
@@ -8442,9 +8362,26 @@ function handleDragEnd() {
   // Initialiser l'indicateur Undo (désactivé tant qu'aucune action n'a été faite)
   updateUndoIndicator();
 
-  // Rappel au démarrage : toast si des tâches sont en retard
-  // Attendu 1.5s pour ne pas saturer l'utilisateur dès l'arrivée + délai au cas où
-  // un pull de sync arriverait juste après et changerait les compteurs
+  // Initialiser le système de sauvegarde manuelle :
+  // - Mettre à jour l'indicateur visuel d'âge de la dernière sauvegarde
+  // - Vérifier si on doit afficher le bandeau de rappel (24h+) ou la modale (3j+)
+  // - Lancer le ticker périodique qui rafraîchit l'âge dans le header
+  refreshBackupUI();
+  startBackupFreshnessTicker();
+
+  // Avertissement à la fermeture de l'onglet si modifs non sauvegardées
+  // Le navigateur affichera un dialogue "Êtes-vous sûr ?" si l'utilisateur ferme
+  // l'onglet alors qu'il a fait des modifs depuis le dernier export JSON.
+  window.addEventListener('beforeunload', (e) => {
+    if (hasUnsavedChanges()) {
+      e.preventDefault();
+      e.returnValue = ''; // Chrome demande cette propriété
+      return '';
+    }
+  });
+
+  // Rappel "X tâches en retard" au boot.
+  // On attend 1.5s pour ne pas saturer l'utilisateur dès l'arrivée.
   setTimeout(() => {
     try {
       const tasks = collectDeadlineTasks(false);
@@ -8460,34 +8397,6 @@ function handleDragEnd() {
       }
     } catch(e) { console.warn('[boot] overdue reminder failed:', e); }
   }, 1500);
-
-  // Démarrer la synchronisation cross-device si activée par URL fragment
-  updateSyncIndicator();
-  if (syncState.enabled) {
-    startSyncPolling();
-    startSyncFreshnessTicker(); // mise à jour "il y a Xs" toutes les 10s
-    // Pull immédiat pour récupérer la version la plus récente
-    pollAndMerge();
-  }
-
-  // Rappel "X tâches en retard" au boot (option 32a + 32c).
-  // On attend 1.2s pour laisser le pull initial terminer s'il y en a un, et pour ne pas
-  // lancer le toast pile au moment où l'utilisateur regarde l'écran de chargement.
-  setTimeout(() => {
-    try {
-      const tasks = collectDeadlineTasks(false);
-      const overdue = tasks.filter(t => t.status.kind === 'overdue').length;
-      const urgent = tasks.filter(t => t.status.kind === 'urgent').length;
-      if (overdue > 0) {
-        const msg = overdue + ' tâche' + (overdue > 1 ? 's' : '') + ' en retard'
-                  + (urgent > 0 ? ' • ' + urgent + ' urgente' + (urgent > 1 ? 's' : '') : '')
-                  + ' — voir l\'agenda';
-        showToast(msg, 4500, 'error');
-      } else if (urgent > 0) {
-        showToast(urgent + ' tâche' + (urgent > 1 ? 's' : '') + ' urgente' + (urgent > 1 ? 's' : '') + ' (≤ 3 jours) — voir l\'agenda', 3500);
-      }
-    } catch(e) { console.warn('[boot] overdue check failed:', e); }
-  }, 1200);
 })();
 </script>
 </body>
