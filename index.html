@@ -5537,28 +5537,10 @@ function openMamadAlertView() {
 // =================================================================
 // Vue Réglages — export/import JSON, infos diverses
 // =================================================================
-function exportDataAsJson() {
-  // Génère et télécharge un fichier JSON avec toutes les données
-  try {
-    const json = JSON.stringify(state.data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const dateStr = todayISO();
-    a.href = url;
-    a.download = 'expat-tracker-' + dateStr + '.json';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-    showToast('Sauvegarde téléchargée (' + (json.length > 1024 ? Math.round(json.length / 1024) + ' KB' : json.length + ' B') + ')', 2500, 'success');
-  } catch(e) {
-    console.warn('[export] failed:', e);
-    showToast('Erreur lors de l\'export : ' + e.message, 4000, 'error');
-  }
-}
+// Note : la fonction exportDataAsJson() précédente a été retirée. exportBackupNow()
+// (définie en haut du script) la remplace : elle fait l'export ET met à jour le
+// timestamp de dernière sauvegarde, ce qui rafraîchit l'indicateur du header
+// et fait disparaître le bandeau de rappel.
 
 async function importDataFromJson(file) {
   if (!file) return;
@@ -5605,17 +5587,15 @@ function openSettingsView() {
   // Calcule la taille des données et nombre de tâches
   const json = JSON.stringify(state.data);
   const sizeKB = Math.round(json.length / 1024);
-  let totalTasks = 0;
-  state.data.sections.forEach(s => {
-    if (s.items) totalTasks += s.items.length;
-    if (s.subsections) s.subsections.forEach(sub => { if (sub.items) totalTasks += sub.items.length; });
-  });
+  // Utiliser le même comptage que la barre principale pour cohérence
+  // (compte chaque sous-tâche comme une tâche quand l'item en a)
+  const g = globalStats();
 
   let body = '<div style="font-size:14px; line-height:1.5;">';
   body += '<h3 style="font-family:\'Fraunces\',serif; font-size:15px; font-weight:500; margin-bottom:8px; padding-bottom:4px; border-bottom:1px dashed var(--line);">📊 État actuel</h3>';
   body += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; font-size:13px;">';
   body += '<div><strong>' + state.data.sections.length + '</strong> sections</div>';
-  body += '<div><strong>' + totalTasks + '</strong> tâches</div>';
+  body += '<div><strong>' + g.total + '</strong> tâches</div>';
   body += '<div><strong>' + sizeKB + ' KB</strong> de données</div>';
   body += '<div><strong>v' + (state.data.version || 0) + '</strong> du schéma</div>';
   body += '</div>';
@@ -5641,7 +5621,7 @@ function openSettingsView() {
   // Brancher les boutons
   setTimeout(() => {
     const exportBtn = modal.querySelector('#settings-export-btn');
-    if (exportBtn) exportBtn.addEventListener('click', () => exportDataAsJson());
+    if (exportBtn) exportBtn.addEventListener('click', () => exportBackupNow());
     const importBtn = modal.querySelector('#settings-import-btn');
     const importInp = modal.querySelector('#settings-import-input');
     if (importBtn && importInp) {
