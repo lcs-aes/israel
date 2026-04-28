@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FAF7F2">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate">
 <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet">
@@ -14,7 +15,79 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* === Mobile : éviter le zoom auto iOS === */
+  /* Sur iOS, un input avec font-size < 16px déclenche un zoom au focus, ce qui est gênant.
+     On force 16px minimum sur tous les champs sur mobile. */
+  @media (max-width: 768px) {
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    input[type="search"],
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Note : on n'applique PAS `overscroll-behavior-y: contain` ici.
+     Cette propriété, prévue pour désactiver le pull-to-refresh sur mobile,
+     casse le scroll molette sur certains navigateurs desktop (Chrome notamment).
+     Le risque d'un rechargement involontaire sur mobile est mineur (la sync
+     conserve les données entre rechargements) — beaucoup moins grave qu'une
+     molette qui ne fonctionne plus sur PC. */
+
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  /* === Accessibilité === */
+  /* Pour les libellés visuellement masqués mais lus par les lecteurs d'écran */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important; height: 1px !important;
+    padding: 0 !important; margin: -1px !important;
+    overflow: hidden !important; clip: rect(0,0,0,0) !important;
+    white-space: nowrap !important; border: 0 !important;
+  }
+  /* Skip link : invisible jusqu'à ce qu'il prenne le focus (Tab depuis le haut de la page).
+     Permet aux utilisateurs clavier de sauter directement au contenu principal. */
+  .skip-link {
+    position: absolute;
+    top: -40px; left: 8px;
+    background: var(--ink); color: var(--bg);
+    padding: 8px 16px; border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    z-index: 10001;
+    transition: top 0.2s;
+  }
+  .skip-link:focus {
+    top: 8px;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  /* Focus visible amélioré (pour navigation clavier) */
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+  /* Respect des préférences utilisateur réduction des animations */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  /* Cible tactile minimale (recommandation WCAG : 44x44px) */
+  button, [role="button"], a, input, select, textarea {
+    min-height: 24px;
+  }
+
   :root {
     --bg: #FAF7F2;
     --ink: #1E1A17;
@@ -27,10 +100,11 @@
     --accent: #C2410C;
     --accent-blue: #0E2A47;
     --green: #65A30D;
-    --crit-bg: #FEE2E2; --crit-fg: #7F1D1D; --crit-dot: #B91C1C;
-    --high-bg: #FFEDD5; --high-fg: #7C2D12; --high-dot: #C2410C;
-    --med-bg:  #FEF3C7; --med-fg:  #713F12; --med-dot:  #A16207;
-    --low-bg:  #F1F5F9; --low-fg:  #334155; --low-dot:  #64748B;
+    /* Badges priorité — fonds plus saturés (+12%) et textes plus sombres pour contraste WCAG AA */
+    --crit-bg: #FECACA; --crit-fg: #7F1D1D; --crit-dot: #B91C1C;
+    --high-bg: #FED7AA; --high-fg: #7C2D12; --high-dot: #C2410C;
+    --med-bg:  #FDE68A; --med-fg:  #713F12; --med-dot:  #A16207;
+    --low-bg:  #E2E8F0; --low-fg:  #334155; --low-dot:  #64748B;
   }
   html, body {
     background: var(--bg);
@@ -41,19 +115,26 @@
     font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
     font-size: 15px;
     line-height: 1.5;
-    min-height: 100vh;
+    min-height: 100vh; /* fallback navigateurs anciens */
+    min-height: 100dvh; /* viewport dynamique : tient compte de la barre URL mobile qui s'ouvre/ferme */
     overflow-x: hidden;
   }
-  body { padding-bottom: 60px; }
+  body {
+    padding-bottom: max(60px, env(safe-area-inset-bottom, 60px));
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  .wrap {
+    max-width: 960px; margin: 0 auto;
+    padding: 0 max(14px, env(safe-area-inset-left, 14px)) 0 max(14px, env(safe-area-inset-right, 14px));
+  }
+  @media (min-width: 640px) { .wrap { padding-left: max(24px, env(safe-area-inset-left, 24px)); padding-right: max(24px, env(safe-area-inset-right, 24px)); } }
+  @media (min-width: 900px) { .wrap { padding-left: max(32px, env(safe-area-inset-left, 32px)); padding-right: max(32px, env(safe-area-inset-right, 32px)); } }
+
   .serif { font-family: 'Fraunces', Georgia, serif; font-feature-settings: "ss01", "ss02"; }
   button { font-family: inherit; font-size: inherit; background: none; border: none; cursor: pointer; color: inherit; }
   input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
   select { cursor: pointer; }
   a { color: inherit; }
-
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 14px; }
-  @media (min-width: 640px) { .wrap { padding: 0 24px; } }
-  @media (min-width: 900px) { .wrap { padding: 0 32px; } }
 
   /* Header */
   header { padding: 20px 0 14px; border-bottom: 1px solid var(--line); }
@@ -67,6 +148,9 @@
   .save-indicator.saving { opacity: 1; color: var(--accent); }
   .refresh-btn { font-size: 11px; opacity: 0.6; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
   .refresh-btn:hover { opacity: 1; }
+  /* Bouton Annuler — pulse subtile quand devient actif après une action */
+  #undo-btn:not(:disabled) { transition: opacity 0.2s, color 0.2s; }
+  #undo-btn:not(:disabled):hover { color: var(--accent); }
 
   .progress-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; gap:10px; flex-wrap:wrap; }
   .progress-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.6; }
@@ -76,6 +160,78 @@
   .progress-value .pct-sign { font-size: 12px; opacity: 0.5; font-family: 'DM Sans', sans-serif; }
   .progress-bar { height: 5px; background: rgba(30, 26, 23, 0.1); border-radius: 3px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent) 100%); transition: width 0.6s ease; }
+
+  /* Tooltip détail progression par section */
+  .progress-bar-wrapper {
+    position: relative;
+    cursor: help;
+    padding: 6px 0;
+    margin: -6px 0;
+  }
+  .progress-bar-wrapper:focus { outline: none; }
+  .progress-bar-wrapper:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  .progress-tooltip {
+    position: absolute;
+    left: 0; right: 0; top: calc(100% + 6px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 12px 14px;
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.15s, transform 0.15s;
+    pointer-events: none;
+    font-size: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .progress-bar-wrapper:hover .progress-tooltip,
+  .progress-bar-wrapper:focus .progress-tooltip,
+  .progress-bar-wrapper:focus-within .progress-tooltip { opacity: 1; transform: translateY(0); }
+  .progress-tooltip-title {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    opacity: 0.85;
+  }
+  .progress-tooltip-row {
+    display: grid;
+    grid-template-columns: 18px 1fr 80px 50px;
+    gap: 8px;
+    align-items: center;
+    padding: 3px 0;
+  }
+  .progress-tooltip-emoji { font-size: 13px; line-height: 1; text-align: center; }
+  .progress-tooltip-name { font-size: 12px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .progress-tooltip-mini-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    overflow: hidden;
+    display: block;
+  }
+  .progress-tooltip-mini-fill {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #FBBF24, #34D399);
+    transition: width 0.6s ease;
+  }
+  .progress-tooltip-pct {
+    font-family: 'Fraunces', serif;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    opacity: 0.8;
+  }
+  @media (max-width: 600px) {
+    .progress-tooltip { font-size: 11px; padding: 10px; }
+    .progress-tooltip-row { grid-template-columns: 16px 1fr 60px 44px; gap: 6px; }
+  }
   .progress-count { font-size: 11px; opacity: 0.6; margin-top: 4px; display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap; }
   .global-total { font-family: 'Fraunces', serif; font-style: italic; color: var(--accent); font-size: 13px; font-weight: 500; }
 
@@ -162,13 +318,43 @@
   .item { background: var(--surface); border: 1px solid var(--line-soft); border-radius: 6px; transition: all 0.15s; position: relative; overflow: hidden; }
   .item.dragging { opacity: 0.35; }
   .item.drop-target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  /* Halo tactile renforcé (mobile) : plus visible, animé pour aimanter l'œil */
+  .drop-target-touch {
+    box-shadow: 0 0 0 3px var(--accent), 0 0 12px rgba(194, 65, 12, 0.35) !important;
+    background: rgba(194, 65, 12, 0.08) !important;
+    transition: box-shadow 0.12s ease, background 0.12s ease;
+    position: relative;
+  }
+  .drop-target-touch::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 2px dashed var(--accent);
+    border-radius: 8px;
+    pointer-events: none;
+    animation: dropTargetPulse 1.1s ease-in-out infinite;
+  }
+  @keyframes dropTargetPulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 0.95; transform: scale(1.012); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .drop-target-touch::after { animation: none; opacity: 0.8; }
+  }
   .item-row { display: flex; align-items: flex-start; gap: 6px; padding: 10px 10px 10px 12px; }
   @media (min-width: 640px) { .item-row { gap: 8px; padding: 10px 12px; } }
   .item-prio-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
-  .grip { display: none; cursor: grab; opacity: 0.2; padding-top: 2px; }
+  .grip { display: flex; cursor: grab; opacity: 0.2; padding: 2px 6px; touch-action: none; align-items: center; min-height: 28px; }
   .item:hover .grip { opacity: 0.7; }
+  /* Sur mobile, grip plus visible et plus large pour le drag tactile */
+  @media (max-width: 699px) {
+    .grip { opacity: 0.35; padding: 4px 8px; min-width: 28px; }
+  }
+  /* Empêcher la sélection de texte pendant le drag tactile */
+  body.touch-dragging { user-select: none; -webkit-user-select: none; }
+  body.touch-dragging * { cursor: grabbing !important; }
   .grip:active { cursor: grabbing; }
-  @media (min-width: 700px) { .grip { display: flex; } }
+  @media (min-width: 700px) { .grip { padding-left: 4px; } }
   .move-buttons { display: flex; flex-direction: column; gap: 1px; padding-top: 0; }
   @media (min-width: 700px) { .move-buttons { display: none; } }
   .move-buttons button { opacity: 0.35; padding: 4px 2px; display: flex; }
@@ -192,6 +378,359 @@
   .price-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: rgba(14, 42, 71, 0.08); color: var(--accent-blue); cursor: pointer; font-family: 'Fraunces', serif; font-variant-numeric: tabular-nums; }
   .price-pill:hover { background: rgba(14, 42, 71, 0.14); }
   .price-pill.computed { background: transparent; border: 1px dashed rgba(14, 42, 71, 0.25); font-style: italic; }
+
+  /* Badge échéance */
+  .deadline-pill {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500;
+    cursor: pointer; font-variant-numeric: tabular-nums;
+    background: rgba(0,0,0,0.04);
+    transition: background 0.15s;
+  }
+  .deadline-pill:hover { background: rgba(0,0,0,0.08); }
+  .deadline-overdue { background: var(--crit-bg); color: var(--crit-fg); animation: deadlinePulse 2.4s ease-in-out infinite; }
+  .deadline-urgent { background: var(--crit-bg); color: var(--crit-fg); }
+  .deadline-soon { background: var(--high-bg); color: var(--high-fg); }
+  .deadline-later { background: var(--med-bg); color: var(--med-fg); }
+  .deadline-far { background: rgba(0,0,0,0.04); color: var(--ink-soft); }
+  .deadline-init { background: rgba(101, 163, 13, 0.12); color: var(--green); border: 1px dashed rgba(101, 163, 13, 0.4); font-style: italic; }
+  .deadline-from-perishable { border-left: 2px solid rgba(101, 163, 13, 0.5); padding-left: 6px; }
+  @keyframes deadlinePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.65; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deadline-overdue { animation: none; }
+  }
+
+  /* Badge alerte critique (Mamad) */
+  .critical-alert-badge {
+    display: inline-flex; align-items: center;
+    font-size: 14px; line-height: 1;
+    margin-right: 2px;
+    cursor: help;
+  }
+
+  /* Boutons date rapide dans modales */
+  .quick-date-btn {
+    padding: 5px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .quick-date-btn:hover { background: var(--surface-hover); }
+
+  /* Modale custom réutilisable */
+  .custom-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    padding-top: max(20px, env(safe-area-inset-top, 20px));
+    animation: modalFadeIn 0.18s ease-out;
+  }
+  .custom-modal-box {
+    background: var(--bg);
+    border-radius: 10px;
+    max-width: 520px; width: 100%;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    max-height: calc(100vh - 80px); /* fallback */
+    max-height: calc(100dvh - 80px); /* tient compte du clavier virtuel mobile */
+    overflow-y: auto;
+  }
+  .custom-modal-title {
+    font-family: 'Fraunces', serif;
+    font-size: 20px; font-weight: 400;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .custom-modal-body { margin-bottom: 20px; font-size: 14px; }
+  .custom-modal-actions {
+    display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;
+  }
+  .custom-modal-actions .btn-primary {
+    padding: 9px 16px; background: var(--ink); color: var(--bg);
+    border-radius: 6px; font-weight: 500; border: none; cursor: pointer;
+  }
+  .custom-modal-actions .btn-danger-primary {
+    padding: 9px 16px; background: var(--crit-dot); color: white;
+    border-radius: 6px; font-weight: 500; border: none; cursor: pointer;
+  }
+  .custom-modal-actions .btn-danger-primary:hover { background: #991B1B; }
+  .custom-modal-actions .btn-ghost {
+    padding: 9px 14px; background: transparent;
+    border: 1px solid var(--line); border-radius: 6px; cursor: pointer;
+  }
+  .custom-modal-actions .btn-ghost:hover { background: rgba(0,0,0,0.04); }
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @media (max-width: 480px) {
+    .custom-modal-box { padding: 18px; }
+    .custom-modal-actions { flex-direction: column-reverse; }
+    .custom-modal-actions button { width: 100%; }
+  }
+
+  /* Badge "en retard" sur bouton Agenda du header */
+  .badge-overdue {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 16px; height: 16px;
+    padding: 0 5px; margin-left: 4px;
+    background: var(--crit-fg); color: white;
+    border-radius: 999px;
+    font-size: 10px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    animation: badgeOverduePulse 2.4s ease-in-out infinite;
+  }
+  @keyframes badgeOverduePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.75; transform: scale(0.95); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .badge-overdue { animation: none; }
+  }
+
+  /* === Vue Agenda === */
+  .agenda-content { font-size: 14px; }
+  /* Barre de filtres en haut de l'agenda */
+  .agenda-filters {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .agenda-filter-btn {
+    padding: 5px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .agenda-filter-btn:hover { background: rgba(0,0,0,0.04); }
+  .agenda-filter-btn.active {
+    background: var(--ink); color: var(--bg); border-color: var(--ink);
+  }
+  .agenda-filter-count {
+    font-size: 10px;
+    background: rgba(0,0,0,0.06);
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+  .agenda-filter-btn.active .agenda-filter-count {
+    background: rgba(255,255,255,0.18);
+  }
+  /* Toggle inclure terminées */
+  .agenda-toggle-row {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .agenda-toggle-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; opacity: 0.8;
+    user-select: none;
+  }
+  .agenda-toggle-label:hover { opacity: 1; }
+  .agenda-toggle-label input[type="checkbox"] { cursor: pointer; }
+  /* Tâche terminée dans l'agenda */
+  .agenda-task-done { opacity: 0.55; }
+  .agenda-task-done .agenda-task-text { text-decoration: line-through; }
+  .agenda-group { margin-bottom: 22px; }
+  .agenda-group-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px; font-weight: 500;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .agenda-group-count {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 500;
+    background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 999px;
+    opacity: 0.7;
+  }
+  .agenda-group-overdue .agenda-group-title { color: var(--crit-fg); }
+  .agenda-group-urgent .agenda-group-title { color: var(--crit-fg); }
+  .agenda-group-soon .agenda-group-title { color: var(--high-fg); }
+  .agenda-group-items { display: flex; flex-direction: column; gap: 8px; }
+  .agenda-task {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "date text section" "date btn section";
+    gap: 4px 12px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .agenda-task:hover, .agenda-task:focus-visible { background: var(--surface-hover); border-color: rgba(194, 65, 12, 0.4); }
+  .agenda-task-date {
+    grid-area: date;
+    font-size: 12px; font-weight: 500;
+    display: flex; flex-direction: column; gap: 2px;
+    min-width: 110px;
+  }
+  .agenda-task-iso { font-size: 10px; opacity: 0.55; font-family: 'Fraunces', serif; font-style: italic; }
+  .agenda-task-text {
+    grid-area: text;
+    font-size: 13px; line-height: 1.4;
+  }
+  .agenda-task-section {
+    grid-area: section;
+    font-size: 11px; opacity: 0.55;
+    text-align: right; align-self: start;
+    white-space: nowrap;
+  }
+  .agenda-rotate-btn {
+    grid-area: btn;
+    justify-self: start;
+    margin-top: 4px;
+    padding: 3px 10px;
+    background: rgba(101, 163, 13, 0.12);
+    color: var(--green);
+    border: 1px solid rgba(101, 163, 13, 0.3);
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .agenda-rotate-btn:hover { background: rgba(101, 163, 13, 0.22); }
+  .agenda-prio-critical { border-left: 3px solid var(--crit-dot); }
+  .agenda-prio-high { border-left: 3px solid var(--high-dot); }
+  .agenda-prio-medium { border-left: 3px solid var(--med-dot); }
+  .agenda-prio-low { border-left: 3px solid var(--low-dot); }
+  @media (max-width: 600px) {
+    .agenda-task {
+      grid-template-columns: 1fr;
+      grid-template-areas: "date" "text" "section" "btn";
+      gap: 4px;
+    }
+    .agenda-task-section { text-align: left; }
+  }
+  .agenda-highlight {
+    animation: agendaHighlight 1.8s ease-out;
+  }
+  @keyframes agendaHighlight {
+    0%, 30% { background: rgba(194, 65, 12, 0.18); }
+    100% { background: transparent; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .agenda-highlight { animation: none; outline: 2px solid var(--accent); }
+  }
+
+  /* === Mode Alerte Mamad === */
+  .mamad-alert-trigger {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+    align-self: flex-start;
+  }
+  .mamad-alert-trigger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+  }
+  .mamad-alert-content { font-size: 14px; }
+  .mamad-alert-intro {
+    background: rgba(220, 38, 38, 0.08);
+    border-left: 3px solid #DC2626;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .mamad-alert-procedure {
+    list-style: none;
+    counter-reset: alert-step;
+    padding: 0;
+    margin-bottom: 22px;
+  }
+  .mamad-alert-procedure li {
+    counter-increment: alert-step;
+    padding: 12px 14px 12px 50px;
+    margin-bottom: 6px;
+    background: var(--surface);
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    position: relative;
+    line-height: 1.5;
+  }
+  .mamad-alert-procedure li::before {
+    content: counter(alert-step);
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    width: 28px; height: 28px;
+    background: #DC2626;
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+  }
+  .mamad-alert-numbers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .mamad-alert-number {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 14px 8px;
+    border-radius: 6px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    gap: 4px;
+  }
+  .mamad-alert-number .num {
+    font-family: 'Fraunces', serif;
+    font-size: 32px; font-weight: 600;
+    line-height: 1;
+  }
+  .mamad-alert-number .lbl { font-size: 10px; opacity: 0.8; }
+  .mamad-alert-section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 15px; font-weight: 500;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .mamad-alert-checklist {
+    list-style: none; padding: 0;
+    font-size: 13px;
+  }
+  .mamad-alert-checklist li {
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .mamad-alert-checklist li.done { opacity: 0.55; text-decoration: line-through; }
+  .mamad-alert-checklist li.todo { color: var(--ink); font-weight: 500; }
+  @media (max-width: 480px) {
+    .mamad-alert-numbers { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .mamad-alert-number .num { font-size: 26px; }
+  }
 
   .prio-select { font-size: 11px; padding: 2px 20px 2px 8px; border-radius: 999px; font-weight: 500; cursor: pointer; border: none; outline: none; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 6px center; }
   .prio-critical { background-color: var(--crit-bg); color: var(--crit-fg); }
@@ -262,7 +801,7 @@
   .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); text-align: center; font-size: 11px; opacity: 0.55; }
   .footer .quote { font-family: 'Fraunces', serif; font-style: italic; }
 
-  .loading-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+  .loading-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; text-align: center; }
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -308,15 +847,20 @@
   /* FILTER BANNER (global location filter) */
   .filter-banner {
     margin: 0 0 16px;
-    padding: 10px 14px;
+    padding: 12px 14px;
     background: linear-gradient(135deg, rgba(194, 65, 12, 0.07), rgba(14, 42, 71, 0.05));
     border: 1px solid rgba(194, 65, 12, 0.25);
     border-radius: 8px;
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .filter-banner-row {
+    display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    font-size: 13px;
   }
   .filter-banner-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; }
   .filter-banner .location-pill { font-size: 12px; padding: 3px 12px; cursor: default; }
@@ -333,6 +877,60 @@
     background: rgba(0,0,0,0.04);
   }
   .filter-banner-clear:hover { background: var(--crit-bg); color: var(--crit-fg); }
+
+  /* Synthèse budgétaire dans le bandeau filtre */
+  .filter-banner-budget {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(194, 65, 12, 0.25);
+  }
+  .budget-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    min-width: 110px;
+  }
+  .budget-stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.65;
+  }
+  .budget-stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+  .budget-stat-main { background: rgba(194, 65, 12, 0.1); border-color: rgba(194, 65, 12, 0.3); }
+  .budget-stat-main .budget-stat-value { color: var(--accent); }
+  .budget-stat-todo { background: rgba(14, 42, 71, 0.06); border-color: rgba(14, 42, 71, 0.2); }
+  .budget-stat-todo .budget-stat-value { color: var(--accent-blue); }
+  .budget-stat-done { opacity: 0.75; }
+  .budget-stat-done .budget-stat-value { color: var(--green); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .budget-stat-meta {
+    align-self: center;
+    font-size: 11px;
+    opacity: 0.6;
+    font-style: italic;
+    padding: 0 8px;
+  }
+  .budget-empty {
+    border-top: 1px dashed rgba(194, 65, 12, 0.25);
+    padding: 8px 4px 0;
+  }
+  .budget-empty-text { font-size: 12px; opacity: 0.65; font-style: italic; }
+  @media (max-width: 600px) {
+    .budget-stat { flex: 1 1 calc(50% - 4px); min-width: 0; }
+    .budget-stat-value { font-size: 16px; }
+  }
 
   /* Image thumbnail */
   .image-thumb {
@@ -436,6 +1034,15 @@
 </head>
 <body>
 
+<!-- Skip link : permet aux utilisateurs clavier de sauter directement au contenu -->
+<a href="#tabpanel-content" class="skip-link">Aller au contenu principal</a>
+
+<!-- Live regions ARIA pour annoncer les changements aux lecteurs d'écran -->
+<!-- polite : non bloquant, attendra une pause (ex: chargement, mise à jour de filtre) -->
+<div id="aria-live-polite" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+<!-- assertive : interrompt immédiatement (erreurs, alertes critiques) -->
+<div id="aria-live-assertive" aria-live="assertive" aria-atomic="true" role="alert" class="sr-only"></div>
+
 <div id="app">
   <div class="loading-screen">
     <div>
@@ -465,11 +1072,25 @@ function genId() {
   return (crypto.randomUUID && crypto.randomUUID()) || 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2);
 }
 function I(text, priority, notes) {
-  return { id: genId(), text, priority: priority || 'medium', notes: notes || '', link: '', price: 0, location: null, image: '', done: false, subtasks: [] };
+  return { id: genId(), text, priority: priority || 'medium', notes: notes || '', link: '', price: 0, location: null, image: '', done: false, subtasks: [], deadline: '', perishable: null, criticalAlert: false };
+}
+// Variante avec flag "alerte critique" : tâche affichée dans le mode Alerte du Mamad
+// (les actions à connaître par cœur quand la sirène sonne)
+function IC(text, priority, notes) {
+  const item = I(text, priority, notes);
+  item.criticalAlert = true;
+  return item;
+}
+// Variante "périssable" avec rotation tous les X mois
+// lastRotation = '' au seed, sera renseignée par l'utilisateur quand il fera la rotation
+function IP(text, priority, intervalMonths, notes) {
+  const item = I(text, priority, notes);
+  item.perishable = { intervalMonths: intervalMonths || 6, lastRotation: '' };
+  return item;
 }
 function IwithFamily(text, priority) {
   const item = I(text, priority);
-  item.subtasks = FAMILY.map(name => ({ id: genId(), text: name, done: false, link: '', price: 0, location: null, image: '' }));
+  item.subtasks = FAMILY.map(name => ({ id: genId(), text: name, done: false, link: '', price: 0, location: null, image: '', deadline: '' }));
   return item;
 }
 function SUB(title, items) { return { id: genId(), title, collapsed: false, items: items || [] }; }
@@ -486,21 +1107,21 @@ function MAMAD_SECTION() { return {
     I("Tester l'ouverture/fermeture de la porte blindée et du volet de fenêtre", 'critical'),
     I("Récupérer les masques NBC auprès du Pikud Haoref pour les 4 membres", 'critical'),
     I("Installer l'app Pikud Haoref / Home Front Command + test des alertes", 'critical'),
-    I("Mémoriser numéros d'urgence : 101 (MDA), 100 (police), 102 (pompiers)", 'critical'),
+    IC("Mémoriser numéros d'urgence : 101 (MDA), 100 (police), 102 (pompiers)", 'critical'),
     I("Définir l'aménagement permanent (lit modulable, étagères fixées, espace dégagé vers la porte)", 'high'),
     I("Identifier l'hôpital de référence (Wolfson Medical Center à Holon)", 'high'),
     I("Premier exercice familial : simulation d'alerte chronométrée < 60s", 'high'),
     I("Constituer la pochette documents étanche \"grab and go\"", 'high'),
-    I("Attribuer un rôle à chaque membre en cas d'alerte (porte / décompte / téléphones / animaux)", 'high'),
+    IC("Attribuer un rôle à chaque membre en cas d'alerte (porte / décompte / téléphones / animaux)", 'high'),
     I("Imprimer un poster checklist alerte à l'entrée du mamad", 'medium'),
     I("Plan évacuation logement si bâtiment inhabitable (itinéraire + point de regroupement famille)", 'medium'),
     I("Tester le réseau mobile depuis l'intérieur du mamad (le béton armé atténue le signal)", 'medium'),
   ],
   subsections: [
     SUB('Eau (cible 100 L pour 72h)', [
-      I('5 jerricans alimentaires 20 L PEHD opaque avec robinet', 'critical'),
-      I('Pack bouteilles 1,5 L pour mobilité (24 unités)', 'high'),
-      I('Pastilles purification eau (Aquatabs / Micropur, 50-100 unités)', 'high'),
+      IP('5 jerricans alimentaires 20 L PEHD opaque avec robinet', 'critical', 6),
+      IP('Pack bouteilles 1,5 L pour mobilité (24 unités)', 'high', 12),
+      IP('Pastilles purification eau (Aquatabs / Micropur, 50-100 unités)', 'high', 24),
       I('2 filtres LifeStraw ou Sawyer Mini (un par adulte, backup)', 'medium'),
       I('Marquage feutre indélébile date de remplissage sur chaque bidon', 'low'),
       I('Calendrier rotation eau tous les 6 mois', 'medium'),
@@ -546,7 +1167,7 @@ function MAMAD_SECTION() { return {
       I('Câbles USB-C, Lightning, micro-USB (2 de chaque, 1m + 2m)', 'high'),
       I('Chargeur secteur multi-port USB (4+ ports)', 'medium'),
       I('Adaptateurs prises israéliennes type H (différent du type C européen)', 'critical'),
-      I('30 piles AA + 30 piles AAA qualité (Energizer Lithium / Eneloop)', 'medium'),
+      IP('30 piles AA + 30 piles AAA qualité (Energizer Lithium / Eneloop)', 'medium', 24),
       I('Piles bouton CR2032 (4-6 unités)', 'low'),
       I('Câble allume-cigare 12V → USB (backup véhicule)', 'low'),
     ]),
@@ -575,15 +1196,15 @@ function MAMAD_SECTION() { return {
       I('Crème antibiotique Fucidine (sur ordonnance)', 'medium'),
       I('Crème cortisone 1% (piqûres, eczéma)', 'medium'),
       I('Compresses froides instantanées x 2', 'low'),
-      I('Paracétamol 500 et 1000 mg (Doliprane / Acamol en IL)', 'critical'),
+      IP('Paracétamol 500 et 1000 mg (Doliprane / Acamol en IL)', 'critical', 24),
       I('Ibuprofène 200 et 400 mg (Nurofen / Advil)', 'high'),
       I('Antihistaminique (Cétirizine ou Loratadine)', 'medium'),
       I('Antidiarrhéique (lopéramide / Imodium)', 'high'),
       I('Antinauséeux (Vogalène) + antispasmodique (Spasfon)', 'medium'),
       I('Pansement gastrique (Gaviscon, Maalox)', 'medium'),
-      I('Sels de réhydratation orale (6-10 sachets OMS)', 'high'),
+      IP('Sels de réhydratation orale (6-10 sachets OMS)', 'high', 24),
       I('Charbon activé en gélules (intoxication alimentaire)', 'medium'),
-      I('Réserve 30 jours traitements chroniques de la famille', 'critical'),
+      IP('Réserve 30 jours traitements chroniques de la famille', 'critical', 1),
       I('Ordonnances copiées et stockées dans le mamad', 'critical'),
       I('Pommade antibrûlure (Biafine ou équivalent)', 'high'),
       I('Collyre stérile + thermomètre digital + piles', 'medium'),
@@ -666,7 +1287,7 @@ function MAMAD_SECTION() { return {
       I('Sacs poubelle épais (couvrir grilles ventilation)', 'medium'),
       I('20+ masques chirurgicaux + FFP3/N95', 'high'),
       I('4 masques à gaz NBC (distribution Pikud Haoref)', 'critical'),
-      I('Filtres NBC neufs en stock (durée limitée après ouverture)', 'high'),
+      IP('Filtres NBC neufs en stock (durée limitée après ouverture)', 'high', 12),
       I('4 combinaisons Tyvek jetables', 'medium'),
       I('Gants nitrile ou butyle épais', 'medium'),
       I('Lunettes protection étanches', 'medium'),
@@ -4252,18 +4873,24 @@ const DEFAULT_DATA = {
 function migrate(data) {
   if (!data || !data.sections) return null;
   const fromVersion = data.version || 0;
-  data.version = 5;
+  data.version = 6;
   const fixItem = (i) => {
     if (!Array.isArray(i.subtasks)) i.subtasks = [];
     if (typeof i.link !== 'string') i.link = '';
     if (typeof i.price !== 'number') i.price = 0;
     if (!i.location || typeof i.location !== 'object') i.location = null;
     if (typeof i.image !== 'string') i.image = '';
+    // v6 : champs date d'échéance, périssable, alerte critique
+    if (typeof i.deadline !== 'string') i.deadline = '';        // ISO YYYY-MM-DD ou ''
+    if (typeof i.perishable !== 'object' || !i.perishable) i.perishable = null;
+    // perishable structure : { intervalMonths: 6, lastRotation: '2026-04-28' }
+    if (typeof i.criticalAlert !== 'boolean') i.criticalAlert = false; // pour mode Alerte Mamad
     i.subtasks.forEach(st => {
       if (typeof st.link !== 'string') st.link = '';
       if (typeof st.price !== 'number') st.price = 0;
       if (!st.location || typeof st.location !== 'object') st.location = null;
       if (typeof st.image !== 'string') st.image = '';
+      if (typeof st.deadline !== 'string') st.deadline = '';
     });
   };
   data.sections.forEach(s => {
@@ -4351,6 +4978,9 @@ let state = {
   saving: false,
   contextMenu: null,           // { type: 'tab', id, x, y }
   lightbox: null,              // { src, caption, kind, itemId, subtaskId }
+  // === Vue Agenda ===
+  agendaFilter: 'all',         // 'all' | 'overdue' | 'urgent' | 'perishable'
+  agendaIncludeDone: false,    // toggle pour inclure les tâches terminées
 };
 let saveTimeout = null;
 
@@ -4388,7 +5018,7 @@ const syncState = {
         syncState.blobId = id;
       }
     }
-  } catch(e) {}
+  } catch(e) { console.warn('[sync] URL fragment parse failed:', e); }
 })();
 
 async function fetchRemoteData() {
@@ -4428,10 +5058,29 @@ async function pushRemoteData(data) {
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     syncState.lastRemoteHash = json;
     syncState.lastError = null;
+    syncState.lastSyncSuccessAt = Date.now();
+    syncState.consecutiveFailures = 0;
+    // Si on était en erreur récente, signaler la reprise
+    if (syncState.wasInError) {
+      showToast('✓ Synchronisation rétablie');
+      syncState.wasInError = false;
+    }
     return true;
   } catch(e) {
     console.warn('[sync] push failed:', e);
     syncState.lastError = e.message;
+    syncState.consecutiveFailures = (syncState.consecutiveFailures || 0) + 1;
+    // Premier échec : avertir l'utilisateur (sinon il croit que c'est synchronisé)
+    if (!syncState.wasInError) {
+      syncState.wasInError = true;
+      showToast('⚠️ Échec de synchronisation — modifications gardées en local, retry dans 30s', 4500, 'error');
+    }
+    // Retry automatique avec backoff exponentiel : 30s, 60s, 120s, 240s, max 300s
+    const retryDelay = Math.min(30000 * Math.pow(2, Math.min(syncState.consecutiveFailures - 1, 4)), 300000);
+    if (syncState.retryHandle) clearTimeout(syncState.retryHandle);
+    syncState.retryHandle = setTimeout(() => {
+      if (syncState.enabled && state.data) pushRemoteData(state.data);
+    }, retryDelay);
     return false;
   } finally {
     syncState.isPushing = false;
@@ -4457,16 +5106,29 @@ async function pollAndMerge() {
     syncState.lastRemoteHash = remoteJson;
     return;
   }
-  if (remoteJson === syncState.lastRemoteHash) return;
+  if (remoteJson === syncState.lastRemoteHash) {
+    // Pas de changement, mais on a tout de même réussi à fetch : marque la fraîcheur
+    syncState.lastSyncSuccessAt = Date.now();
+    return;
+  }
   const migrated = migrate(remote);
   if (!migrated) return;
   state.data = migrated;
   syncState.lastRemoteHash = JSON.stringify(migrated);
+  syncState.lastSyncSuccessAt = Date.now();
+  // Données distantes reçues : on vide la pile undo locale (Q3 — l'undo n'annule
+  // que les actions locales, pas celles d'autres devices). Sinon Ctrl+Z restaurerait
+  // un état qui ne correspondrait plus à ce que voit Préma.
+  if (typeof undoStack !== 'undefined') {
+    undoStack.length = 0;
+    redoStack.length = 0;
+    if (typeof updateUndoIndicator === 'function') updateUndoIndicator();
+  }
   try {
     const json = JSON.stringify(migrated);
     if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
     else localStorage.setItem(STORAGE_KEY, json);
-  } catch(e) {}
+  } catch(e) { console.warn('[sync] local persist after pull failed:', e); }
   if (typeof render === 'function') render();
 }
 
@@ -4482,7 +5144,7 @@ async function activateSync() {
     return;
   }
   if (typeof state === 'undefined' || !state.data) {
-    alert('Données pas encore chargées, attends une seconde…');
+    showToast('Données pas encore chargées, attends une seconde…');
     return;
   }
   const btn = document.getElementById('sync-indicator');
@@ -4500,13 +5162,15 @@ async function activateSync() {
     syncState.blobId = id;
     syncState.enabled = true;
     syncState.lastRemoteHash = JSON.stringify(state.data);
+    syncState.lastSyncSuccessAt = Date.now();
     history.replaceState(null, '', window.location.pathname + window.location.search + SYNC_HASH_PREFIX + id);
     startSyncPolling();
+    startSyncFreshnessTicker();
     if (btn) btn.disabled = false;
     showMagicLinkModal();
     updateSyncIndicator();
   } catch(e) {
-    alert('Échec de l\'activation de la sync : ' + e.message + '\n\nVérifie ta connexion et réessaie.');
+    alertDialog('Échec de l\'activation de la sync : ' + e.message + '\n\nVérifie ta connexion et réessaie.', { title: 'Erreur de synchronisation' });
     if (btn) btn.disabled = false;
     updateSyncIndicator();
   }
@@ -4516,31 +5180,488 @@ function showMagicLinkModal() {
   const url = window.location.origin + window.location.pathname + window.location.search + SYNC_HASH_PREFIX + syncState.blobId;
   const existing = document.getElementById('magic-link-modal');
   if (existing) existing.remove();
+  const previouslyFocused = document.activeElement;
   const modal = document.createElement('div');
   modal.id = 'magic-link-modal';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-labelledby', 'magic-link-title');
+  modal.setAttribute('aria-describedby', 'magic-link-desc');
   modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px;';
-  modal.innerHTML = '<div style="background:var(--bg); border-radius:10px; max-width:560px; width:100%; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35);">'
-    + '<h2 style="font-family:\'Fraunces\',serif; font-size:24px; font-weight:400; margin-bottom:8px;">Synchronisation activée 🛰️</h2>'
-    + '<p style="font-size:13px; opacity:0.75; margin-bottom:18px; line-height:1.55;">Voici ton <strong>lien magique</strong>. Ouvre-le sur tous tes appareils (PC, mobile) et envoie-le à Préma. Toutes les modifications seront partagées automatiquement (vérification toutes les 15 secondes).</p>'
-    + '<div style="background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:14px; font-family:monospace; font-size:12px; word-break:break-all; margin-bottom:18px; user-select:all; line-height:1.4;">' + url + '</div>'
+  modal.innerHTML = '<div style="background:var(--bg); border-radius:10px; max-width:560px; width:100%; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35); max-height:calc(100dvh - 40px); overflow-y:auto;">'
+    + '<h2 id="magic-link-title" style="font-family:\'Fraunces\',serif; font-size:24px; font-weight:400; margin-bottom:8px;">Synchronisation activée 🛰️</h2>'
+    + '<p id="magic-link-desc" style="font-size:13px; opacity:0.75; margin-bottom:18px; line-height:1.55;">Voici ton <strong>lien magique</strong>. Ouvre-le sur tous tes appareils (PC, mobile) et envoie-le à Préma. Toutes les modifications seront partagées automatiquement (vérification toutes les 15 secondes).</p>'
+    + '<div role="textbox" aria-readonly="true" aria-label="Lien magique de synchronisation" tabindex="0" style="background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:14px; font-family:monospace; font-size:12px; word-break:break-all; margin-bottom:18px; user-select:all; line-height:1.4;">' + url + '</div>'
     + '<div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:14px;">'
     + '<button id="magic-copy-btn" style="padding:9px 16px; background:var(--ink); color:var(--bg); border-radius:6px; font-weight:500; border:none; cursor:pointer;">Copier le lien</button>'
     + '<button id="magic-close-btn" style="padding:9px 16px; background:transparent; border:1px solid var(--line); border-radius:6px; cursor:pointer;">Fermer</button>'
     + '</div>'
-    + '<p style="font-size:11px; opacity:0.55; line-height:1.5; border-top:1px solid var(--line-soft); padding-top:12px;">⚠️ Ce lien contient un identifiant qui donne accès à tes données. Garde-le confidentiel. Stockage : jsonblob.com (gratuit, sans compte). Les blobs inactifs >30 jours sont effacés ; toute modification réinitialise ce délai.</p>'
+    + '<p style="font-size:11px; opacity:0.55; line-height:1.5; border-top:1px solid var(--line-soft); padding-top:12px;">⚠️ Ce lien contient un identifiant qui donne accès à tes données. Garde-le confidentiel. Stockage : jsonblob.com (gratuit, sans compte). Les blobs inactifs &gt;30 jours sont effacés ; toute modification réinitialise ce délai.</p>'
     + '</div>';
   document.body.appendChild(modal);
+
+  const closeModal = () => {
+    modal.remove();
+    document.removeEventListener('keydown', handleKey);
+    if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+      try { previouslyFocused.focus(); } catch(e) { console.warn('[a11y] restore focus magic-link failed:', e); }
+    }
+  };
+  const focusables = modal.querySelectorAll('button, [tabindex="0"]');
+  const first = focusables[0], last = focusables[focusables.length - 1];
+  const handleKey = (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); closeModal(); return; }
+    if (e.key === 'Tab' && focusables.length > 0) {
+      // Focus trap
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  };
+  document.addEventListener('keydown', handleKey);
+
   document.getElementById('magic-copy-btn').onclick = async () => {
     try {
       await navigator.clipboard.writeText(url);
       const b = document.getElementById('magic-copy-btn');
       if (b) { b.textContent = 'Copié ✓'; setTimeout(() => { if (b) b.textContent = 'Copier le lien'; }, 2000); }
+      showToast('Lien copié dans le presse-papier');
     } catch(e) {
-      alert('Sélectionne le lien manuellement et copie-le (Ctrl+C).');
+      alertDialog('Sélectionne le lien manuellement et copie-le (Ctrl+C).', { title: 'Copie impossible' });
     }
   };
-  document.getElementById('magic-close-btn').onclick = () => modal.remove();
-  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  document.getElementById('magic-close-btn').onclick = closeModal;
+  modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+  // Focus initial sur le bouton "Copier"
+  setTimeout(() => { const b = document.getElementById('magic-copy-btn'); if (b) b.focus(); }, 50);
+}
+
+// Toast notification pour feedback non-intrusif
+// type: 'info' (défaut), 'error', 'success'
+// Les toasts d'erreur utilisent aria-live="assertive" pour interrompre les lecteurs d'écran
+function showToast(message, duration, type) {
+  duration = duration || 2200;
+  type = type || 'info';
+  const existing = document.getElementById('app-toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.id = 'app-toast';
+  toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+  // Couleur selon type
+  const bgColor = type === 'error' ? 'var(--crit-fg)' : (type === 'success' ? 'var(--green)' : 'var(--ink)');
+  toast.style.cssText = 'position:fixed; bottom:max(20px, env(safe-area-inset-bottom, 20px)); left:50%; transform:translateX(-50%) translateY(100px); background:' + bgColor + '; color:var(--bg); padding:10px 18px; border-radius:6px; font-size:13px; z-index:10000; box-shadow:0 8px 28px rgba(0,0,0,0.3); opacity:0; transition:opacity 0.2s, transform 0.3s ease; max-width:calc(100vw - 40px); text-align:center;';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+// Annonce un message aux lecteurs d'écran via les live regions ARIA cachées.
+// Utile pour signaler les changements de contexte qui ne sont pas visibles autrement
+// (ex: filtre agenda changé, modale ouverte, action effectuée silencieusement).
+// 'polite' (défaut) : attend une pause dans la lecture courante
+// 'assertive' : interrompt immédiatement (erreurs, alertes critiques)
+function announceToScreenReader(message, urgency) {
+  const region = document.getElementById('aria-live-' + (urgency === 'assertive' ? 'assertive' : 'polite'));
+  if (!region) return;
+  // Hack classique : vider puis remplir pour forcer le re-déclenchement même si le texte est identique
+  region.textContent = '';
+  setTimeout(() => { region.textContent = message; }, 50);
+  // Auto-clean après quelques secondes pour ne pas polluer le DOM
+  setTimeout(() => { region.textContent = ''; }, 4000);
+}
+
+// =================================================================
+// Vue agenda — toutes les tâches avec échéance triées par date
+// =================================================================
+// Cache léger pour la collecte des tâches à échéance.
+// Invalidé automatiquement quand state.data change (via un petit hash de chaîne).
+let _deadlineCache = { hash: null, dayKey: null, result: null };
+
+// Hash très simple type "djb2" — suffisant pour invalider un cache (collisions extrêmement rares
+// pour des objets JSON courants). Beaucoup plus robuste que la longueur seule.
+function _shallowStringHash(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return h;
+}
+
+function collectDeadlineTasks(includeDone) {
+  // Retourne un tableau plat [{ item, sectionTitle, sectionEmoji, sectionId, deadline, status, fromPerishable, done }]
+  if (!state.data) return [];
+
+  // Hash de l'état pour détecter modifications. On ne hash que les champs pertinents
+  // pour les échéances (deadline, perishable, done, text minimal pour debug) afin de garder
+  // le calcul rapide même avec beaucoup de tâches.
+  const hashSource = JSON.stringify(state.data);
+  const hash = _shallowStringHash(hashSource) + (includeDone ? '_d' : '_n');
+  // Le statut de deadline dépend du jour : on invalide le cache à chaque changement de jour
+  const dayKey = todayISO();
+
+  if (_deadlineCache.hash === hash && _deadlineCache.dayKey === dayKey && _deadlineCache.result) {
+    return _deadlineCache.result;
+  }
+
+  const out = [];
+  state.data.sections.forEach(sec => {
+    const proc = (item) => {
+      const isDone = itemEffectiveDone(item);
+      if (isDone && !includeDone) return; // par défaut on n'affiche que les non finies
+      const eff = effectiveDeadline(item);
+      if (!eff) return;
+      const status = deadlineStatus(eff);
+      const fromPerishable = !item.deadline && !!item.perishable;
+      out.push({
+        item, sectionTitle: sec.title, sectionEmoji: sec.emoji, sectionId: sec.id,
+        deadline: eff, status, fromPerishable, done: isDone,
+      });
+    };
+    sec.items.forEach(proc);
+    sec.subsections.forEach(sub => sub.items.forEach(proc));
+  });
+  // Tri par date croissante (les dépassées en premier, puis les plus proches)
+  out.sort((a, b) => a.deadline.localeCompare(b.deadline));
+
+  // Mémoriser dans le cache
+  _deadlineCache = { hash, dayKey, result: out };
+  return out;
+}
+
+// Construit le HTML du contenu de l'agenda. Séparé d'openAgendaView pour permettre
+// le re-rendu en place lors d'un changement de filtre/toggle (sans clignotement).
+function buildAgendaBody() {
+  const includeDone = !!state.agendaIncludeDone;
+  const allTasks = collectDeadlineTasks(includeDone);
+  // Filtre par catégorie
+  const filter = state.agendaFilter || 'all';
+  let tasks;
+  if (filter === 'overdue') tasks = allTasks.filter(t => t.status.kind === 'overdue');
+  else if (filter === 'urgent') tasks = allTasks.filter(t => t.status.kind === 'urgent' || t.status.kind === 'overdue');
+  else if (filter === 'perishable') tasks = allTasks.filter(t => t.fromPerishable);
+  else tasks = allTasks;
+
+  // Stats pour les boutons de filtre (sur l'ensemble, pas filtré)
+  const counts = {
+    all: allTasks.length,
+    overdue: allTasks.filter(t => t.status.kind === 'overdue').length,
+    urgent: allTasks.filter(t => t.status.kind === 'urgent' || t.status.kind === 'overdue').length,
+    perishable: allTasks.filter(t => t.fromPerishable).length,
+  };
+
+  // Regroupements
+  const groups = {
+    overdue: { label: '🔴 En retard', items: [] },
+    urgent: { label: '⚠️ Urgent (≤ 3 jours)', items: [] },
+    soon: { label: '📅 Cette semaine ou la suivante', items: [] },
+    later: { label: '🗓️ Ce mois et le suivant', items: [] },
+    far: { label: '🕒 Plus tard', items: [] },
+  };
+  const doneGroup = { label: '✓ Terminées (avec échéance dépassée ou prochaine)', items: [] };
+  tasks.forEach(t => {
+    if (t.done) {
+      doneGroup.items.push(t);
+      return;
+    }
+    const k = t.status.kind;
+    if (k === 'overdue') groups.overdue.items.push(t);
+    else if (k === 'urgent') groups.urgent.items.push(t);
+    else if (k === 'soon') groups.soon.items.push(t);
+    else if (k === 'later') groups.later.items.push(t);
+    else groups.far.items.push(t);
+  });
+
+  // Barre de filtres
+  let body = '<div class="agenda-filters" role="toolbar" aria-label="Filtres de l\'agenda">';
+  const mkBtn = (key, label, count) => {
+    const active = filter === key ? ' active' : '';
+    return '<button class="agenda-filter-btn' + active + '" data-action="agenda-set-filter" data-filter="' + key + '">' + label + ' <span class="agenda-filter-count">' + count + '</span></button>';
+  };
+  body += mkBtn('all', 'Toutes', counts.all);
+  body += mkBtn('overdue', '🔴 En retard', counts.overdue);
+  body += mkBtn('urgent', '⚠️ Urgent', counts.urgent);
+  body += mkBtn('perishable', '♻️ Périssables', counts.perishable);
+  body += '</div>';
+
+  // Toggle inclure terminées
+  body += '<div class="agenda-toggle-row">';
+  body += '<label class="agenda-toggle-label">';
+  body += '<input type="checkbox" data-action="agenda-toggle-done" ' + (includeDone ? 'checked' : '') + '>';
+  body += '<span>Inclure les tâches terminées</span>';
+  body += '</label>';
+  body += '</div>';
+
+  if (tasks.length === 0) {
+    body += '<div style="text-align:center; padding:40px 20px; opacity:0.6;">'
+      + '<div style="font-size:48px; margin-bottom:12px;">📭</div>'
+      + '<p style="font-size:14px; line-height:1.6;">';
+    if (filter === 'all') {
+      body += 'Aucune tâche avec échéance pour le moment.<br>Ajoute une date sur tes tâches via le bouton 📅 ou marque tes consommables comme périssables via ♻️.';
+    } else {
+      body += 'Aucune tâche dans ce filtre.<br>Essaie « Toutes » pour voir l\'ensemble.';
+    }
+    body += '</p></div>';
+  } else {
+    body += '<p style="font-size:13px; opacity:0.7; margin-bottom:18px;">' + tasks.length + ' tâche' + (tasks.length > 1 ? 's' : '') + ' affichée' + (tasks.length > 1 ? 's' : '') + (filter !== 'all' ? ' (filtre actif)' : '') + '.</p>';
+    const renderGroup = (key, g) => {
+      if (g.items.length === 0) return '';
+      let s = '<div class="agenda-group agenda-group-' + key + '">';
+      s += '<h3 class="agenda-group-title">' + g.label + ' <span class="agenda-group-count">' + g.items.length + '</span></h3>';
+      s += '<div class="agenda-group-items">';
+      g.items.forEach(t => {
+        const item = t.item;
+        const prio = item.priority || 'medium';
+        const doneCls = t.done ? ' agenda-task-done' : '';
+        s += '<div class="agenda-task agenda-prio-' + prio + doneCls + '" data-action="agenda-goto" data-section-id="' + escapeHtml(t.sectionId) + '" data-id="' + escapeHtml(item.id) + '" tabindex="0" role="button">';
+        s += '<div class="agenda-task-date" style="color:' + t.status.color + ';">' + escapeHtml(t.status.label) + '<span class="agenda-task-iso">' + formatDate(t.deadline) + '</span></div>';
+        s += '<div class="agenda-task-text">' + (t.fromPerishable ? '♻️ ' : '') + (item.criticalAlert ? '🚨 ' : '') + (t.done ? '✓ ' : '') + escapeHtml(item.text) + '</div>';
+        s += '<div class="agenda-task-section">' + (t.sectionEmoji || '') + ' ' + escapeHtml(t.sectionTitle) + '</div>';
+        if (t.fromPerishable && !t.done) {
+          s += '<button class="agenda-rotate-btn" data-action="mark-rotated" data-id="' + escapeHtml(item.id) + '" title="Enregistrer la rotation à aujourd\'hui">✓ Rotation faite</button>';
+        }
+        s += '</div>';
+      });
+      s += '</div></div>';
+      return s;
+    };
+    Object.entries(groups).forEach(([key, g]) => { body += renderGroup(key, g); });
+    if (includeDone && doneGroup.items.length > 0) {
+      body += renderGroup('done', doneGroup);
+    }
+  }
+
+  return '<div class="agenda-content">' + body + '</div>';
+}
+
+// Met à jour le contenu de la modale agenda en place (sans la fermer/rouvrir).
+// Conserve le scroll, l'animation, et évite le flash visuel désagréable.
+function refreshAgendaInPlace() {
+  const modal = document.getElementById('custom-modal');
+  if (!modal) return;
+  const bodyEl = modal.querySelector('.custom-modal-body');
+  if (!bodyEl) return;
+  // Conserver la position de scroll de la modale
+  const box = modal.querySelector('.custom-modal-box');
+  const scrollTop = box ? box.scrollTop : 0;
+  // Remplacer juste le contenu interne
+  bodyEl.innerHTML = buildAgendaBody();
+  // Ré-attacher les listeners sur les nouveaux éléments
+  attachAgendaListeners(modal);
+  // Restaurer le scroll
+  if (box) box.scrollTop = scrollTop;
+  // Annoncer le changement aux lecteurs d'écran (étape D-3 : live region)
+  announceToScreenReader('Agenda mis à jour avec le nouveau filtre');
+}
+
+// Branche les listeners filtres + toggle dans une modale agenda
+function attachAgendaListeners(modal) {
+  modal.querySelectorAll('[data-action="agenda-set-filter"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.agendaFilter = btn.dataset.filter;
+      refreshAgendaInPlace();
+    });
+  });
+  const toggle = modal.querySelector('[data-action="agenda-toggle-done"]');
+  if (toggle) {
+    toggle.addEventListener('change', (e) => {
+      state.agendaIncludeDone = !!e.target.checked;
+      refreshAgendaInPlace();
+    });
+  }
+}
+
+function openAgendaView() {
+  const { modal } = openCustomModal({
+    title: '📅 Agenda — échéances et rotations',
+    body: buildAgendaBody(),
+    actions: [
+      { label: 'Fermer', className: 'btn-primary', onClick: () => {} },
+    ],
+  });
+  // Brancher les filtres et toggle au premier rendu
+  setTimeout(() => { attachAgendaListeners(modal); }, 60);
+}
+
+// =================================================================
+// Mode Alerte Mamad — vue ultra-épurée pour stress aigu (sirène)
+// =================================================================
+function openMamadAlertView() {
+  const mamad = state.data.sections.find(s => s.id === 'mamad');
+  if (!mamad) {
+    showToast('Section Mamad introuvable.');
+    return;
+  }
+  // Collecter toutes les tâches marquées criticalAlert dans le Mamad
+  const critical = [];
+  mamad.items.forEach(it => { if (it.criticalAlert) critical.push(it); });
+  mamad.subsections.forEach(sub => sub.items.forEach(it => { if (it.criticalAlert) critical.push(it); }));
+
+  let body = '<div class="mamad-alert-content">';
+  body += '<p class="mamad-alert-intro">Procédure d\'alerte. À connaître par cœur. Délai cible : <strong>&lt; 60 secondes</strong> jusqu\'à la fermeture de la porte blindée.</p>';
+  body += '<ol class="mamad-alert-procedure">';
+  body += '<li><strong>Tous au mamad</strong> — chacun se dirige immédiatement vers la pièce sécurisée.</li>';
+  body += '<li><strong>Fermer la porte blindée</strong> et le volet de fenêtre.</li>';
+  body += '<li><strong>Compter les présents</strong> — Préma, Jérémie, Matthieu, Baptiste.</li>';
+  body += '<li><strong>Allumer la radio</strong> sur Galei Tzahal (102.3 FM) ou consulter l\'app Pikud Haoref.</li>';
+  body += '<li><strong>Attendre 10 minutes</strong> après la fin de la sirène avant de sortir.</li>';
+  body += '</ol>';
+  body += '<div class="mamad-alert-numbers">';
+  body += '<div class="mamad-alert-number"><span class="num">101</span><span class="lbl">Magen David Adom (médical)</span></div>';
+  body += '<div class="mamad-alert-number"><span class="num">100</span><span class="lbl">Police</span></div>';
+  body += '<div class="mamad-alert-number"><span class="num">102</span><span class="lbl">Pompiers</span></div>';
+  body += '</div>';
+  if (critical.length > 0) {
+    body += '<h3 class="mamad-alert-section-title">Points critiques à vérifier régulièrement</h3>';
+    body += '<ul class="mamad-alert-checklist">';
+    critical.forEach(it => {
+      const done = itemEffectiveDone(it);
+      body += '<li class="' + (done ? 'done' : 'todo') + '">' + (done ? '✓ ' : '☐ ') + escapeHtml(it.text) + '</li>';
+    });
+    body += '</ul>';
+  }
+  body += '</div>';
+
+  openCustomModal({
+    title: '🚨 Mode Alerte — Mamad',
+    body,
+    actions: [
+      { label: 'Fermer', className: 'btn-primary', onClick: () => {} },
+    ],
+  });
+}
+
+// =================================================================
+// Vue Réglages — export/import JSON, infos diverses
+// =================================================================
+function exportDataAsJson() {
+  // Génère et télécharge un fichier JSON avec toutes les données
+  try {
+    const json = JSON.stringify(state.data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const dateStr = todayISO();
+    a.href = url;
+    a.download = 'expat-tracker-' + dateStr + '.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+    showToast('Sauvegarde téléchargée (' + (json.length > 1024 ? Math.round(json.length / 1024) + ' KB' : json.length + ' B') + ')', 2500, 'success');
+  } catch(e) {
+    console.warn('[export] failed:', e);
+    showToast('Erreur lors de l\'export : ' + e.message, 4000, 'error');
+  }
+}
+
+async function importDataFromJson(file) {
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    if (!parsed || !Array.isArray(parsed.sections)) {
+      throw new Error('Le fichier ne ressemble pas à une sauvegarde valide (pas de sections).');
+    }
+    const sectionCount = parsed.sections.length;
+    let taskCount = 0;
+    parsed.sections.forEach(s => {
+      if (Array.isArray(s.items)) taskCount += s.items.length;
+      if (Array.isArray(s.subsections)) s.subsections.forEach(sub => { if (Array.isArray(sub.items)) taskCount += sub.items.length; });
+    });
+    const ok = await confirmDialog(
+      '⚠️ Cela va REMPLACER toutes tes données actuelles.\n\nFichier détecté : ' + sectionCount + ' section(s), ~' + taskCount + ' tâche(s).\n\nUne sauvegarde de ton état actuel a été créée dans ton localStorage avant l\'import (récupérable via la console).\n\nContinuer ?',
+      { title: 'Importer une sauvegarde', okLabel: 'Importer et remplacer', danger: true }
+    );
+    if (!ok) return;
+    // Backup sécurité avant remplacement
+    try {
+      const backup = JSON.stringify(state.data);
+      localStorage.setItem('expat-tracker-pre-import-' + Date.now(), backup);
+    } catch(e) { console.warn('[import] backup failed:', e); }
+    const migrated = migrate(parsed);
+    if (!migrated) throw new Error('Migration impossible.');
+    mutate(() => { state.data = migrated; }, 'Import depuis fichier JSON');
+    showToast('Import réussi : ' + sectionCount + ' section(s) chargée(s)', 3000, 'success');
+  } catch(e) {
+    console.warn('[import] failed:', e);
+    alertDialog('Erreur lors de l\'import : ' + e.message, { title: 'Import impossible' });
+  }
+}
+
+function openSettingsView() {
+  // Calcule la taille des données et nombre de tâches
+  const json = JSON.stringify(state.data);
+  const sizeKB = Math.round(json.length / 1024);
+  let totalTasks = 0;
+  state.data.sections.forEach(s => {
+    if (s.items) totalTasks += s.items.length;
+    if (s.subsections) s.subsections.forEach(sub => { if (sub.items) totalTasks += sub.items.length; });
+  });
+
+  let body = '<div style="font-size:14px; line-height:1.5;">';
+  body += '<h3 style="font-family:\'Fraunces\',serif; font-size:15px; font-weight:500; margin-bottom:8px; padding-bottom:4px; border-bottom:1px dashed var(--line);">📊 État actuel</h3>';
+  body += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; font-size:13px;">';
+  body += '<div><strong>' + state.data.sections.length + '</strong> sections</div>';
+  body += '<div><strong>' + totalTasks + '</strong> tâches</div>';
+  body += '<div><strong>' + sizeKB + ' KB</strong> de données</div>';
+  body += '<div><strong>v' + (state.data.version || 0) + '</strong> du schéma</div>';
+  body += '</div>';
+
+  body += '<h3 style="font-family:\'Fraunces\',serif; font-size:15px; font-weight:500; margin-bottom:8px; padding-bottom:4px; border-bottom:1px dashed var(--line);">💾 Sauvegarde locale</h3>';
+  body += '<p style="font-size:13px; opacity:0.75; margin-bottom:10px;">Télécharge un fichier JSON avec toutes tes données. À garder précieusement (Drive, email à toi-même, clé USB).</p>';
+  body += '<button id="settings-export-btn" class="btn-primary" style="width:100%; padding:10px; font-size:14px; margin-bottom:18px;">📥 Télécharger une sauvegarde</button>';
+
+  body += '<h3 style="font-family:\'Fraunces\',serif; font-size:15px; font-weight:500; margin-bottom:8px; padding-bottom:4px; border-bottom:1px dashed var(--line);">📂 Restaurer une sauvegarde</h3>';
+  body += '<p style="font-size:13px; opacity:0.75; margin-bottom:10px;">Charge un fichier JSON précédemment exporté. <strong>Attention :</strong> remplace toutes les données actuelles.</p>';
+  body += '<input type="file" id="settings-import-input" accept="application/json,.json" style="display:none;" />';
+  body += '<button id="settings-import-btn" class="btn-ghost" style="width:100%; padding:10px; font-size:14px; margin-bottom:18px;">📤 Sélectionner un fichier à importer…</button>';
+
+  if (syncState.enabled) {
+    body += '<h3 style="font-family:\'Fraunces\',serif; font-size:15px; font-weight:500; margin-bottom:8px; padding-bottom:4px; border-bottom:1px dashed var(--line);">🛰️ Synchronisation</h3>';
+    body += '<p style="font-size:13px; opacity:0.75; margin-bottom:10px;">Sync active vers jsonblob. Identifiant : <code style="background:var(--surface); padding:2px 6px; border-radius:3px; font-size:11px;">' + escapeHtml(syncState.blobId || '?') + '</code></p>';
+    if (syncState.lastSyncSuccessAt) {
+      const ageS = Math.floor((Date.now() - syncState.lastSyncSuccessAt) / 1000);
+      body += '<p style="font-size:12px; opacity:0.65; margin-bottom:18px;">Dernière sync réussie : il y a ' + ageS + ' s</p>';
+    }
+  }
+
+  body += '</div>';
+
+  const { modal } = openCustomModal({
+    title: '⚙️ Réglages',
+    body,
+    actions: [
+      { label: 'Fermer', className: 'btn-primary', onClick: () => {} },
+    ],
+  });
+  // Brancher les boutons
+  setTimeout(() => {
+    const exportBtn = modal.querySelector('#settings-export-btn');
+    if (exportBtn) exportBtn.addEventListener('click', () => exportDataAsJson());
+    const importBtn = modal.querySelector('#settings-import-btn');
+    const importInp = modal.querySelector('#settings-import-input');
+    if (importBtn && importInp) {
+      importBtn.addEventListener('click', () => importInp.click());
+      importInp.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          // Fermer la modale réglages avant d'ouvrir la confirmation d'import
+          const settingsModal = document.getElementById('custom-modal');
+          if (settingsModal) settingsModal.remove();
+          await importDataFromJson(file);
+        }
+      });
+    }
+  }, 60);
 }
 
 function updateSyncIndicator() {
@@ -4549,25 +5670,60 @@ function updateSyncIndicator() {
   if (!syncState.enabled) {
     el.innerHTML = '🛰️ Activer la sync';
     el.title = 'Activer la synchronisation entre tous tes appareils';
+    el.style.color = '';
     return;
   }
-  if (syncState.lastError) {
+  if (syncState.lastError && syncState.wasInError) {
     el.innerHTML = '⚠️ Sync (erreur)';
-    el.title = 'Erreur sync : ' + syncState.lastError + ' — clique pour voir le lien magique';
+    el.title = 'Erreur sync : ' + syncState.lastError + ' — retry automatique en cours. Clic pour voir le lien magique.';
+    el.style.color = 'var(--crit-fg)';
     return;
   }
   if (syncState.isPushing) {
     el.innerHTML = '⇈ Sync…';
     el.title = 'Envoi en cours';
+    el.style.color = '';
     return;
   }
   if (syncState.isPulling) {
     el.innerHTML = '⇊ Sync…';
     el.title = 'Réception en cours';
+    el.style.color = '';
+    return;
+  }
+  // Indicateur de fraîcheur : "Synchronisé il y a Xs"
+  if (syncState.lastSyncSuccessAt) {
+    const ageMs = Date.now() - syncState.lastSyncSuccessAt;
+    const ageS = Math.floor(ageMs / 1000);
+    let label, color = '';
+    if (ageS < 60) label = '🛰️ Sync (' + ageS + 's)';
+    else if (ageS < 3600) {
+      label = '🛰️ Sync (' + Math.floor(ageS / 60) + ' min)';
+      if (ageS > 120) color = 'var(--high-fg)'; // dégrade après 2 min sans sync
+    } else {
+      label = '🛰️ Sync (' + Math.floor(ageS / 3600) + ' h)';
+      color = 'var(--crit-fg)';
+    }
+    el.innerHTML = label;
+    el.title = 'Dernière synchronisation réussie : il y a ' + ageS + ' s. Clic pour voir le lien magique.';
+    el.style.color = color;
     return;
   }
   el.innerHTML = '🛰️ Sync active';
-  el.title = 'Synchronisation active — clique pour revoir le lien magique';
+  el.title = 'Synchronisation active — clique pour voir le lien magique';
+  el.style.color = '';
+}
+
+// Met à jour l'indicateur de fraîcheur toutes les 10 secondes
+// (sinon "5s" reste affiché alors qu'en réalité 30 secondes ont passé)
+let _syncFreshnessTimer = null;
+function startSyncFreshnessTicker() {
+  if (_syncFreshnessTimer) clearInterval(_syncFreshnessTimer);
+  _syncFreshnessTimer = setInterval(() => {
+    if (syncState.enabled && !syncState.isPushing && !syncState.isPulling) {
+      updateSyncIndicator();
+    }
+  }, 10000);
 }
 
 async function loadData() {
@@ -4578,12 +5734,13 @@ async function loadData() {
       const migrated = migrate(remote);
       if (migrated) {
         syncState.lastRemoteHash = JSON.stringify(migrated);
+        syncState.lastSyncSuccessAt = Date.now();
         // Sauvegarder localement aussi pour fallback offline
         try {
           const json = JSON.stringify(migrated);
           if (hasWindowStorage) await window.storage.set(STORAGE_KEY, json, true);
           else localStorage.setItem(STORAGE_KEY, json);
-        } catch(e) {}
+        } catch(e) { console.warn('[load] cache after sync pull failed:', e); }
         return migrated;
       }
     }
@@ -4591,8 +5748,8 @@ async function loadData() {
   }
   try {
     if (hasWindowStorage) {
-      try { const r = await window.storage.get(STORAGE_KEY, true); if (r && r.value) return migrate(JSON.parse(r.value)); } catch (e) {}
-      try { const r1 = await window.storage.get(STORAGE_KEY_V1, true); if (r1 && r1.value) return migrate(JSON.parse(r1.value)); } catch (e) {}
+      try { const r = await window.storage.get(STORAGE_KEY, true); if (r && r.value) return migrate(JSON.parse(r.value)); } catch (e) { console.warn('[load] window.storage v2 failed:', e); }
+      try { const r1 = await window.storage.get(STORAGE_KEY_V1, true); if (r1 && r1.value) return migrate(JSON.parse(r1.value)); } catch (e) { console.warn('[load] window.storage v1 failed:', e); }
     } else {
       const raw2 = localStorage.getItem(STORAGE_KEY); if (raw2) return migrate(JSON.parse(raw2));
       const raw1 = localStorage.getItem(STORAGE_KEY_V1); if (raw1) return migrate(JSON.parse(raw1));
@@ -4740,6 +5897,85 @@ function locationMatchesFilter(loc, filter) {
   if (!filter) return true;
   return !!(loc && loc.name === filter);
 }
+
+// ==============================================
+// Helpers dates d'échéance et périssables
+// ==============================================
+function todayISO() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+function parseISO(s) {
+  if (!s || typeof s !== 'string') return null;
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return null;
+  const d = new Date(+m[1], +m[2] - 1, +m[3]);
+  return isNaN(d.getTime()) ? null : d;
+}
+function daysUntil(isoDate) {
+  const d = parseISO(isoDate);
+  if (!d) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0);
+  return Math.round((d - today) / 86400000);
+}
+function formatDate(isoDate) {
+  const d = parseISO(isoDate);
+  if (!d) return '';
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: d.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined });
+}
+function addMonthsISO(isoDate, months) {
+  const d = parseISO(isoDate);
+  if (!d || !months) return '';
+  const targetMonth = d.getMonth() + months;
+  const originalDay = d.getDate();
+  d.setDate(1); // évite le rollover
+  d.setMonth(targetMonth);
+  // Restaure le jour, en clampant au dernier jour du mois cible si nécessaire
+  const lastDayOfTargetMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(originalDay, lastDayOfTargetMonth));
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+// Statut d'une échéance : { kind: 'overdue'|'urgent'|'soon'|'later'|'none', days, label, color }
+function deadlineStatus(isoDate) {
+  if (!isoDate) return { kind: 'none' };
+  const days = daysUntil(isoDate);
+  if (days === null) return { kind: 'none' };
+  if (days < 0) return { kind: 'overdue', days, label: 'En retard de ' + Math.abs(days) + 'j', color: 'var(--crit-fg)' };
+  if (days === 0) return { kind: 'urgent', days, label: "Aujourd'hui", color: 'var(--crit-fg)' };
+  if (days <= 3) return { kind: 'urgent', days, label: 'Dans ' + days + 'j', color: 'var(--crit-fg)' };
+  if (days <= 14) return { kind: 'soon', days, label: 'Dans ' + days + 'j', color: 'var(--high-fg)' };
+  if (days <= 60) return { kind: 'later', days, label: formatDate(isoDate), color: 'var(--med-fg)' };
+  return { kind: 'far', days, label: formatDate(isoDate), color: 'var(--ink-soft)' };
+}
+// Calcule la prochaine échéance d'un item périssable depuis sa dernière rotation
+function perishableNextDate(item) {
+  if (!item.perishable || !item.perishable.intervalMonths) return '';
+  const last = item.perishable.lastRotation;
+  if (!last) return ''; // pas encore de rotation initiale
+  return addMonthsISO(last, item.perishable.intervalMonths);
+}
+// Statut périssable : combine perishable + deadline calculée
+function perishableStatus(item) {
+  if (!item.perishable) return { kind: 'none' };
+  const next = perishableNextDate(item);
+  if (!next) return { kind: 'never-rotated' }; // jamais initialisé
+  return deadlineStatus(next);
+}
+// Échéance "effective" d'une tâche : deadline manuelle prioritaire,
+// sinon échéance dérivée du périssable
+function effectiveDeadline(item) {
+  if (item.deadline) return item.deadline;
+  if (item.perishable) return perishableNextDate(item);
+  return '';
+}
 function itemMatchesLocationFilter(item) {
   if (!state.locationFilter) return true;
   if (locationMatchesFilter(item.location, state.locationFilter)) return true;
@@ -4789,6 +6025,62 @@ function countLocationMatches(locName) {
   });
   return count;
 }
+
+// Calcule le total budgétaire d'un lieu : somme des prix des items et sous-tâches
+// dont la location correspond. Pour un item parent qui a sa propre location ET des sous-tâches,
+// on additionne le prix de l'item ET les sous-tâches correspondant au filtre, en évitant
+// le double-comptage avec computeItemTotal qui agrège déjà les sous-tâches.
+function computeLocationStats(locName) {
+  const stats = {
+    totalAll: 0,        // Tout le budget rattaché à ce lieu
+    totalTodo: 0,       // Budget restant à dépenser (tâches non faites)
+    totalDone: 0,       // Budget déjà engagé (tâches cochées)
+    countAll: 0,        // Nombre total d'occurrences
+    countTodo: 0,
+    countDone: 0,
+    countWithPrice: 0,  // Nombre d'occurrences ayant un prix renseigné
+  };
+  if (!locName || !state.data) return stats;
+
+  const matchesThisLoc = (loc) => loc && loc.name === locName;
+
+  state.data.sections.forEach(sec => {
+    const proc = (item) => {
+      // Cas A : le parent matche → on compte le parent (prix propre uniquement, pas les sous-tâches
+      // qui pourraient être ailleurs)
+      if (matchesThisLoc(item.location)) {
+        stats.countAll++;
+        const done = itemEffectiveDone(item);
+        if (done) stats.countDone++; else stats.countTodo++;
+        const ownPrice = (item.price && item.price > 0) ? item.price : 0;
+        if (ownPrice > 0) {
+          stats.countWithPrice++;
+          stats.totalAll += ownPrice;
+          if (done) stats.totalDone += ownPrice;
+          else stats.totalTodo += ownPrice;
+        }
+      }
+      // Cas B : sous-tâches qui matchent (même si le parent ne matche pas)
+      if (item.subtasks) item.subtasks.forEach(st => {
+        if (matchesThisLoc(st.location)) {
+          stats.countAll++;
+          const stDone = !!st.done;
+          if (stDone) stats.countDone++; else stats.countTodo++;
+          const stPrice = (st.price && st.price > 0) ? st.price : 0;
+          if (stPrice > 0) {
+            stats.countWithPrice++;
+            stats.totalAll += stPrice;
+            if (stDone) stats.totalDone += stPrice;
+            else stats.totalTodo += stPrice;
+          }
+        }
+      });
+    };
+    sec.items.forEach(proc);
+    sec.subsections.forEach(sub => sub.items.forEach(proc));
+  });
+  return stats;
+}
 function matchFilter(item) {
   const done = itemEffectiveDone(item);
   if (state.filter === 'todo' && done) return false;
@@ -4800,34 +6092,352 @@ function matchFilter(item) {
 function filterItems(items) { return items.filter(i => matchFilter(i) && matchSearch(i, state.search)); }
 
 // ==============================================
+// Undo / Redo
+// ==============================================
+// Pile d'historique des états locaux (max UNDO_LIMIT entrées).
+// Chaque entrée contient : { snapshot: deep clone des sections, label: description, ts: timestamp }
+// Une mutation locale push dans undoStack et clear redoStack.
+// Ctrl+Z (ou bouton ↶) : pop undoStack, push current dans redoStack, restaure.
+// Ctrl+Shift+Z / Ctrl+Y : pop redoStack, push current dans undoStack, restaure.
+// Les actions venant de la sync distante n'alimentent PAS la pile undo (volontairement).
+const UNDO_LIMIT = 20;
+const undoStack = [];
+const redoStack = [];
+
+function pushUndoSnapshot(label) {
+  try {
+    if (!state.data) return;
+    const snap = JSON.parse(JSON.stringify(state.data));
+    undoStack.push({ snapshot: snap, label: label || 'Modification', ts: Date.now() });
+    if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+    // Toute nouvelle action invalide la pile redo
+    redoStack.length = 0;
+    updateUndoIndicator();
+  } catch(e) { console.warn('[undo] snapshot failed:', e); }
+}
+
+function performUndo() {
+  if (undoStack.length === 0) {
+    showToast('Rien à annuler');
+    return;
+  }
+  const entry = undoStack.pop();
+  // Push état actuel dans redo pour permettre le redo
+  try {
+    const current = JSON.parse(JSON.stringify(state.data));
+    redoStack.push({ snapshot: current, label: entry.label, ts: Date.now() });
+    if (redoStack.length > UNDO_LIMIT) redoStack.shift();
+  } catch(e) { console.warn('[undo] capture current for redo failed:', e); }
+  // Restaurer
+  state.data = entry.snapshot;
+  scheduleSave();
+  render();
+  updateUndoIndicator();
+  showToast('Annulé : ' + entry.label);
+}
+
+function performRedo() {
+  if (redoStack.length === 0) {
+    showToast('Rien à rétablir');
+    return;
+  }
+  const entry = redoStack.pop();
+  try {
+    const current = JSON.parse(JSON.stringify(state.data));
+    undoStack.push({ snapshot: current, label: entry.label, ts: Date.now() });
+    if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+  } catch(e) { console.warn('[redo] capture current for undo failed:', e); }
+  state.data = entry.snapshot;
+  scheduleSave();
+  render();
+  updateUndoIndicator();
+  showToast('Rétabli : ' + entry.label);
+}
+
+function updateUndoIndicator() {
+  const btn = document.getElementById('undo-btn');
+  if (!btn) return;
+  const can = undoStack.length > 0;
+  btn.disabled = !can;
+  btn.style.opacity = can ? '0.85' : '0.3';
+  btn.style.cursor = can ? 'pointer' : 'not-allowed';
+  if (can) {
+    const last = undoStack[undoStack.length - 1];
+    btn.title = 'Annuler : ' + last.label + ' (Ctrl+Z)';
+    btn.setAttribute('aria-label', 'Annuler la dernière action : ' + last.label);
+  } else {
+    btn.title = 'Rien à annuler';
+    btn.setAttribute('aria-label', 'Rien à annuler');
+  }
+}
+
+// ==============================================
 // Mutations
 // ==============================================
-function mutate(fn) { fn(state.data); scheduleSave(); render(); }
+// `mutate` accepte maintenant un label optionnel décrivant l'action,
+// utilisé pour le toast undo/redo. Compat. arrière : les anciens appels
+// sans label utilisent un libellé générique.
+function mutate(fn, label) {
+  pushUndoSnapshot(label || 'Modification');
+  fn(state.data);
+  scheduleSave();
+  render();
+  updateUndoIndicator();
+}
+
+// =================================================================
+// Mutation légère — pour les actions atomiques fréquentes (toggle, change-prio).
+// Identique à mutate() mais sans appel à render(). L'appelant doit ensuite
+// patcher le DOM ciblé via les fonctions patchXxx ci-dessous, ET appeler
+// updateGlobalProgress() pour rafraîchir la barre globale et le pourcentage section.
+// Bénéfice : pas de full re-render (qui fait clignoter l'écran et dégrade les perfs sur mobile).
+// Risque résiduel : si une action a des effets secondaires non prévus (filtre actif qui
+// devrait masquer la tâche par exemple), le DOM peut devenir incohérent. Dans ce cas,
+// fallback sur mutate() classique.
+// =================================================================
+function lightMutate(fn, label) {
+  pushUndoSnapshot(label || 'Modification');
+  fn(state.data);
+  scheduleSave();
+  updateUndoIndicator();
+}
+
+// Recalcule et met à jour la barre de progression globale + le pourcentage de la section courante.
+// Appelé après une action atomique pour refléter le changement sans full render.
+function updateGlobalProgress() {
+  if (!state.data) return;
+  // Barre globale
+  const g = globalStats();
+  const pctEl = document.querySelector('.progress-row .progress-value');
+  const fillEl = document.querySelector('.progress-fill');
+  const countEl = document.querySelector('.progress-count > span:first-child');
+  if (pctEl) pctEl.innerHTML = g.pct + '<span class="pct-sign">%</span>';
+  if (fillEl) fillEl.style.width = g.pct + '%';
+  if (countEl) countEl.textContent = g.done + ' / ' + g.total + ' tâches terminées';
+
+  // Pourcentage section courante (en-tête de section)
+  const sec = currentSection();
+  if (sec) {
+    const s = sectionStats(sec);
+    const sectPct = document.querySelector('.section-stats .pct');
+    const sectCount = document.querySelector('.section-stats > div:nth-child(2)');
+    if (sectPct) sectPct.innerHTML = s.pct + '<span style="font-size:12px;opacity:0.5;font-family:\'DM Sans\',sans-serif;">%</span>';
+    if (sectCount) sectCount.textContent = s.done + ' / ' + s.total;
+    // Compteur sur l'onglet de la section (la classe est 'count' dans renderTabs)
+    const tab = document.querySelector('.tab[data-id="' + sec.id + '"] .count');
+    if (tab) tab.textContent = s.done + '/' + s.total;
+  }
+
+  // Tooltip progression par section : recalcule la mini-barre de la section courante
+  if (sec) {
+    const s = sectionStats(sec);
+    const tooltipRow = document.querySelector('.progress-tooltip-row[data-section-id="' + sec.id + '"]');
+    if (tooltipRow) {
+      const fill = tooltipRow.querySelector('.progress-tooltip-mini-fill');
+      const pctText = tooltipRow.querySelector('.progress-tooltip-pct');
+      if (fill) fill.style.width = s.pct + '%';
+      if (pctText) pctText.textContent = s.done + '/' + s.total;
+    }
+  }
+}
+
+// Patch DOM d'une checkbox de tâche (item ou sous-tâche) sans full render
+function patchItemCheckbox(itemId) {
+  const i = findItem(itemId); if (!i) return;
+  const itemEl = document.querySelector('.item[data-id="' + itemId + '"]');
+  if (!itemEl) return;
+  const done = itemEffectiveDone(i);
+  const checkBtn = itemEl.querySelector('.checkbox-btn');
+  const textSpan = itemEl.querySelector('.item-text');
+  // Mise à jour de l'icône
+  if (checkBtn) {
+    const hasSubtasks = i.subtasks && i.subtasks.length > 0;
+    const progress = itemProgress(i);
+    let iconHtml;
+    if (hasSubtasks) {
+      iconHtml = done ? ICO.checkFull : (progress.done > 0 ? ICO.checkPartial : ICO.circle);
+    } else {
+      iconHtml = i.done ? ICO.checkFull : ICO.circle;
+    }
+    checkBtn.innerHTML = iconHtml;
+    checkBtn.setAttribute('aria-checked', String(done));
+    checkBtn.setAttribute('aria-label', (done ? 'Marquer comme non fait' : 'Marquer comme fait') + ' : ' + i.text);
+  }
+  // Texte barré ou non
+  if (textSpan) {
+    textSpan.classList.toggle('done', done);
+  }
+  // Badge progression sous-tâches (X/Y)
+  if (i.subtasks && i.subtasks.length > 0) {
+    const badge = itemEl.querySelector('.subtask-badge');
+    if (badge) {
+      const progress = itemProgress(i);
+      // On ne change que le texte de progression, en préservant le chevron
+      const chevron = badge.querySelector('svg');
+      const chevronHtml = chevron ? chevron.outerHTML : '';
+      badge.innerHTML = chevronHtml + ' ' + progress.done + '/' + progress.total;
+      badge.classList.toggle('all-done', done);
+    }
+  }
+  // Cacher les badges deadline et perishable si done
+  if (done) {
+    itemEl.querySelectorAll('.deadline-pill, .deadline-init').forEach(el => el.style.display = 'none');
+  } else {
+    itemEl.querySelectorAll('.deadline-pill, .deadline-init').forEach(el => el.style.display = '');
+  }
+}
+
+// Patch DOM d'une checkbox de sous-tâche
+function patchSubtaskCheckbox(itemId, subId) {
+  const i = findItem(itemId); if (!i) return;
+  const st = i.subtasks.find(x => x.id === subId); if (!st) return;
+  const itemEl = document.querySelector('.item[data-id="' + itemId + '"]');
+  if (!itemEl) return;
+  // Trouver la sous-tâche par bouton avec data-id correspondant
+  const stBtn = itemEl.querySelector('.subtask-checkbox[data-id="' + subId + '"]');
+  if (stBtn) {
+    stBtn.innerHTML = st.done ? ICO.checkSm : ICO.circleSm;
+    stBtn.setAttribute('aria-checked', String(!!st.done));
+    stBtn.setAttribute('aria-label', (st.done ? 'Marquer comme non fait' : 'Marquer comme fait') + ' : ' + st.text);
+    // Texte barré
+    const textSpan = stBtn.parentElement.querySelector('.subtask-text');
+    if (textSpan) textSpan.classList.toggle('done', !!st.done);
+  }
+  // Le statut "done" du parent peut avoir changé : repatcher la checkbox du parent aussi
+  patchItemCheckbox(itemId);
+}
+
+// Patch DOM d'un changement de priorité d'une tâche
+function patchItemPriority(itemId) {
+  const i = findItem(itemId); if (!i) return;
+  const itemEl = document.querySelector('.item[data-id="' + itemId + '"]');
+  if (!itemEl) return;
+  const prio = i.priority || 'medium';
+  const dotColors = { critical: 'var(--crit-dot)', high: 'var(--high-dot)', medium: 'var(--med-dot)', low: 'var(--low-dot)' };
+  // Barre de couleur à gauche
+  const bar = itemEl.querySelector('.item-prio-bar');
+  if (bar) bar.style.background = dotColors[prio];
+  // Select de priorité (classe)
+  const select = itemEl.querySelector('.prio-select');
+  if (select) {
+    select.className = 'prio-select prio-' + prio;
+    select.value = prio;
+  }
+}
+
+// Patch DOM d'un toggle plier/déplier sous-section
+function patchSubsectionCollapsed(subId) {
+  const sec = currentSection(); if (!sec) return;
+  const sub = sec.subsections.find(s => s.id === subId); if (!sub) return;
+  const subEl = document.querySelector('.subsection[data-id="' + subId + '"]');
+  if (!subEl) return;
+  subEl.classList.toggle('collapsed', sub.collapsed);
+  // L'icône chevron du bouton toggle
+  const toggleBtn = subEl.querySelector('.subsection-toggle');
+  if (toggleBtn) {
+    toggleBtn.innerHTML = sub.collapsed ? ICO.chevronR : ICO.chevronD;
+    toggleBtn.setAttribute('title', sub.collapsed ? 'Déplier' : 'Replier');
+  }
+}
+
 function toggleItemDone(id) {
-  mutate(() => {
+  // Si un filtre est actif qui pourrait masquer/afficher cette tâche après toggle,
+  // on retombe sur un full render pour éviter une incohérence visuelle.
+  const filterCouldHide = state.filter !== 'all' || state.search;
+  if (filterCouldHide) {
+    mutate(() => {
+      const i = findItem(id); if (!i) return;
+      if (i.subtasks && i.subtasks.length > 0) {
+        const allDone = i.subtasks.every(st => st.done);
+        i.subtasks.forEach(st => st.done = !allDone);
+      } else i.done = !i.done;
+    }, 'Cocher/décocher tâche');
+    return;
+  }
+  // Render léger : on patch juste les éléments DOM concernés
+  lightMutate(() => {
     const i = findItem(id); if (!i) return;
     if (i.subtasks && i.subtasks.length > 0) {
       const allDone = i.subtasks.every(st => st.done);
       i.subtasks.forEach(st => st.done = !allDone);
     } else i.done = !i.done;
-  });
+  }, 'Cocher/décocher tâche');
+  patchItemCheckbox(id);
+  // Si la tâche a des sous-tâches, leurs checkboxes ont aussi changé
+  const i = findItem(id);
+  if (i && i.subtasks && i.subtasks.length > 0) {
+    i.subtasks.forEach(st => patchSubtaskCheckbox(id, st.id));
+  }
+  updateGlobalProgress();
 }
-function changeItemPriority(id, p) { mutate(() => { const i = findItem(id); if (i) i.priority = p; }); }
-function updateItemText(id, t) { mutate(() => { const i = findItem(id); if (i && t.trim()) i.text = t.trim(); }); }
+function changeItemPriority(id, p) {
+  // Si filtre par priorité actif, full render pour gérer apparition/disparition
+  if (state.priorityFilter && state.priorityFilter !== 'all') {
+    mutate(() => { const i = findItem(id); if (i) i.priority = p; }, 'Changement de priorité');
+    return;
+  }
+  lightMutate(() => { const i = findItem(id); if (i) i.priority = p; }, 'Changement de priorité');
+  patchItemPriority(id);
+}
+function updateItemText(id, t) { mutate(() => { const i = findItem(id); if (i && t.trim()) i.text = t.trim(); }, 'Modification du texte'); }
 function updateItemNotes(id, n) { const i = findItem(id); if (i) { i.notes = n; scheduleSave(); } }
-function updateItemLink(id, l) { mutate(() => { const i = findItem(id); if (i) i.link = normalizeUrl(l); }); }
-function updateItemPrice(id, p) { mutate(() => { const i = findItem(id); if (i) i.price = parsePrice(p); }); }
+function updateItemLink(id, l) { mutate(() => { const i = findItem(id); if (i) i.link = normalizeUrl(l); }, 'Modification du lien'); }
+function updateItemPrice(id, p) { mutate(() => { const i = findItem(id); if (i) i.price = parsePrice(p); }, 'Modification du prix'); }
+// === Échéance et périssables ===
+function updateItemDeadline(id, isoDate) {
+  mutate(() => {
+    const i = findItem(id); if (!i) return;
+    i.deadline = (typeof isoDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(isoDate)) ? isoDate : '';
+  }, isoDate ? 'Ajout d\'une échéance' : 'Retrait d\'échéance');
+}
+function updateSubtaskDeadline(iid, sid, isoDate) {
+  mutate(() => {
+    const i = findItem(iid); if (!i) return;
+    const st = i.subtasks.find(x => x.id === sid); if (!st) return;
+    st.deadline = (typeof isoDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(isoDate)) ? isoDate : '';
+  }, isoDate ? 'Ajout d\'une échéance (sous-tâche)' : 'Retrait d\'échéance (sous-tâche)');
+}
+function updateItemPerishable(id, intervalMonths, lastRotation) {
+  mutate(() => {
+    const i = findItem(id); if (!i) return;
+    if (!intervalMonths || intervalMonths <= 0) {
+      i.perishable = null;
+    } else {
+      i.perishable = {
+        intervalMonths: parseInt(intervalMonths, 10),
+        lastRotation: (typeof lastRotation === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(lastRotation)) ? lastRotation : ''
+      };
+    }
+  }, intervalMonths > 0 ? 'Configuration périssable' : 'Suppression suivi périssable');
+}
+// Action utilisateur : "j'ai effectué la rotation aujourd'hui"
+function markPerishableRotated(id) {
+  mutate(() => {
+    const i = findItem(id); if (!i || !i.perishable) return;
+    i.perishable.lastRotation = todayISO();
+  }, 'Rotation périssable enregistrée');
+  showToast('Rotation enregistrée. Prochaine échéance dans ' + (findItem(id).perishable.intervalMonths) + ' mois.');
+}
 function updateItemLocation(id, name, color) {
   mutate(() => {
     const i = findItem(id); if (!i) return;
     if (!name || !name.trim()) i.location = null;
     else i.location = { name: name.trim(), color: color || COLOR_PALETTE[0] };
-  });
+  }, name && name.trim() ? 'Modification du lieu' : 'Retrait du lieu');
 }
-function deleteItem(id) {
+async function deleteItem(id) {
   const i = findItem(id); if (!i) return;
-  if (!confirm('Supprimer "' + i.text + '" ?')) return;
-  mutate(() => { const c = findItemContainer(id); const idx = c.findIndex(x => x.id === id); if (idx >= 0) c.splice(idx, 1); });
+  const hasSubtasks = (i.subtasks || []).length > 0;
+  // Confirmation systématique (option a) : la sécurité prime sur la rapidité.
+  // L'undo (Ctrl+Z / bouton ↶) reste là si on accepte par erreur.
+  const message = hasSubtasks
+    ? 'Supprimer « ' + i.text + ' » ?\n\nCette tâche contient ' + i.subtasks.length + ' sous-tâche' + (i.subtasks.length > 1 ? 's' : '') + ' qui seront aussi supprimées.'
+    : 'Supprimer « ' + i.text + ' » ?';
+  const ok = await confirmDialog(message, { title: 'Confirmer la suppression', okLabel: 'Supprimer', danger: true });
+  if (!ok) return;
+  const label = 'Suppression : ' + i.text.slice(0, 50);
+  mutate(() => { const c = findItemContainer(id); const idx = c.findIndex(x => x.id === id); if (idx >= 0) c.splice(idx, 1); }, label);
+  showToast('Tâche supprimée. Ctrl+Z ou ↶ pour annuler.');
 }
 function moveItem(id, dir) {
   mutate(() => {
@@ -4836,7 +6446,7 @@ function moveItem(id, dir) {
     const t = dir === 'up' ? idx-1 : idx+1;
     if (t < 0 || t >= c.length) return;
     [c[idx], c[t]] = [c[t], c[idx]];
-  });
+  }, 'Déplacement de tâche');
 }
 function dropReorderItem(dId, tId) {
   if (!dId || dId === tId) return;
@@ -4847,7 +6457,7 @@ function dropReorderItem(dId, tId) {
     const [m] = cD.splice(fi, 1);
     const ti = cT.findIndex(x => x.id === tId);
     cT.splice(ti, 0, m);
-  });
+  }, 'Réorganisation par glisser-déposer');
 }
 function addItem(pt, pid, txt, pr) {
   if (!txt.trim()) return;
@@ -4856,25 +6466,33 @@ function addItem(pt, pid, txt, pr) {
     const ni = I(txt.trim(), pr);
     if (pt === 'section') sec.items.push(ni);
     else { const sub = sec.subsections.find(s => s.id === pid); if (sub) sub.items.push(ni); }
-  });
+  }, 'Ajout : ' + txt.trim().slice(0, 50));
 }
 
 // Subtasks
 function toggleSubtaskDone(iid, sid) {
-  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.done = !st.done; });
+  // Si filtre/recherche actif, fallback full render
+  const filterCouldHide = state.filter !== 'all' || state.search;
+  if (filterCouldHide) {
+    mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.done = !st.done; }, 'Cocher/décocher sous-tâche');
+    return;
+  }
+  lightMutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.done = !st.done; }, 'Cocher/décocher sous-tâche');
+  patchSubtaskCheckbox(iid, sid);
+  updateGlobalProgress();
 }
 function addSubtask(iid, txt) {
   if (!txt.trim()) return;
-  mutate(() => { const i = findItem(iid); if (i) i.subtasks.push({ id: genId(), text: txt.trim(), done: false, link: '', price: 0, location: null }); });
+  mutate(() => { const i = findItem(iid); if (i) i.subtasks.push({ id: genId(), text: txt.trim(), done: false, link: '', price: 0, location: null }); }, 'Ajout sous-tâche : ' + txt.trim().slice(0, 50));
 }
 function updateSubtaskText(iid, sid, txt) {
-  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st && txt.trim()) st.text = txt.trim(); });
+  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st && txt.trim()) st.text = txt.trim(); }, 'Modification du texte (sous-tâche)');
 }
 function updateSubtaskLink(iid, sid, l) {
-  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.link = normalizeUrl(l); });
+  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.link = normalizeUrl(l); }, 'Modification du lien (sous-tâche)');
 }
 function updateSubtaskPrice(iid, sid, p) {
-  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.price = parsePrice(p); });
+  mutate(() => { const i = findItem(iid); if (!i) return; const st = i.subtasks.find(x => x.id === sid); if (st) st.price = parsePrice(p); }, 'Modification du prix (sous-tâche)');
 }
 function updateSubtaskLocation(iid, sid, name, color) {
   mutate(() => {
@@ -4882,20 +6500,25 @@ function updateSubtaskLocation(iid, sid, name, color) {
     const st = i.subtasks.find(x => x.id === sid); if (!st) return;
     if (!name || !name.trim()) st.location = null;
     else st.location = { name: name.trim(), color: color || COLOR_PALETTE[0] };
-  });
+  }, name && name.trim() ? 'Modification du lieu (sous-tâche)' : 'Retrait du lieu (sous-tâche)');
 }
 function updateItemImage(id, dataUrl) {
-  mutate(() => { const i = findItem(id); if (i) i.image = dataUrl || ''; });
+  mutate(() => { const i = findItem(id); if (i) i.image = dataUrl || ''; }, dataUrl ? 'Ajout/changement d\'image' : 'Suppression d\'image');
 }
 function updateSubtaskImage(iid, sid, dataUrl) {
   mutate(() => {
     const i = findItem(iid); if (!i) return;
     const st = i.subtasks.find(x => x.id === sid); if (!st) return;
     st.image = dataUrl || '';
-  });
+  }, dataUrl ? 'Ajout/changement d\'image (sous-tâche)' : 'Suppression d\'image (sous-tâche)');
 }
-function deleteSubtask(iid, sid) {
-  mutate(() => { const i = findItem(iid); if (!i) return; i.subtasks = i.subtasks.filter(x => x.id !== sid); });
+async function deleteSubtask(iid, sid) {
+  const i = findItem(iid); if (!i) return;
+  const st = i.subtasks.find(x => x.id === sid); if (!st) return;
+  const ok = await confirmDialog('Supprimer la sous-tâche « ' + st.text + ' » ?', { title: 'Confirmer la suppression', okLabel: 'Supprimer', danger: true });
+  if (!ok) return;
+  mutate(() => { const it = findItem(iid); if (!it) return; it.subtasks = it.subtasks.filter(x => x.id !== sid); }, 'Suppression sous-tâche : ' + st.text.slice(0, 50));
+  showToast('Sous-tâche supprimée. Ctrl+Z pour annuler.');
 }
 function moveSubtask(iid, sid, dir) {
   mutate(() => {
@@ -4910,22 +6533,28 @@ function moveSubtask(iid, sid, dir) {
 // Subsections
 function addSubsection(title) {
   if (!title.trim()) return;
-  mutate(() => { const sec = currentSection(); sec.subsections.push({ id: genId(), title: title.trim(), collapsed: false, items: [] }); });
+  mutate(() => { const sec = currentSection(); sec.subsections.push({ id: genId(), title: title.trim(), collapsed: false, items: [] }); }, 'Ajout sous-section : ' + title.trim().slice(0, 50));
 }
 function updateSubsectionTitle(sid, t) {
-  mutate(() => { const sec = currentSection(); const sub = sec.subsections.find(x => x.id === sid); if (sub && t.trim()) sub.title = t.trim(); });
+  mutate(() => { const sec = currentSection(); const sub = sec.subsections.find(x => x.id === sid); if (sub && t.trim()) sub.title = t.trim(); }, 'Renommage de sous-section');
 }
-function deleteSubsection(sid) {
+async function deleteSubsection(sid) {
   const sec = currentSection();
   const sub = sec.subsections.find(s => s.id === sid); if (!sub) return;
   const count = sub.items.length;
   const msg = count > 0
-    ? `Supprimer la sous-section "${sub.title}" ?\n\nLes ${count} tâche(s) seront déplacées dans la section principale.`
-    : `Supprimer la sous-section "${sub.title}" ?`;
-  if (!confirm(msg)) return;
-  mutate(() => { sec.items.push(...sub.items); sec.subsections = sec.subsections.filter(s => s.id !== sid); });
+    ? 'Supprimer la sous-section « ' + sub.title + ' » ?\n\nLes ' + count + ' tâche' + (count > 1 ? 's' : '') + ' seront déplacées dans la section principale (pas perdues).'
+    : 'Supprimer la sous-section « ' + sub.title + ' » ?';
+  const ok = await confirmDialog(msg, { title: 'Supprimer la sous-section', okLabel: 'Supprimer', danger: true });
+  if (!ok) return;
+  mutate(() => { sec.items.push(...sub.items); sec.subsections = sec.subsections.filter(s => s.id !== sid); }, 'Suppression sous-section : ' + sub.title.slice(0, 50));
+  showToast('Sous-section supprimée. Ctrl+Z pour annuler.');
 }
-function toggleSubsection(sid) { mutate(() => { const sec = currentSection(); const sub = sec.subsections.find(s => s.id === sid); if (sub) sub.collapsed = !sub.collapsed; }); }
+function toggleSubsection(sid) {
+  // Plier/déplier est purement visuel : pas besoin de full render
+  lightMutate(() => { const sec = currentSection(); const sub = sec.subsections.find(s => s.id === sid); if (sub) sub.collapsed = !sub.collapsed; }, 'Plier/déplier sous-section');
+  patchSubsectionCollapsed(sid);
+}
 function moveSubsection(sid, dir) {
   mutate(() => {
     const sec = currentSection();
@@ -4933,7 +6562,7 @@ function moveSubsection(sid, dir) {
     const t = dir === 'up' ? idx-1 : idx+1;
     if (t < 0 || t >= sec.subsections.length) return;
     [sec.subsections[idx], sec.subsections[t]] = [sec.subsections[t], sec.subsections[idx]];
-  });
+  }, 'Déplacement de sous-section');
 }
 function dropReorderSubsection(dId, tId) {
   if (!dId || dId === tId) return;
@@ -4943,7 +6572,7 @@ function dropReorderSubsection(dId, tId) {
     const [m] = sec.subsections.splice(fi, 1);
     const ti = sec.subsections.findIndex(s => s.id === tId);
     sec.subsections.splice(ti < 0 ? sec.subsections.length : ti, 0, m);
-  });
+  }, 'Réorganisation de sous-section');
 }
 
 // Sections
@@ -4953,7 +6582,47 @@ function addSection(title, emoji) {
     const ns = { id: genId(), emoji: (emoji && emoji.trim()) || '📁', title: title.trim(), subtitle: '', items: [], subsections: [] };
     state.data.sections.push(ns);
     state.currentSectionId = ns.id;
+  }, 'Ajout section : ' + title.trim().slice(0, 50));
+}
+function addSectionInteractive() {
+  // Modale custom à 2 champs : titre + emoji, avec aperçu live
+  const body =
+    '<label style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.65; margin-bottom:6px;">Titre de la section</label>'
+    + '<input type="text" id="newsec-title" value="" placeholder="ex. Voyages, Documents, …" autofocus style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--surface); margin-bottom:14px;" />'
+    + '<label style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.65; margin-bottom:6px;">Emoji (1 à 4 caractères)</label>'
+    + '<input type="text" id="newsec-emoji" value="📁" maxlength="4" style="width:80px; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:18px; background:var(--surface); text-align:center;" />';
+  const submit = (m) => {
+    const title = m.querySelector('#newsec-title').value.trim();
+    const emoji = (m.querySelector('#newsec-emoji').value || '📁').trim() || '📁';
+    if (!title) {
+      showToast('Indique d\'abord un titre.');
+      return false; // bloque la fermeture
+    }
+    addSection(title, emoji);
+    showToast('Section « ' + title + ' » créée.');
+  };
+  const { modal } = openCustomModal({
+    title: 'Nouvelle section',
+    body,
+    actions: [
+      { label: 'Annuler', className: 'btn-ghost', onClick: () => {} },
+      { label: 'Créer', className: 'btn-primary', onClick: submit },
+    ],
   });
+  // Validation à l'Entrée depuis le champ titre
+  setTimeout(() => {
+    const tInput = modal.querySelector('#newsec-title');
+    if (tInput) {
+      tInput.focus();
+      tInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const okBtn = modal.querySelector('[data-modal-action="1"]');
+          if (okBtn) okBtn.click();
+        }
+      });
+    }
+  }, 60);
 }
 function updateSectionTitle(sid, title, subtitle, emoji) {
   mutate(() => {
@@ -4961,17 +6630,28 @@ function updateSectionTitle(sid, title, subtitle, emoji) {
     if (title !== undefined && title && title.trim()) sec.title = title.trim();
     if (subtitle !== undefined) sec.subtitle = subtitle.trim();
     if (emoji !== undefined && emoji && emoji.trim()) sec.emoji = emoji.trim();
-  });
+  }, 'Modification de la section');
 }
-function deleteSection(sid) {
+async function deleteSection(sid) {
   const sec = state.data.sections.find(s => s.id === sid); if (!sec) return;
   const c = countItems(sec);
-  if (!confirm(`⚠️ Supprimer la section "${sec.title}" ?\n\nCela supprimera ${c.total} tâche(s). Cette action est irréversible.`)) return;
-  if (!confirm('Êtes-vous absolument sûr ?')) return;
+  // 1ère confirmation
+  const ok1 = await confirmDialog(
+    '⚠️ Supprimer la section « ' + sec.title + ' » ?\n\nCela supprimera ' + c.total + ' tâche' + (c.total > 1 ? 's' : '') + '. Cette action est irréversible.',
+    { title: 'Supprimer la section', okLabel: 'Continuer', danger: true }
+  );
+  if (!ok1) return;
+  // 2ème confirmation
+  const ok2 = await confirmDialog(
+    'Es-tu absolument sûr ?\n\nLa section « ' + sec.title + ' » et ses ' + c.total + ' tâche' + (c.total > 1 ? 's' : '') + ' seront définitivement perdues.',
+    { title: 'Dernière confirmation', okLabel: 'Oui, supprimer définitivement', danger: true }
+  );
+  if (!ok2) return;
   mutate(() => {
     state.data.sections = state.data.sections.filter(s => s.id !== sid);
     if (state.currentSectionId === sid && state.data.sections.length > 0) state.currentSectionId = state.data.sections[0].id;
-  });
+  }, 'Suppression section : ' + sec.title.slice(0, 50));
+  showToast('Section « ' + sec.title + ' » supprimée. Ctrl+Z pour annuler.');
 }
 function dropReorderTab(dId, tId) {
   if (!dId || dId === tId) return;
@@ -4980,7 +6660,7 @@ function dropReorderTab(dId, tId) {
     const [m] = state.data.sections.splice(fi, 1);
     const ti = state.data.sections.findIndex(s => s.id === tId);
     state.data.sections.splice(ti < 0 ? state.data.sections.length : ti, 0, m);
-  });
+  }, 'Réorganisation de section');
 }
 
 async function refresh() { const l = await loadData(); if (l) { state.data = l; render(); } }
@@ -4988,31 +6668,330 @@ async function refresh() { const l = await loadData(); if (l) { state.data = l; 
 // ==============================================
 // Interactions (prompts + location editor)
 // ==============================================
-function manageItemLink(id) {
+async function manageItemLink(id) {
   const i = findItem(id); if (!i) return;
-  const v = prompt(i.link ? 'Modifier le lien (vide pour retirer) :' : 'Ajouter un lien (URL) :', i.link || '');
+  const v = await promptDialog(
+    i.link ? 'Modifier le lien (vide pour retirer)' : 'Ajouter un lien',
+    i.link || '',
+    { title: i.link ? 'Modifier le lien' : 'Ajouter un lien', placeholder: 'https://exemple.com', inputType: 'url' }
+  );
   if (v === null) return;
   updateItemLink(id, v);
 }
-function manageSubtaskLink(iid, sid) {
+async function manageSubtaskLink(iid, sid) {
   const i = findItem(iid); if (!i) return;
   const st = i.subtasks.find(x => x.id === sid); if (!st) return;
-  const v = prompt(st.link ? 'Modifier le lien (vide pour retirer) :' : 'Ajouter un lien (URL) :', st.link || '');
+  const v = await promptDialog(
+    st.link ? 'Modifier le lien (vide pour retirer)' : 'Ajouter un lien',
+    st.link || '',
+    { title: st.link ? 'Modifier le lien' : 'Ajouter un lien', placeholder: 'https://exemple.com', inputType: 'url' }
+  );
   if (v === null) return;
   updateSubtaskLink(iid, sid, v);
 }
-function manageItemPrice(id) {
+async function manageItemPrice(id) {
   const i = findItem(id); if (!i) return;
   const current = i.price ? String(i.price).replace('.', ',') : '';
-  const v = prompt('Prix en € (vide pour retirer) :', current);
+  const v = await promptDialog(
+    'Prix en € (vide pour retirer)',
+    current,
+    { title: 'Prix', placeholder: 'ex. 29,90', helper: 'Saisir un nombre. Laisse vide pour retirer le prix.', inputMode: 'decimal' }
+  );
   if (v === null) return;
   updateItemPrice(id, v);
 }
-function manageSubtaskPrice(iid, sid) {
+
+// =================================================================
+// Modale réutilisable (alternative aux prompt/alert/confirm natifs)
+// =================================================================
+function openCustomModal({ title, body, actions, onClose }) {
+  const existing = document.getElementById('custom-modal');
+  if (existing) existing.remove();
+  const previouslyFocused = document.activeElement;
+  const modal = document.createElement('div');
+  modal.id = 'custom-modal';
+  modal.className = 'custom-modal-overlay';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-labelledby', 'custom-modal-title');
+  modal.innerHTML = `
+    <div class="custom-modal-box">
+      <h2 class="custom-modal-title" id="custom-modal-title">${title}</h2>
+      <div class="custom-modal-body">${body}</div>
+      <div class="custom-modal-actions">${(actions || []).map((a, idx) =>
+        `<button class="${a.className || (idx === actions.length - 1 ? 'btn-primary' : 'btn-ghost')}" data-modal-action="${idx}">${escapeHtml(a.label)}</button>`
+      ).join('')}</div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  let isClosing = false;
+  const close = () => {
+    if (isClosing) return; isClosing = true;
+    document.removeEventListener('keydown', handleKey);
+    modal.remove();
+    if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+      try { previouslyFocused.focus(); } catch(e) { console.warn('[a11y] restore focus custom modal failed:', e); }
+    }
+    if (typeof onClose === 'function') onClose();
+  };
+  const handleKey = (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+    if (e.key === 'Tab') {
+      const focusables = modal.querySelectorAll('button, input, select, textarea, [tabindex="0"]');
+      if (focusables.length === 0) return;
+      const first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  };
+  document.addEventListener('keydown', handleKey);
+  modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+  modal.querySelectorAll('[data-modal-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.modalAction, 10);
+      const action = (actions || [])[idx];
+      if (action && typeof action.onClick === 'function') {
+        const result = action.onClick(modal);
+        if (result === false) return; // l'action peut bloquer la fermeture
+      }
+      close();
+    });
+  });
+  // Focus initial sur le 1er input/select, sinon le 1er bouton
+  setTimeout(() => {
+    const firstField = modal.querySelector('input, select, textarea');
+    if (firstField) firstField.focus();
+    else { const b = modal.querySelector('button'); if (b) b.focus(); }
+  }, 50);
+  // Annoncer l'ouverture aux lecteurs d'écran (le titre seul ne suffit pas toujours)
+  announceToScreenReader('Boîte de dialogue ouverte : ' + (title || 'sans titre'));
+  return { close, modal };
+}
+
+// =================================================================
+// Helpers asynchrones — remplacent alert/confirm/prompt natifs
+// =================================================================
+
+// Boîte d'information simple (1 bouton OK), retourne une promesse résolue à la fermeture
+function alertDialog(message, opts) {
+  opts = opts || {};
+  return new Promise((resolve) => {
+    openCustomModal({
+      title: opts.title || 'Information',
+      body: '<p style="font-size:14px; line-height:1.55; white-space:pre-wrap;">' + escapeHtml(message) + '</p>',
+      actions: [
+        { label: opts.okLabel || 'OK', className: 'btn-primary', onClick: () => {} },
+      ],
+      onClose: () => resolve(),
+    });
+  });
+}
+
+// Boîte de confirmation : retourne true si OK, false si Annuler/Esc/clic dehors
+function confirmDialog(message, opts) {
+  opts = opts || {};
+  return new Promise((resolve) => {
+    let answered = false;
+    openCustomModal({
+      title: opts.title || 'Confirmation',
+      body: '<p style="font-size:14px; line-height:1.55; white-space:pre-wrap;">' + escapeHtml(message) + '</p>',
+      actions: [
+        { label: opts.cancelLabel || 'Annuler', className: 'btn-ghost', onClick: () => { answered = true; resolve(false); } },
+        { label: opts.okLabel || 'Confirmer', className: opts.danger ? 'btn-danger-primary' : 'btn-primary', onClick: () => { answered = true; resolve(true); } },
+      ],
+      onClose: () => { if (!answered) resolve(false); },
+    });
+  });
+}
+
+// Boîte de saisie : retourne la string saisie, ou null si Annuler/Esc/clic dehors
+function promptDialog(message, defaultValue, opts) {
+  opts = opts || {};
+  return new Promise((resolve) => {
+    let answered = false;
+    const inputId = 'prompt-input-' + Math.random().toString(36).slice(2, 8);
+    const inputType = opts.inputType || 'text';
+    const placeholder = opts.placeholder || '';
+    const helper = opts.helper ? '<p style="font-size:12px; opacity:0.65; margin-top:8px; line-height:1.5;">' + escapeHtml(opts.helper) + '</p>' : '';
+    // inputmode adapte le clavier virtuel mobile (numérique pour prix, url pour liens, etc.)
+    let inputModeAttr = '';
+    if (opts.inputMode) inputModeAttr = ' inputmode="' + opts.inputMode + '"';
+    else if (inputType === 'url') inputModeAttr = ' inputmode="url"';
+    else if (inputType === 'email') inputModeAttr = ' inputmode="email"';
+    else if (inputType === 'tel') inputModeAttr = ' inputmode="tel"';
+    else if (inputType === 'number') inputModeAttr = ' inputmode="decimal"';
+    // autocomplete="off" par défaut pour éviter les suggestions du navigateur sur les saisies courtes
+    const autocomplete = opts.autocomplete || 'off';
+    // enterkeyhint : améliore l'expérience clavier mobile (la touche Entrée affiche "Enregistrer")
+    const enterHint = opts.enterKeyHint || 'done';
+    const body =
+      '<p style="font-size:14px; line-height:1.55; margin-bottom:12px;">' + escapeHtml(message) + '</p>'
+      + '<input type="' + inputType + '" id="' + inputId + '" value="' + escapeHtml(defaultValue || '') + '" placeholder="' + escapeHtml(placeholder) + '"'
+      + inputModeAttr + ' autocomplete="' + autocomplete + '" enterkeyhint="' + enterHint + '"'
+      + ' style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:16px; background:var(--surface); outline:none;" />'
+      + helper;
+    // Note : font-size:16px sur mobile évite le zoom auto iOS quand le champ prend le focus
+    const submit = (m) => {
+      const v = m.querySelector('#' + inputId);
+      const value = v ? v.value : '';
+      answered = true;
+      resolve(value);
+    };
+    const { modal } = openCustomModal({
+      title: opts.title || 'Saisie',
+      body,
+      actions: [
+        { label: opts.cancelLabel || 'Annuler', className: 'btn-ghost', onClick: () => { answered = true; resolve(null); } },
+        { label: opts.okLabel || 'Enregistrer', className: 'btn-primary', onClick: submit },
+      ],
+      onClose: () => { if (!answered) resolve(null); },
+    });
+    // Validation à l'Entrée : déclenche le bouton "OK" (qui fermera proprement la modale)
+    setTimeout(() => {
+      const input = modal.querySelector('#' + inputId);
+      if (input) {
+        input.focus();
+        input.select();
+        // Sur mobile, scroll l'input dans la zone visible quand le clavier virtuel s'ouvre
+        // (le clavier réduit la fenêtre, sans ça l'input peut être caché)
+        try { input.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch(e) { console.warn('[mobile] scrollIntoView failed:', e); }
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const okBtn = modal.querySelector('[data-modal-action="1"]');
+            if (okBtn) okBtn.click();
+          }
+        });
+      }
+    }, 60);
+  });
+}
+
+// =================================================================
+// Gestion échéance d'un item (modale)
+// =================================================================
+function manageItemDeadline(id) {
+  const i = findItem(id); if (!i) return;
+  const current = i.deadline || '';
+  const fromPerish = !current && i.perishable && perishableNextDate(i);
+  const today = todayISO();
+
+  let body = '<p style="font-size:13px; opacity:0.7; margin-bottom:14px; line-height:1.5;">';
+  body += 'Date d\'échéance optionnelle pour cette tâche. Laisse vide pour la retirer.';
+  if (fromPerish) {
+    body += '<br><strong>Note :</strong> cette tâche est marquée comme périssable, l\'échéance est calculée automatiquement à <em>' + formatDate(fromPerish) + '</em>. Une date manuelle prendra le pas.';
+  }
+  body += '</p>';
+  body += '<label style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.65; margin-bottom:6px;">Date d\'échéance</label>';
+  body += '<input type="date" id="modal-deadline-input" value="' + (current || '') + '" min="' + addMonthsISO(today, -120) + '" max="' + addMonthsISO(today, 120) + '" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--surface);" />';
+  // Boutons rapides
+  body += '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">';
+  body += '<button type="button" class="quick-date-btn" data-days="0">Aujourd\'hui</button>';
+  body += '<button type="button" class="quick-date-btn" data-days="7">Dans 1 sem.</button>';
+  body += '<button type="button" class="quick-date-btn" data-days="30">Dans 1 mois</button>';
+  body += '<button type="button" class="quick-date-btn" data-days="90">Dans 3 mois</button>';
+  body += '<button type="button" class="quick-date-btn" data-days="180">Dans 6 mois</button>';
+  body += '</div>';
+
+  const modal = openCustomModal({
+    title: 'Échéance — ' + escapeHtml(i.text.slice(0, 60) + (i.text.length > 60 ? '…' : '')),
+    body,
+    actions: [
+      { label: 'Retirer', className: 'btn-ghost', onClick: () => { updateItemDeadline(id, ''); showToast('Échéance retirée.'); } },
+      { label: 'Annuler', className: 'btn-ghost', onClick: () => {} },
+      { label: 'Enregistrer', className: 'btn-primary', onClick: (m) => {
+        const v = m.querySelector('#modal-deadline-input').value;
+        updateItemDeadline(id, v);
+        showToast(v ? 'Échéance fixée au ' + formatDate(v) : 'Échéance retirée.');
+      } },
+    ],
+  });
+  // Quick date buttons
+  modal.modal.querySelectorAll('.quick-date-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const days = parseInt(btn.dataset.days, 10);
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      modal.modal.querySelector('#modal-deadline-input').value = iso;
+    });
+  });
+}
+
+// =================================================================
+// Gestion périssable d'un item (modale)
+// =================================================================
+function manageItemPerishable(id) {
+  const i = findItem(id); if (!i) return;
+  const p = i.perishable || { intervalMonths: 6, lastRotation: '' };
+  const next = i.perishable ? perishableNextDate(i) : '';
+
+  let body = '<p style="font-size:13px; opacity:0.75; margin-bottom:14px; line-height:1.5;">';
+  body += 'Marquer cette tâche comme périssable permet de suivre les rotations régulières (eau, piles, médicaments, masques NBC, etc.). L\'échéance se calcule automatiquement depuis la dernière rotation.';
+  body += '</p>';
+  body += '<label style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.65; margin-bottom:6px;">Intervalle de rotation</label>';
+  body += '<select id="modal-perish-interval" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--surface); margin-bottom:14px;">';
+  body += '<option value="0">— Pas périssable (retirer le suivi) —</option>';
+  [1, 3, 6, 12, 18, 24, 36, 60].forEach(m => {
+    const sel = (i.perishable && p.intervalMonths === m) ? ' selected' : '';
+    const label = m === 1 ? '1 mois' : m < 12 ? m + ' mois' : (m / 12) + ' an' + (m / 12 > 1 ? 's' : '');
+    body += '<option value="' + m + '"' + sel + '>Tous les ' + label + '</option>';
+  });
+  body += '</select>';
+  body += '<label style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.65; margin-bottom:6px;">Date de la dernière rotation</label>';
+  body += '<input type="date" id="modal-perish-last" value="' + (p.lastRotation || '') + '" max="' + todayISO() + '" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--surface);" />';
+  body += '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">';
+  body += '<button type="button" class="quick-date-btn" data-perish-set="today">Aujourd\'hui</button>';
+  body += '<button type="button" class="quick-date-btn" data-perish-set="clear">Effacer</button>';
+  body += '</div>';
+
+  if (next) {
+    body += '<div style="margin-top:14px; padding:10px 12px; background:rgba(194,65,12,0.08); border-radius:6px; font-size:13px; line-height:1.5;">';
+    body += '📅 Prochaine rotation prévue : <strong>' + formatDate(next) + '</strong>';
+    body += '</div>';
+  }
+
+  const modal = openCustomModal({
+    title: 'Périssable — ' + escapeHtml(i.text.slice(0, 60) + (i.text.length > 60 ? '…' : '')),
+    body,
+    actions: [
+      { label: 'J\'ai fait la rotation ✓', className: 'btn-ghost', onClick: () => {
+        const sel = modal.modal.querySelector('#modal-perish-interval');
+        const interval = parseInt(sel.value, 10);
+        if (interval > 0) {
+          updateItemPerishable(id, interval, todayISO());
+          showToast('Rotation enregistrée à aujourd\'hui.');
+        } else {
+          showToast('Choisis d\'abord un intervalle.');
+          return false;
+        }
+      } },
+      { label: 'Annuler', className: 'btn-ghost', onClick: () => {} },
+      { label: 'Enregistrer', className: 'btn-primary', onClick: (m) => {
+        const interval = parseInt(m.querySelector('#modal-perish-interval').value, 10);
+        const last = m.querySelector('#modal-perish-last').value;
+        updateItemPerishable(id, interval, last);
+        if (interval > 0) showToast(last ? 'Périssable configuré, prochaine rotation : ' + formatDate(addMonthsISO(last, interval)) : 'Périssable configuré (renseigne la dernière rotation pour activer le rappel).');
+        else showToast('Suivi périssable retiré.');
+      } },
+    ],
+  });
+  modal.modal.querySelectorAll('[data-perish-set]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp = modal.modal.querySelector('#modal-perish-last');
+      inp.value = btn.dataset.perishSet === 'today' ? todayISO() : '';
+    });
+  });
+}
+async function manageSubtaskPrice(iid, sid) {
   const i = findItem(iid); if (!i) return;
   const st = i.subtasks.find(x => x.id === sid); if (!st) return;
   const current = st.price ? String(st.price).replace('.', ',') : '';
-  const v = prompt('Prix en € (vide pour retirer) :', current);
+  const v = await promptDialog(
+    'Prix en € (vide pour retirer)',
+    current,
+    { title: 'Prix de la sous-tâche', placeholder: 'ex. 29,90', helper: 'Saisir un nombre. Laisse vide pour retirer le prix.', inputMode: 'decimal' }
+  );
   if (v === null) return;
   updateSubtaskPrice(iid, sid, v);
 }
@@ -5077,11 +7056,15 @@ function pickImage(callback) {
       // Estimate size: rough base64 → bytes
       const sizeKb = Math.round((dataUrl.length * 3 / 4) / 1024);
       if (sizeKb > 800) {
-        if (!confirm(`L'image fait ${sizeKb} Ko après compression. Cela peut alourdir le stockage. Continuer ?`)) return;
+        const ok = await confirmDialog(
+          'L\'image fait ' + sizeKb + ' Ko après compression. Cela peut alourdir le stockage. Continuer ?',
+          { title: 'Image volumineuse', okLabel: 'Continuer' }
+        );
+        if (!ok) return;
       }
       callback(dataUrl);
     } catch (err) {
-      alert('Erreur : ' + (err.message || err));
+      alertDialog('Erreur : ' + (err.message || err), { title: 'Erreur' });
     }
   };
   input.click();
@@ -5134,24 +7117,24 @@ function openTabContextMenu(tabId, x, y) {
 }
 function closeContextMenu() { if (state.contextMenu) { state.contextMenu = null; render(); } }
 
-function ctxRenameTab(id) {
+async function ctxRenameTab(id) {
   closeContextMenu();
   const sec = state.data.sections.find(s => s.id === id); if (!sec) return;
-  const newTitle = prompt('Nouveau nom de la section :', sec.title);
+  const newTitle = await promptDialog('Nouveau nom de la section', sec.title, { title: 'Renommer la section' });
   if (newTitle === null || !newTitle.trim()) return;
   updateSectionTitle(id, newTitle, undefined, undefined);
 }
-function ctxChangeEmojiTab(id) {
+async function ctxChangeEmojiTab(id) {
   closeContextMenu();
   const sec = state.data.sections.find(s => s.id === id); if (!sec) return;
-  const newEmoji = prompt('Nouvel emoji (1-4 caractères) :', sec.emoji);
+  const newEmoji = await promptDialog('Nouvel emoji (1 à 4 caractères)', sec.emoji, { title: 'Changer l\'emoji', helper: 'Tu peux copier-coller depuis emojipedia.org si besoin.' });
   if (newEmoji === null || !newEmoji.trim()) return;
   updateSectionTitle(id, undefined, undefined, newEmoji);
 }
-function ctxEditSubtitleTab(id) {
+async function ctxEditSubtitleTab(id) {
   closeContextMenu();
   const sec = state.data.sections.find(s => s.id === id); if (!sec) return;
-  const newSub = prompt('Sous-titre (vide pour retirer) :', sec.subtitle || '');
+  const newSub = await promptDialog('Sous-titre de la section (vide pour retirer)', sec.subtitle || '', { title: 'Modifier le sous-titre' });
   if (newSub === null) return;
   updateSectionTitle(id, undefined, newSub, undefined);
 }
@@ -5171,10 +7154,24 @@ function render() {
   const gTotal = computeGlobalTotal();
   const sTotal = computeSectionTotal(sec);
 
+  // Préservation du focus textarea notes : si l'utilisateur est en train d'éditer une note,
+  // on capture son état avant render pour le restaurer après. Ça évite de perdre la frappe
+  // quand un événement extérieur (sync entrante par ex.) déclenche un render pendant la saisie.
+  let preservedNotes = null;
+  const ae = document.activeElement;
+  if (ae && ae.tagName === 'TEXTAREA' && ae.dataset.action === 'update-notes') {
+    preservedNotes = {
+      itemId: ae.dataset.id,
+      value: ae.value,
+      selStart: ae.selectionStart,
+      selEnd: ae.selectionEnd,
+    };
+  }
+
   app.innerHTML = `
     ${renderHeader(g, gTotal)}
     ${renderTabs()}
-    <main>
+    <main id="tabpanel-content" role="tabpanel" aria-labelledby="tab-aria-${escapeHtml(sec.id)}" tabindex="0">
       <div class="wrap">
         ${renderSectionHeader(sec, s, sTotal)}
         ${renderToolbar()}
@@ -5188,6 +7185,20 @@ function render() {
     ${renderContextMenu()}
     ${renderLightbox()}
   `;
+
+  // Restaurer le focus textarea si on était en train d'éditer
+  if (preservedNotes) {
+    const newTa = document.querySelector('textarea[data-action="update-notes"][data-id="' + preservedNotes.itemId + '"]');
+    if (newTa) {
+      // Si la valeur a été modifiée à distance entre-temps, on garde la nouvelle (sync prime)
+      // mais on tente de préserver la position du curseur si possible
+      newTa.focus();
+      try {
+        const len = newTa.value.length;
+        newTa.setSelectionRange(Math.min(preservedNotes.selStart, len), Math.min(preservedNotes.selEnd, len));
+      } catch(e) { console.warn('[render] restore selection notes failed:', e); }
+    }
+  }
 }
 
 function renderFilterBanner() {
@@ -5195,13 +7206,45 @@ function renderFilterBanner() {
   const allLocs = getAllLocations();
   const loc = allLocs.find(l => l.name === state.locationFilter);
   const color = loc ? loc.color : '#52525B';
-  const total = countLocationMatches(state.locationFilter);
+  const stats = computeLocationStats(state.locationFilter);
+  const hasBudget = stats.totalAll > 0;
   return `
-    <div class="filter-banner">
-      <span class="filter-banner-label">${ICO.filter} Filtre actif</span>
-      <span class="location-pill" style="background:${color};">${escapeHtml(state.locationFilter)}</span>
-      <span class="filter-banner-count">${total} occurrence${total > 1 ? 's' : ''} sur l'ensemble du projet</span>
-      <button class="filter-banner-clear" data-action="clear-location-filter" title="Effacer le filtre">${ICO.x} Effacer</button>
+    <div class="filter-banner" role="region" aria-label="Filtre actif sur le lieu ${escapeHtml(state.locationFilter)}">
+      <div class="filter-banner-row">
+        <span class="filter-banner-label">${ICO.filter} Filtre actif</span>
+        <span class="location-pill" style="background:${color};">${escapeHtml(state.locationFilter)}</span>
+        <span class="filter-banner-count">${stats.countAll} occurrence${stats.countAll > 1 ? 's' : ''}${stats.countDone > 0 ? ` (${stats.countDone} fait${stats.countDone > 1 ? 's' : ''}, ${stats.countTodo} à faire)` : ''}</span>
+        <button class="filter-banner-clear" data-action="clear-location-filter" title="Effacer le filtre" aria-label="Effacer le filtre lieu">${ICO.x} Effacer</button>
+      </div>
+      ${hasBudget ? `
+        <div class="filter-banner-budget" aria-label="Synthèse budgétaire du lieu">
+          <div class="budget-stat budget-stat-main">
+            <span class="budget-stat-label">Budget total</span>
+            <span class="budget-stat-value">${formatPrice(stats.totalAll)}</span>
+          </div>
+          ${stats.totalTodo > 0 ? `
+            <div class="budget-stat budget-stat-todo">
+              <span class="budget-stat-label">À dépenser</span>
+              <span class="budget-stat-value">${formatPrice(stats.totalTodo)}</span>
+            </div>
+          ` : ''}
+          ${stats.totalDone > 0 ? `
+            <div class="budget-stat budget-stat-done">
+              <span class="budget-stat-label">Déjà engagé</span>
+              <span class="budget-stat-value">${formatPrice(stats.totalDone)}</span>
+            </div>
+          ` : ''}
+          ${stats.countWithPrice < stats.countAll ? `
+            <div class="budget-stat-meta" title="Sur ${stats.countAll} occurrences, ${stats.countWithPrice} ont un prix renseigné">
+              ${stats.countWithPrice}/${stats.countAll} avec prix
+            </div>
+          ` : ''}
+        </div>
+      ` : `
+        <div class="filter-banner-budget budget-empty">
+          <span class="budget-empty-text">💡 Aucun prix renseigné pour ce lieu — ajoute des prix sur les tâches pour voir le total à anticiper.</span>
+        </div>
+      `}
     </div>
   `;
 }
@@ -5239,15 +7282,38 @@ function renderHeader(g, gTotal) {
           </div>
           <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
             <span id="save-indicator" class="save-indicator">${ICO.checkSm} Synchronisé</span>
-            <button class="refresh-btn" data-action="refresh" title="Rafraîchir">${ICO.refresh} Rafraîchir</button>
-            <button id="sync-indicator" class="refresh-btn" data-action="toggle-sync" title="Activer la synchronisation entre appareils">🛰️ ${syncState.enabled ? 'Sync active' : 'Activer la sync'}</button>
+            <button id="undo-btn" class="refresh-btn" data-action="undo" title="Rien à annuler" aria-label="Rien à annuler" disabled style="opacity:0.3;cursor:not-allowed;">↶ Annuler</button>
+            <button class="refresh-btn" data-action="open-agenda" title="Voir les échéances à venir" aria-label="Voir les tâches avec échéance triées par date">📅 Agenda${(() => {
+              try {
+                const t = collectDeadlineTasks(false);
+                const overdue = t.filter(x => x.status.kind === 'overdue').length;
+                return overdue > 0 ? ' <span class="badge-overdue" aria-label="' + overdue + ' tâche' + (overdue > 1 ? 's' : '') + ' en retard">' + overdue + '</span>' : '';
+              } catch(e) { return ''; }
+            })()}</button>
+            <button id="sync-indicator" class="refresh-btn" data-action="toggle-sync" title="Activer la synchronisation entre appareils" aria-label="${syncState.enabled ? 'Synchronisation active. Cliquer pour revoir le lien magique' : 'Activer la synchronisation entre tous tes appareils'}">🛰️ ${syncState.enabled ? 'Sync active' : 'Activer la sync'}</button>
+            <button class="refresh-btn" data-action="open-settings" title="Réglages, sauvegarde, import/export" aria-label="Ouvrir les réglages">⚙️ Réglages</button>
           </div>
         </div>
         <div class="progress-row">
           <span class="progress-label">Progression globale</span>
           <span class="progress-value">${g.pct}<span class="pct-sign">%</span></span>
         </div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${g.pct}%"></div></div>
+        <div class="progress-bar-wrapper" tabindex="0" aria-label="Détail de la progression par section (survol pour voir)" role="figure">
+          <div class="progress-bar"><div class="progress-fill" style="width:${g.pct}%"></div></div>
+          <div class="progress-tooltip" role="tooltip">
+            <div class="progress-tooltip-title">Progression par section</div>
+            ${state.data.sections.map(s => {
+              const st = sectionStats(s);
+              const barW = st.total > 0 ? st.pct : 0;
+              return `<div class="progress-tooltip-row" data-section-id="${escapeHtml(s.id)}">
+                <span class="progress-tooltip-emoji">${s.emoji || '·'}</span>
+                <span class="progress-tooltip-name">${escapeHtml(s.title)}</span>
+                <span class="progress-tooltip-mini-bar"><span class="progress-tooltip-mini-fill" style="width:${barW}%"></span></span>
+                <span class="progress-tooltip-pct">${st.done}/${st.total}</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
         <div class="progress-count">
           <span>${g.done} / ${g.total} tâches terminées</span>
           ${gTotal > 0 ? `<span class="global-total">Total estimé : ${formatPrice(gTotal)}</span>` : ''}
@@ -5261,19 +7327,22 @@ function renderTabs() {
   return `
     <div class="tabs-outer">
       <div class="tabs-scroll">
-        <div class="tabs-inner">
+        <div class="tabs-inner" role="tablist" aria-label="Sections du projet">
           ${state.data.sections.map(s => {
             const st = sectionStats(s);
-            const active = s.id === state.currentSectionId ? ' active' : '';
+            const isActive = s.id === state.currentSectionId;
+            const active = isActive ? ' active' : '';
             const dragging = state.draggedType === 'tab' && state.draggedId === s.id ? ' dragging' : '';
             const dropTarget = state.draggedType === 'tab' && state.dropTargetId === s.id && state.draggedId !== s.id ? ' drop-target' : '';
-            return `<button class="tab${active}${dragging}${dropTarget}" draggable="true" data-drag-type="tab" data-id="${s.id}" data-action="select-section" title="Clic droit / Double-clic / Appui long pour éditer">
-              <span>${s.emoji}</span>
+            // role="tab" avec aria-selected pour l'état actif, tabindex pour la navigation au clavier (active = 0, autres = -1)
+            // id="tab-aria-{id}" sert d'ancre ARIA pour aria-labelledby sur le tabpanel correspondant
+            return `<button class="tab${active}${dragging}${dropTarget}" id="tab-aria-${escapeHtml(s.id)}" draggable="true" data-drag-type="tab" data-id="${s.id}" data-action="select-section" role="tab" aria-selected="${isActive}" aria-controls="tabpanel-content" tabindex="${isActive ? '0' : '-1'}" aria-label="${escapeHtml(s.title)} : ${st.done} sur ${st.total} tâches faites" title="Clic droit / Double-clic / Appui long pour éditer">
+              <span aria-hidden="true">${s.emoji}</span>
               <span>${escapeHtml(s.title)}</span>
-              <span class="count">${st.done}/${st.total}</span>
+              <span class="count" aria-hidden="true">${st.done}/${st.total}</span>
             </button>`;
           }).join('')}
-          <button class="tab-add" data-action="add-section" title="Ajouter une section">${ICO.plus}</button>
+          <button class="tab-add" data-action="add-section" aria-label="Ajouter une nouvelle section" title="Ajouter une section">${ICO.plus}</button>
         </div>
       </div>
     </div>
@@ -5324,6 +7393,9 @@ function renderSectionHeader(sec, s, sTotal) {
             </span>
           </div>
           ${sec.subtitle ? `<div class="section-subtitle">${escapeHtml(sec.subtitle)}</div>` : ''}
+          ${sec.id === 'mamad' ? `
+            <button class="mamad-alert-trigger" data-action="open-mamad-alert" title="Vue épurée à utiliser quand la sirène sonne" aria-label="Ouvrir le mode alerte Mamad">🚨 Mode Alerte (sirène)</button>
+          ` : ''}
         `}
       </div>
       <div class="section-stats">
@@ -5498,23 +7570,49 @@ function renderItem(item) {
     priceDisplay = `<span class="price-pill${isComputed ? ' computed' : ''}" data-action="manage-item-price" data-id="${item.id}" title="${tooltip}">${formatPrice(itemTotal)}</span>`;
   }
 
+  // Badge échéance (deadline manuelle prioritaire, sinon dérivée du périssable)
+  let deadlineBadge = '';
+  const effDeadline = effectiveDeadline(item);
+  if (effDeadline && !effectiveDone) {
+    const status = deadlineStatus(effDeadline);
+    if (status.kind !== 'none') {
+      const fromPerish = !item.deadline && item.perishable;
+      const icon = status.kind === 'overdue' ? '🔴' : status.kind === 'urgent' ? '⚠️' : '📅';
+      const cls = 'deadline-pill deadline-' + status.kind + (fromPerish ? ' deadline-from-perishable' : '');
+      const title = fromPerish
+        ? 'Rotation périssable prévue le ' + formatDate(effDeadline) + ' (tous les ' + item.perishable.intervalMonths + ' mois)'
+        : 'Échéance : ' + formatDate(effDeadline);
+      deadlineBadge = `<span class="${cls}" data-action="manage-item-deadline" data-id="${item.id}" title="${escapeHtml(title)}">${icon} ${escapeHtml(status.label)}</span>`;
+    }
+  }
+  // Badge périssable jamais initialisé
+  let perishableInitBadge = '';
+  if (item.perishable && !item.perishable.lastRotation && !item.deadline) {
+    perishableInitBadge = `<span class="deadline-pill deadline-init" data-action="manage-item-deadline" data-id="${item.id}" title="Périssable : noter la dernière rotation pour suivre les renouvellements (tous les ${item.perishable.intervalMonths} mois)">♻️ À initialiser</span>`;
+  }
+  // Badge alerte critique (mode Mamad)
+  const criticalBadge = item.criticalAlert ? `<span class="critical-alert-badge" title="Action critique en cas d'alerte (sirène)">🚨</span>` : '';
+
   return `
     <div class="${cls}" data-id="${item.id}" draggable="true" data-drag-type="item">
       <div class="item-prio-bar" style="background:${dotColors[prio]};"></div>
       <div class="item-row">
-        <div class="grip">${ICO.grip}</div>
-        <div class="move-buttons">
-          <button data-action="move-item-up" data-id="${item.id}">${ICO.up}</button>
-          <button data-action="move-item-down" data-id="${item.id}">${ICO.down}</button>
+        <div class="grip" role="button" tabindex="0" aria-label="Maintenir et faire glisser pour réorganiser">${ICO.grip}</div>
+        <div class="move-buttons" role="group" aria-label="Réorganiser la tâche">
+          <button data-action="move-item-up" data-id="${item.id}" aria-label="Monter cette tâche">${ICO.up}</button>
+          <button data-action="move-item-down" data-id="${item.id}" aria-label="Descendre cette tâche">${ICO.down}</button>
         </div>
-        <button class="checkbox-btn" data-action="toggle-item" data-id="${item.id}">${checkIcon}</button>
+        <button class="checkbox-btn" data-action="toggle-item" data-id="${item.id}" role="checkbox" aria-checked="${effectiveDone}" aria-label="${effectiveDone ? 'Marquer comme non fait' : 'Marquer comme fait'} : ${escapeHtml(item.text)}">${checkIcon}</button>
         <div class="item-content">
           <div class="item-text-row">
             ${hasImage ? `<button class="image-thumb" data-action="open-lightbox-item" data-id="${item.id}" title="Voir l'image"><img src="${item.image}" alt=""></button>` : ''}
+            ${criticalBadge}
             <span class="item-text${effectiveDone ? ' done' : ''}">${escapeHtml(item.text)}</span>
             ${hasLink ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer" class="link-inline" title="${escapeHtml(item.link)}">${ICO.linkSm}</a>` : ''}
             ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(item.location.color)};" data-action="filter-by-location" data-location="${escapeHtml(item.location.name)}" title="Cliquer pour filtrer par « ${escapeHtml(item.location.name)} »">${escapeHtml(item.location.name)}</span>` : ''}
             ${priceDisplay}
+            ${deadlineBadge}
+            ${perishableInitBadge}
             ${hasSubtasks ? `<span class="subtask-badge${effectiveDone ? ' all-done' : ''}" data-action="toggle-subtasks-display" data-id="${item.id}">
               ${subtasksOpen ? ICO.chevronD : ICO.chevronR} ${progress.done}/${progress.total}
             </span>` : ''}
@@ -5531,15 +7629,17 @@ function renderItem(item) {
           ` : '')}
           ${locationOpen ? renderLocationEditor(item, 'item') : ''}
         </div>
-        <div class="item-actions">
-          ${!hasSubtasks ? `<button data-action="toggle-subtasks-display" data-id="${item.id}" title="Sous-tâches">${ICO.chevronR}</button>` : ''}
-          <button data-action="manage-item-image" data-id="${item.id}" title="${hasImage ? 'Voir ou gérer l’image' : 'Ajouter une image'}"${hasImage ? ' class="has-data"' : ''}>${ICO.image}</button>
-          <button data-action="toggle-location-editor" data-key="${item.id}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter un lieu'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
-          <button data-action="manage-item-price" data-id="${item.id}" title="${hasOwnPrice ? 'Modifier le prix' : 'Ajouter un prix'}"${hasOwnPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
-          <button data-action="manage-item-link" data-id="${item.id}" title="${hasLink ? 'Modifier le lien' : 'Ajouter un lien'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
-          <button data-action="toggle-notes-display" data-id="${item.id}" title="Notes"${item.notes?' class="has-data"':''}>${ICO.note}</button>
-          <button data-action="edit-item" data-id="${item.id}" title="Modifier">${ICO.edit}</button>
-          <button data-action="delete-item" data-id="${item.id}" class="delete" title="Supprimer">${ICO.trash}</button>
+        <div class="item-actions" role="toolbar" aria-label="Actions sur la tâche">
+          ${!hasSubtasks ? `<button data-action="toggle-subtasks-display" data-id="${item.id}" title="Sous-tâches" aria-label="Afficher les sous-tâches">${ICO.chevronR}</button>` : ''}
+          <button data-action="manage-item-image" data-id="${item.id}" title="${hasImage ? 'Voir ou gérer l’image' : 'Ajouter une image'}" aria-label="${hasImage ? 'Voir ou modifier l’image' : 'Ajouter une image'}"${hasImage ? ' class="has-data"' : ''}>${ICO.image}</button>
+          <button data-action="toggle-location-editor" data-key="${item.id}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter un lieu'}" aria-label="${hasLocation ? 'Modifier le lieu' : 'Ajouter un lieu'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
+          <button data-action="manage-item-price" data-id="${item.id}" title="${hasOwnPrice ? 'Modifier le prix' : 'Ajouter un prix'}" aria-label="${hasOwnPrice ? 'Modifier le prix' : 'Ajouter un prix'}"${hasOwnPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
+          <button data-action="manage-item-link" data-id="${item.id}" title="${hasLink ? 'Modifier le lien' : 'Ajouter un lien'}" aria-label="${hasLink ? 'Modifier le lien' : 'Ajouter un lien'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
+          <button data-action="manage-item-deadline" data-id="${item.id}" title="${item.deadline ? 'Modifier l’échéance' : 'Ajouter une échéance'}" aria-label="${item.deadline ? 'Modifier l’échéance' : 'Ajouter une échéance'}"${item.deadline ? ' class="has-data"' : ''}>📅</button>
+          <button data-action="manage-item-perishable" data-id="${item.id}" title="${item.perishable ? 'Gérer le rappel de rotation (périssable)' : 'Marquer comme périssable avec rappel de rotation'}" aria-label="${item.perishable ? 'Gérer rotation périssable' : 'Marquer périssable'}"${item.perishable ? ' class="has-data"' : ''}>♻️</button>
+          <button data-action="toggle-notes-display" data-id="${item.id}" title="Notes" aria-label="${item.notes ? 'Voir ou modifier les notes' : 'Ajouter des notes'}"${item.notes?' class="has-data"':''}>${ICO.note}</button>
+          <button data-action="edit-item" data-id="${item.id}" title="Modifier" aria-label="Modifier le texte de la tâche">${ICO.edit}</button>
+          <button data-action="delete-item" data-id="${item.id}" class="delete" title="Supprimer" aria-label="Supprimer la tâche">${ICO.trash}</button>
         </div>
       </div>
       ${subtasksOpen ? renderSubtasks(item) : ''}
@@ -5597,7 +7697,7 @@ function renderSubtasks(item) {
     } else {
       html += `
         <div class="subtask-row">
-          <button class="subtask-checkbox" data-action="toggle-subtask" data-item-id="${item.id}" data-id="${st.id}">
+          <button class="subtask-checkbox" data-action="toggle-subtask" data-item-id="${item.id}" data-id="${st.id}" role="checkbox" aria-checked="${!!st.done}" aria-label="${st.done ? 'Marquer comme non fait' : 'Marquer comme fait'} : ${escapeHtml(st.text)}">
             ${st.done ? ICO.checkSm : ICO.circleSm}
           </button>
           ${hasImage ? `<button class="image-thumb" style="width:22px;height:22px;" data-action="open-lightbox-subtask" data-item-id="${item.id}" data-id="${st.id}" title="Voir l'image"><img src="${st.image}" alt=""></button>` : ''}
@@ -5605,15 +7705,15 @@ function renderSubtasks(item) {
           ${hasLink ? `<a href="${escapeHtml(st.link)}" target="_blank" rel="noopener noreferrer" class="link-inline" title="${escapeHtml(st.link)}">${ICO.linkSm}</a>` : ''}
           ${hasLocation ? `<span class="location-pill" style="background:${escapeHtml(st.location.color)};" data-action="filter-by-location" data-location="${escapeHtml(st.location.name)}" title="Cliquer pour filtrer par « ${escapeHtml(st.location.name)} »">${escapeHtml(st.location.name)}</span>` : ''}
           ${hasPrice ? `<span class="price-pill" data-action="manage-subtask-price" data-item-id="${item.id}" data-id="${st.id}">${formatPrice(st.price)}</span>` : ''}
-          <span class="subtask-actions">
-            <button data-action="manage-subtask-image" data-item-id="${item.id}" data-id="${st.id}" title="${hasImage ? 'Voir ou gérer l’image' : 'Ajouter image'}"${hasImage ? ' class="has-data"' : ''}>${ICO.image}</button>
-            <button data-action="toggle-location-editor" data-key="${locKey}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter lieu'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
-            <button data-action="manage-subtask-price" data-item-id="${item.id}" data-id="${st.id}" title="${hasPrice ? 'Modifier prix' : 'Ajouter prix'}"${hasPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
-            <button data-action="manage-subtask-link" data-item-id="${item.id}" data-id="${st.id}" title="${hasLink ? 'Modifier lien' : 'Ajouter lien'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
-            <button data-action="move-subtask-up" data-item-id="${item.id}" data-id="${st.id}">${ICO.up}</button>
-            <button data-action="move-subtask-down" data-item-id="${item.id}" data-id="${st.id}">${ICO.down}</button>
-            <button data-action="edit-subtask" data-item-id="${item.id}" data-id="${st.id}">${ICO.edit}</button>
-            <button data-action="delete-subtask" data-item-id="${item.id}" data-id="${st.id}" class="danger">${ICO.trash}</button>
+          <span class="subtask-actions" role="toolbar" aria-label="Actions sur la sous-tâche">
+            <button data-action="manage-subtask-image" data-item-id="${item.id}" data-id="${st.id}" title="${hasImage ? 'Voir ou gérer l’image' : 'Ajouter image'}" aria-label="${hasImage ? 'Voir ou modifier image de la sous-tâche' : 'Ajouter image à la sous-tâche'}"${hasImage ? ' class="has-data"' : ''}>${ICO.image}</button>
+            <button data-action="toggle-location-editor" data-key="${locKey}" title="${hasLocation ? 'Modifier lieu' : 'Ajouter lieu'}" aria-label="${hasLocation ? 'Modifier lieu de la sous-tâche' : 'Ajouter lieu à la sous-tâche'}"${hasLocation ? ' class="has-data"' : ''}>${ICO.tag}</button>
+            <button data-action="manage-subtask-price" data-item-id="${item.id}" data-id="${st.id}" title="${hasPrice ? 'Modifier prix' : 'Ajouter prix'}" aria-label="${hasPrice ? 'Modifier prix de la sous-tâche' : 'Ajouter prix à la sous-tâche'}"${hasPrice ? ' class="has-data"' : ''}>${ICO.euro}</button>
+            <button data-action="manage-subtask-link" data-item-id="${item.id}" data-id="${st.id}" title="${hasLink ? 'Modifier lien' : 'Ajouter lien'}" aria-label="${hasLink ? 'Modifier lien de la sous-tâche' : 'Ajouter lien à la sous-tâche'}"${hasLink ? ' class="has-data"' : ''}>${ICO.link}</button>
+            <button data-action="move-subtask-up" data-item-id="${item.id}" data-id="${st.id}" aria-label="Monter la sous-tâche">${ICO.up}</button>
+            <button data-action="move-subtask-down" data-item-id="${item.id}" data-id="${st.id}" aria-label="Descendre la sous-tâche">${ICO.down}</button>
+            <button data-action="edit-subtask" data-item-id="${item.id}" data-id="${st.id}" aria-label="Modifier le texte de la sous-tâche">${ICO.edit}</button>
+            <button data-action="delete-subtask" data-item-id="${item.id}" data-id="${st.id}" class="danger" aria-label="Supprimer la sous-tâche">${ICO.trash}</button>
           </span>
           ${locOpen ? renderLocationEditor(st, 'subtask', item.id) : ''}
         </div>
@@ -5685,8 +7785,33 @@ function handleClick(e) {
   const id = el.dataset.id;
 
   switch (a) {
-    case 'refresh': refresh(); break;
     case 'toggle-sync': activateSync(); break;
+    case 'undo': performUndo(); break;
+    case 'redo': performRedo(); break;
+    case 'open-agenda': openAgendaView(); break;
+    case 'open-settings': openSettingsView(); break;
+    case 'agenda-goto': {
+      const sectionId = el.dataset.sectionId;
+      if (sectionId && state.data.sections.find(s => s.id === sectionId)) {
+        state.currentSectionId = sectionId;
+        // Fermer la modale agenda
+        const modal = document.getElementById('custom-modal');
+        if (modal) modal.remove();
+        render();
+        // Faire défiler jusqu'à l'élément après le render
+        setTimeout(() => {
+          const target = document.querySelector('[data-id="' + id + '"]');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.add('agenda-highlight');
+            setTimeout(() => target.classList.remove('agenda-highlight'), 1800);
+          }
+        }, 80);
+      }
+      break;
+    }
+    case 'open-mamad-alert': openMamadAlertView(); break;
+    case 'mark-rotated': markPerishableRotated(id); break;
     case 'select-section': {
       if (state.draggedType) return;
       state.currentSectionId = id;
@@ -5700,10 +7825,7 @@ function handleClick(e) {
       break;
     }
     case 'add-section': {
-      const title = prompt('Nom de la nouvelle section :');
-      if (!title) return;
-      const emoji = prompt('Emoji (optionnel) :', '📁') || '📁';
-      addSection(title, emoji);
+      addSectionInteractive();
       break;
     }
     case 'edit-section': {
@@ -5805,6 +7927,8 @@ function handleClick(e) {
     case 'toggle-subtasks-display': state.expandedSubtasks[id] = !state.expandedSubtasks[id]; render(); break;
     case 'manage-item-link': manageItemLink(id); break;
     case 'manage-item-price': manageItemPrice(id); break;
+    case 'manage-item-deadline': manageItemDeadline(id); break;
+    case 'manage-item-perishable': manageItemPerishable(id); break;
 
     case 'toggle-location-editor': {
       const key = el.dataset.key;
@@ -5872,10 +7996,14 @@ function handleClick(e) {
       const kind = el.dataset.kind;
       const itemId = el.dataset.itemId;
       const subtaskId = el.dataset.subtaskId;
-      if (!confirm('Supprimer l\'image attachée ?')) return;
-      state.lightbox = null;
-      if (kind === 'item') updateItemImage(itemId, '');
-      else updateSubtaskImage(itemId, subtaskId, '');
+      confirmDialog('Supprimer l\'image attachée ?', { title: 'Supprimer l\'image', okLabel: 'Supprimer', danger: true })
+        .then(ok => {
+          if (!ok) return;
+          state.lightbox = null;
+          if (kind === 'item') updateItemImage(itemId, '');
+          else updateSubtaskImage(itemId, subtaskId, '');
+          showToast('Image supprimée.');
+        });
       break;
     }
 
@@ -5942,18 +8070,55 @@ function handleChange(e) {
   if (a === 'set-location-filter') { state.locationFilter = e.target.value || null; render(); }
 }
 
+// Debounce de la recherche : on ne re-render qu'après 250ms d'inactivité de frappe
+// Évite 9 renders sur "passeport" → 1 seul render à la fin
+let searchDebounceTimer = null;
+
 function handleInput(e) {
   const el = e.target;
   if (el.id === 'search-input') {
+    // Mise à jour optimiste : on stocke la nouvelle valeur immédiatement
+    // mais on diffère le render pour éviter de re-rendre toute l'app à chaque frappe
     state.search = el.value;
-    const cursor = el.selectionStart;
-    render();
-    const ni = document.getElementById('search-input');
-    if (ni) { ni.focus(); ni.setSelectionRange(cursor, cursor); }
+    if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+      // Avant de re-render, on capture la position du curseur
+      const inp = document.getElementById('search-input');
+      const cursor = inp ? inp.selectionStart : null;
+      render();
+      const ni = document.getElementById('search-input');
+      if (ni && cursor !== null) { ni.focus(); ni.setSelectionRange(cursor, cursor); }
+    }, 250);
     return;
   }
   const ae = el.closest('[data-action]');
   if (ae && ae.dataset.action === 'update-notes') updateItemNotes(ae.dataset.id, el.value);
+}
+
+// ==============================================
+// Raccourcis clavier globaux (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y)
+// ==============================================
+function handleGlobalKeydown(e) {
+  // On ignore le raccourci si l'utilisateur est en train de saisir du texte
+  // (input/textarea/contenteditable) — laisser le Ctrl+Z natif faire son travail dans le champ.
+  const ae = document.activeElement;
+  if (ae) {
+    const tag = ae.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || ae.isContentEditable) return;
+  }
+  // Ctrl+Z (ou ⌘+Z sur Mac) sans Shift = Undo
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'z') {
+    e.preventDefault();
+    performUndo();
+    return;
+  }
+  // Ctrl+Shift+Z (ou ⌘+Shift+Z) ou Ctrl+Y = Redo
+  if (((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.key.toLowerCase() === 'z')
+   || ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'y')) {
+    e.preventDefault();
+    performRedo();
+    return;
+  }
 }
 
 function handleKeydown(e) {
@@ -5972,6 +8137,33 @@ function handleKeydown(e) {
     if (state.contextMenu) { closeContextMenu(); return; }
     if (state.editing) { state.editing = null; render(); }
     else if (state.adding) { state.adding = null; render(); }
+  }
+  // Navigation clavier dans le tablist (pattern ARIA standard) :
+  // Flèche gauche/droite = onglet précédent/suivant, Home/End = premier/dernier
+  if (el.getAttribute && el.getAttribute('role') === 'tab') {
+    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+    const i = tabs.indexOf(el);
+    if (i < 0) return;
+    let next = -1;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % tabs.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = tabs.length - 1;
+    if (next >= 0) {
+      e.preventDefault();
+      tabs[next].focus();
+      // Activer l'onglet (changer de section) — comportement "automatic activation"
+      const sectionId = tabs[next].dataset.id;
+      if (sectionId && state.data.sections.find(s => s.id === sectionId)) {
+        state.currentSectionId = sectionId;
+        render();
+        // Restaurer le focus sur l'onglet après render (le DOM a été reconstruit)
+        setTimeout(() => {
+          const newTab = document.querySelector('[role="tab"][data-id="' + sectionId + '"]');
+          if (newTab) newTab.focus();
+        }, 30);
+      }
+    }
   }
 }
 
@@ -5993,21 +8185,182 @@ function handleDblClick(e) {
 
 let longPressTimer = null;
 let longPressFired = false;
-function handleTouchStart(e) {
-  const tab = e.target.closest('.tab[data-drag-type="tab"]');
-  if (!tab) return;
-  longPressFired = false;
-  longPressTimer = setTimeout(() => {
-    const rect = tab.getBoundingClientRect();
-    longPressFired = true;
-    // Vibrate if available
-    if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) {}
-    openTabContextMenu(tab.dataset.id, rect.left + rect.width/2 - 100, rect.bottom + 6);
-  }, 500);
+
+// === Drag tactile ===
+// HTML5 drag-and-drop ne fonctionne pas sur mobile. On implémente un système
+// similaire basé sur touch : appui long (500 ms) sur un élément draggable lance le drag,
+// touchmove met à jour la cible, touchend valide la dépose.
+let touchDragState = {
+  active: false,
+  startX: 0, startY: 0,
+  draggedType: null, draggedId: null,
+  triggerTimer: null,
+  ghost: null,
+};
+
+function findDraggableFromTouch(touch) {
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (!el) return null;
+  return el.closest('[data-drag-type]');
 }
+
+function startTouchDrag(el, touch) {
+  touchDragState.active = true;
+  touchDragState.draggedType = el.dataset.dragType;
+  touchDragState.draggedId = el.dataset.id;
+  state.draggedType = el.dataset.dragType;
+  state.draggedId = el.dataset.id;
+  document.body.classList.add('touch-dragging');
+  if (navigator.vibrate) try { navigator.vibrate(20); } catch (e) { console.warn('[touch] vibrate failed:', e); }
+  // Crée un fantôme visuel suivant le doigt
+  const rect = el.getBoundingClientRect();
+  const ghost = el.cloneNode(true);
+  ghost.style.position = 'fixed';
+  ghost.style.left = rect.left + 'px';
+  ghost.style.top = rect.top + 'px';
+  ghost.style.width = rect.width + 'px';
+  ghost.style.pointerEvents = 'none';
+  ghost.style.opacity = '0.85';
+  ghost.style.transform = 'scale(1.04)';
+  ghost.style.boxShadow = '0 12px 32px rgba(0,0,0,0.25)';
+  ghost.style.zIndex = '9998';
+  ghost.style.borderRadius = '6px';
+  ghost.classList.add('touch-drag-ghost');
+  document.body.appendChild(ghost);
+  touchDragState.ghost = ghost;
+  touchDragState.ghostOffsetX = touch.clientX - rect.left;
+  touchDragState.ghostOffsetY = touch.clientY - rect.top;
+  render();
+}
+
+function updateTouchDrag(touch) {
+  if (!touchDragState.active) return;
+  // Déplace le fantôme
+  if (touchDragState.ghost) {
+    touchDragState.ghost.style.left = (touch.clientX - touchDragState.ghostOffsetX) + 'px';
+    touchDragState.ghost.style.top = (touch.clientY - touchDragState.ghostOffsetY) + 'px';
+  }
+  // Trouve l'élément cible sous le doigt
+  // (cacher temporairement le fantôme pour qu'il ne soit pas détecté comme cible)
+  if (touchDragState.ghost) touchDragState.ghost.style.display = 'none';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (touchDragState.ghost) touchDragState.ghost.style.display = '';
+  if (!el) return;
+  let target = null;
+  if (touchDragState.draggedType === 'item') target = el.closest('.item[data-drag-type="item"]');
+  else if (touchDragState.draggedType === 'subsection') target = el.closest('.subsection[data-drag-type="subsection"]');
+  else if (touchDragState.draggedType === 'tab') target = el.closest('.tab[data-drag-type="tab"]');
+  if (target && target.dataset.id !== touchDragState.draggedId) {
+    if (state.dropTargetId !== target.dataset.id) {
+      // Optim : au lieu d'un full render() à chaque mouvement de doigt (60 fps potentiel),
+      // on applique/retire la classe 'drop-target' directement dans le DOM.
+      // Le state reste cohérent pour le drop final.
+      const prevTargetId = state.dropTargetId;
+      state.dropTargetId = target.dataset.id;
+      // Retirer drop-target de l'ancien
+      if (prevTargetId) {
+        const sel = touchDragState.draggedType === 'item' ? '.item[data-id="' + prevTargetId + '"]'
+                  : touchDragState.draggedType === 'subsection' ? '.subsection[data-id="' + prevTargetId + '"]'
+                  : '.tab[data-id="' + prevTargetId + '"]';
+        const prev = document.querySelector(sel);
+        if (prev) prev.classList.remove('drop-target', 'drop-target-touch');
+      }
+      // Appliquer drop-target sur le nouveau (avec classe spéciale tactile pour halo plus marqué)
+      target.classList.add('drop-target', 'drop-target-touch');
+    }
+  }
+  // Auto-scroll quand on approche du bord vertical
+  const margin = 80;
+  const speed = 12;
+  if (touch.clientY < margin) window.scrollBy(0, -speed);
+  else if (touch.clientY > window.innerHeight - margin) window.scrollBy(0, speed);
+}
+
+function endTouchDrag() {
+  if (!touchDragState.active) return;
+  document.body.classList.remove('touch-dragging');
+  // Récupère la cible finale et applique le drop
+  const dId = state.draggedId;
+  const tId = state.dropTargetId;
+  const type = state.draggedType;
+  // Cleanup du fantôme
+  if (touchDragState.ghost) { touchDragState.ghost.remove(); touchDragState.ghost = null; }
+  // Cleanup des classes drop-target ajoutées en mode tactile
+  document.querySelectorAll('.drop-target-touch').forEach(el => el.classList.remove('drop-target', 'drop-target-touch'));
+  state.draggedType = null; state.draggedId = null; state.dropTargetId = null;
+  touchDragState.active = false;
+  touchDragState.draggedType = null; touchDragState.draggedId = null;
+  if (tId && dId && tId !== dId && type) {
+    if (type === 'item') dropReorderItem(dId, tId);
+    else if (type === 'subsection') dropReorderSubsection(dId, tId);
+    else if (type === 'tab') dropReorderTab(dId, tId);
+  } else {
+    render();
+  }
+}
+
+function cancelTouchDrag() {
+  if (touchDragState.triggerTimer) { clearTimeout(touchDragState.triggerTimer); touchDragState.triggerTimer = null; }
+  if (touchDragState.active) endTouchDrag();
+}
+
+function handleTouchStart(e) {
+  // Cas 1 : appui long sur tab → menu contextuel (comportement existant préservé)
+  const tab = e.target.closest('.tab[data-drag-type="tab"]');
+  if (tab) {
+    longPressFired = false;
+    longPressTimer = setTimeout(() => {
+      const rect = tab.getBoundingClientRect();
+      longPressFired = true;
+      if (navigator.vibrate) try { navigator.vibrate(15); } catch (e) { console.warn('[touch] vibrate context menu failed:', e); }
+      openTabContextMenu(tab.dataset.id, rect.left + rect.width/2 - 100, rect.bottom + 6);
+    }, 500);
+  }
+  // Cas 2 : appui long sur la grip d'un item → drag tactile
+  const t = e.touches[0];
+  if (!t) return;
+  const grip = e.target.closest('.grip');
+  const draggable = grip ? grip.closest('[data-drag-type]') : null;
+  if (draggable && draggable.dataset.dragType === 'item') {
+    touchDragState.startX = t.clientX;
+    touchDragState.startY = t.clientY;
+    touchDragState.triggerTimer = setTimeout(() => {
+      startTouchDrag(draggable, t);
+    }, 350);
+  }
+}
+
+function handleTouchMove(e) {
+  // Si le doigt bouge avant le déclenchement du drag → annuler le déclencheur
+  if (touchDragState.triggerTimer && !touchDragState.active) {
+    const t = e.touches[0];
+    if (t) {
+      const dx = Math.abs(t.clientX - touchDragState.startX);
+      const dy = Math.abs(t.clientY - touchDragState.startY);
+      if (dx > 8 || dy > 8) {
+        clearTimeout(touchDragState.triggerTimer);
+        touchDragState.triggerTimer = null;
+      }
+    }
+  }
+  // Si le drag est actif, met à jour la position
+  if (touchDragState.active) {
+    e.preventDefault();
+    const t = e.touches[0];
+    if (t) updateTouchDrag(t);
+  } else {
+    clearLongPress();
+  }
+}
+
 function clearLongPress() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } }
 function handleTouchEnd(e) {
   clearLongPress();
+  if (touchDragState.triggerTimer) { clearTimeout(touchDragState.triggerTimer); touchDragState.triggerTimer = null; }
+  if (touchDragState.active) {
+    e.preventDefault();
+    endTouchDrag();
+  }
   if (longPressFired) { e.preventDefault(); longPressFired = false; }
 }
 
@@ -6020,7 +8373,7 @@ function handleDragStart(e) {
   state.draggedType = d.dataset.dragType;
   state.draggedId = d.dataset.id;
   e.dataTransfer.effectAllowed = 'move';
-  try { e.dataTransfer.setData('text/plain', d.dataset.id); } catch (err) {}
+  try { e.dataTransfer.setData('text/plain', d.dataset.id); } catch (err) { console.warn('[drag] dataTransfer.setData failed:', err); }
   d.classList.add('dragging');
 }
 function handleDragOver(e) {
@@ -6078,18 +8431,63 @@ function handleDragEnd() {
   app.addEventListener('dblclick', handleDblClick);
   app.addEventListener('touchstart', handleTouchStart, { passive: true });
   app.addEventListener('touchend', handleTouchEnd);
-  app.addEventListener('touchmove', clearLongPress, { passive: true });
-  app.addEventListener('touchcancel', clearLongPress);
+  app.addEventListener('touchmove', handleTouchMove, { passive: false });
+  app.addEventListener('touchcancel', (e) => { clearLongPress(); cancelTouchDrag(); });
+
+  // Raccourcis clavier globaux (Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y)
+  window.addEventListener('keydown', handleGlobalKeydown);
 
   render();
+
+  // Initialiser l'indicateur Undo (désactivé tant qu'aucune action n'a été faite)
+  updateUndoIndicator();
+
+  // Rappel au démarrage : toast si des tâches sont en retard
+  // Attendu 1.5s pour ne pas saturer l'utilisateur dès l'arrivée + délai au cas où
+  // un pull de sync arriverait juste après et changerait les compteurs
+  setTimeout(() => {
+    try {
+      const tasks = collectDeadlineTasks(false);
+      const overdue = tasks.filter(t => t.status.kind === 'overdue').length;
+      const urgent = tasks.filter(t => t.status.kind === 'urgent').length;
+      if (overdue > 0) {
+        const msg = overdue + ' tâche' + (overdue > 1 ? 's' : '')
+          + ' en retard' + (urgent > 0 ? ' et ' + urgent + ' urgente' + (urgent > 1 ? 's' : '') : '')
+          + '. Voir l\'agenda 📅';
+        showToast('🔴 ' + msg, 5000);
+      } else if (urgent > 0) {
+        showToast('⚠️ ' + urgent + ' tâche' + (urgent > 1 ? 's' : '') + ' urgente' + (urgent > 1 ? 's' : '') + ' (≤ 3 jours). Voir l\'agenda 📅', 4000);
+      }
+    } catch(e) { console.warn('[boot] overdue reminder failed:', e); }
+  }, 1500);
 
   // Démarrer la synchronisation cross-device si activée par URL fragment
   updateSyncIndicator();
   if (syncState.enabled) {
     startSyncPolling();
+    startSyncFreshnessTicker(); // mise à jour "il y a Xs" toutes les 10s
     // Pull immédiat pour récupérer la version la plus récente
     pollAndMerge();
   }
+
+  // Rappel "X tâches en retard" au boot (option 32a + 32c).
+  // On attend 1.2s pour laisser le pull initial terminer s'il y en a un, et pour ne pas
+  // lancer le toast pile au moment où l'utilisateur regarde l'écran de chargement.
+  setTimeout(() => {
+    try {
+      const tasks = collectDeadlineTasks(false);
+      const overdue = tasks.filter(t => t.status.kind === 'overdue').length;
+      const urgent = tasks.filter(t => t.status.kind === 'urgent').length;
+      if (overdue > 0) {
+        const msg = overdue + ' tâche' + (overdue > 1 ? 's' : '') + ' en retard'
+                  + (urgent > 0 ? ' • ' + urgent + ' urgente' + (urgent > 1 ? 's' : '') : '')
+                  + ' — voir l\'agenda';
+        showToast(msg, 4500, 'error');
+      } else if (urgent > 0) {
+        showToast(urgent + ' tâche' + (urgent > 1 ? 's' : '') + ' urgente' + (urgent > 1 ? 's' : '') + ' (≤ 3 jours) — voir l\'agenda', 3500);
+      }
+    } catch(e) { console.warn('[boot] overdue check failed:', e); }
+  }, 1200);
 })();
 </script>
 </body>
